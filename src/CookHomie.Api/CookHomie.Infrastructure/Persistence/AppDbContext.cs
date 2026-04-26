@@ -33,10 +33,7 @@ public class AppDbContext : DbContext
             entity.HasKey(e => e.Id);
             entity.Property(e => e.Name).IsRequired();
             entity.Property(e => e.Instructions).IsRequired();
-            entity.Property(e => e.Tags).HasConversion(
-                v => v,
-                v => v
-            );
+            entity.Property(e => e.Tags);
             entity.Property(e => e.CreatedAt).IsRequired();
         });
 

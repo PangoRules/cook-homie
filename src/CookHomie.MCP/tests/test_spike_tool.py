@@ -1,6 +1,6 @@
 import pytest
 
-from tools.spike import hello_world
+from tools.spike import _hello_world_with_client, hello_world
 
 
 @pytest.mark.asyncio
@@ -9,7 +9,7 @@ async def test_hello_world_returns_exact_payload_with_injected_client() -> None:
         async def get_spike_hello(self) -> dict[str, str]:
             return {"message": "hello"}
 
-    payload = await hello_world(client=FakeApiClient())
+    payload = await _hello_world_with_client(FakeApiClient())
 
     assert payload == {"message": "hello"}
 

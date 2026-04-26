@@ -24,4 +24,4 @@ Thanks for helping build CookHomie.
 ## MCP local test workflow
 
 - Run MCP tests from `src/CookHomie.MCP` using the project virtual environment, not system Python.
-- Command: `src/CookHomie.MCP/.venv/bin/pytest -q`.
+- From repo root, run: `cd src/CookHomie.MCP && .venv/bin/pytest -q`.

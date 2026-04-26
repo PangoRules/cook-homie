@@ -1,14 +1,14 @@
-FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 
 WORKDIR /src
 
 COPY src/CookHomie.Api/CookHomie.SpikeApi/CookHomie.SpikeApi.csproj ./CookHomie.SpikeApi/
-RUN dotnet restore ./CookHomie.SpikeApi/CookHomie.SpikeApi.csproj -p:TargetFramework=net9.0
+RUN dotnet restore ./CookHomie.SpikeApi/CookHomie.SpikeApi.csproj -p:TargetFramework=net10.0
 
 COPY src/CookHomie.Api/CookHomie.SpikeApi/ ./CookHomie.SpikeApi/
-RUN dotnet publish ./CookHomie.SpikeApi/CookHomie.SpikeApi.csproj -c Release -f net9.0 -p:TargetFramework=net9.0 --no-restore -o /app/publish
+RUN dotnet publish ./CookHomie.SpikeApi/CookHomie.SpikeApi.csproj -c Release -f net10.0 -p:TargetFramework=net10.0 --no-restore -o /app/publish
 
-FROM mcr.microsoft.com/dotnet/aspnet:9.0
+FROM mcr.microsoft.com/dotnet/aspnet:10.0
 
 WORKDIR /app
 

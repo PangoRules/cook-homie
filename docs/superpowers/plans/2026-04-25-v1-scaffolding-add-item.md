@@ -1023,14 +1023,102 @@ git commit -m "chore: add e2e verification script ci stub and runbook"
 
 ---
 
-## Final Validation Checklist (Run After Task 14)
+### Task 15: Cut Over to WebApi and Retire Spike from Default Flow
+
+**Files:**
+- Modify: `docker/Dockerfile.api`
+- Modify: `docker-compose.yml`
+- Modify: `docker-compose.dev.yml`
+- Modify: `README.md`
+- Modify: `scripts/verify_spike.sh`
+
+- [ ] **Step 1: Write failing runtime check proving compose is still on SpikeApi**
+
+Run: `grep -q 'CookHomie.WebApi.dll' docker/Dockerfile.api`
+Expected: FAIL (non-zero) because file still points to `CookHomie.SpikeApi.dll`
+
+- [ ] **Step 2: Switch API container build/publish target from SpikeApi to WebApi**
+
+```dockerfile
+# docker/Dockerfile.api (key lines)
+COPY src/CookHomie.Api/CookHomie.WebApi/CookHomie.WebApi.csproj ./CookHomie.WebApi/
+RUN dotnet restore ./CookHomie.WebApi/CookHomie.WebApi.csproj -p:TargetFramework=net10.0
+
+COPY src/CookHomie.Api/CookHomie.WebApi/ ./CookHomie.WebApi/
+COPY src/CookHomie.Api/CookHomie.Application/ ./CookHomie.Application/
+COPY src/CookHomie.Api/CookHomie.Infrastructure/ ./CookHomie.Infrastructure/
+COPY src/CookHomie.Api/CookHomie.Domain/ ./CookHomie.Domain/
+
+RUN dotnet publish ./CookHomie.WebApi/CookHomie.WebApi.csproj -c Release -f net10.0 -p:TargetFramework=net10.0 --no-restore -o /app/publish
+ENTRYPOINT ["dotnet", "CookHomie.WebApi.dll"]
+```
+
+- [ ] **Step 3: Update compose + docs to treat WebApi as the default API runtime**
+
+```yaml
+# docker-compose.yml (api service)
+api:
+  build:
+    context: .
+    dockerfile: docker/Dockerfile.api
+  environment:
+    ASPNETCORE_URLS: http://+:5000
+    ASPNETCORE_ENVIRONMENT: Development
+    ConnectionStrings__DefaultConnection: Host=postgres;Port=5432;Database=${POSTGRES_DB:-cookhomie};Username=${POSTGRES_USER:-cookhomie};Password=${POSTGRES_PASSWORD:-cookhomie_dev_password}
+```
+
+```md
+## API Runtime
+- Default API service is now `CookHomie.WebApi` (production path).
+- Spike API remains optional for temporary debugging only and is not part of the default validation chain.
+```
+
+- [ ] **Step 4: Adjust spike verifier to be optional and non-blocking**
+
+```bash
+# scripts/verify_spike.sh
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ "${ENABLE_SPIKE_CHECK:-0}" != "1" ]]; then
+  echo "Skipping spike verification (set ENABLE_SPIKE_CHECK=1 to enable)."
+  exit 0
+fi
+
+curl -fsS http://localhost:5000/spike/hello >/dev/null
+curl -fsS http://localhost:3000/api/spike/hello >/dev/null
+echo "Spike verification passed"
+```
+
+- [ ] **Step 5: Verify cutover end-to-end on default stack**
+
+Run: `docker compose -f docker-compose.yml up --build -d && bash scripts/verify_add_item_e2e.sh`
+Expected: `E2E add-item verification passed` with no dependency on spike endpoints
+
+- [ ] **Step 6: Verify Swagger is exposed from WebApi in local development**
+
+Run: `curl -fsS http://localhost:5000/swagger/v1/swagger.json >/dev/null && curl -fsSI http://localhost:5000/swagger | grep -q '200\|301\|302'`
+Expected: commands succeed, proving OpenAPI JSON and Swagger UI endpoint are reachable
+
+- [ ] **Step 7: Commit**
+
+```bash
+git add docker/Dockerfile.api docker-compose.yml docker-compose.dev.yml README.md scripts/verify_spike.sh
+git commit -m "chore: cut over default api runtime from spike to webapi"
+```
+
+---
+
+## Final Validation Checklist (Run After Task 15)
 
 - [ ] `dotnet test src/CookHomie.Api/tests`
 - [ ] `cd src/CookHomie.Web && npm test`
 - [ ] `cd src/CookHomie.MCP && pytest -q`
-- [ ] `docker compose -f docker-compose.dev.yml up --build -d`
-- [ ] `bash scripts/verify_spike.sh`
+- [ ] `docker compose -f docker-compose.yml up --build -d`
 - [ ] `bash scripts/verify_add_item_e2e.sh`
+- [ ] `curl -fsS http://localhost:5000/swagger/v1/swagger.json >/dev/null`
+- [ ] `curl -fsSI http://localhost:5000/swagger >/dev/null`
+- [ ] `bash scripts/verify_spike.sh` (expect skip message unless `ENABLE_SPIKE_CHECK=1`)
 - [ ] `docker compose down`
 
-Expected: all commands succeed, add-item flow verified end-to-end.
+Expected: all default checks succeed with `CookHomie.WebApi` as the primary API path; spike validation is optional.

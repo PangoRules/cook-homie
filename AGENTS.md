@@ -3,14 +3,14 @@
 This repository is the food and kitchen module of HomieOS, a local-first web app for kitchen inventory management, recipe suggestions, and shopping lists, exposing all functionality via MCP tools for AI integration.
 
 ## Project Status
-- **MVP Phase**: Early development with architecture documented but no source code implemented
-- **Monorepo Structure**: Planned with 3 services (API, Web, MCP server) but not yet scaffolded
-- **Development Focus**: Implementation of C# clean architecture, Nuxt frontend, and Python MCP server
+- **MVP Phase**: Early implementation. Foundation scaffolding exists for API, Web, and MCP, with inventory as the first vertical slice in progress.
+- **Monorepo Structure**: Scaffolded with 3 services: API, Web, and MCP server.
+- **Development Focus**: Completing the `add inventory item` vertical slice, tightening WebApi/application-layer boundaries, and adding end-to-end verification.
 
-## Monorepo Structure (Planned)
+## Monorepo Structure
 ```
 src/
-├── CookHomie.Api/                  # C# ASP.NET Core 9 (Clean Architecture)
+├── CookHomie.Api/                  # C# ASP.NET Core 10 (Clean Architecture)
 │   ├── CookHomie.Domain/           # Entities, enums, interfaces
 │   ├── CookHomie.Application/      # Use cases, DTOs, interfaces
 │   ├── CookHomie.Infrastructure/   # EF Core, repositories, migrations
@@ -18,7 +18,7 @@ src/
 │
 ├── CookHomie.Web/                  # Nuxt 3 frontend
 │   ├── pages/                      # UI pages
-│   ├── components/                 # Vue components
+│   ├── components/                 # Vue components (not fully built yet)
 │   ├── composables/                # Shared logic
 │   └── server/api/                 # Nuxt proxy to C# API
 │
@@ -41,7 +41,7 @@ src/
   - C# API: 5000
   - MCP Server: 8000
   - PostgreSQL: 5432
-- **Stack**: Nuxt 3 + Vue 3 | ASP.NET Core 9 + EF Core | PostgreSQL | Docker Compose
+- **Stack**: Nuxt 3 + Vue 3 | ASP.NET Core 10 + EF Core | PostgreSQL | Python FastMCP | Docker Compose
 
 ## Key Design Decisions
 - **All IDs are UUIDs**: For future multi-user or sync scenarios

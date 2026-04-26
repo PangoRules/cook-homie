@@ -30,6 +30,14 @@ CookHomie uses a monorepo with three services communicating over HTTP locally, a
                         └──────────────────────┘
 ```
 
+## Current Runtime State
+
+- `docker-compose.yml` builds the API container from `src/CookHomie.Api/CookHomie.WebApi` and runs `CookHomie.WebApi.dll`.
+- `CookHomie.SpikeApi` still exists for historical spike validation, but it is not the default API runtime.
+- WebApi exposes `/api/inventory`, `/health`, and development OpenAPI/Swagger routes.
+- Nuxt proxies inventory calls through `src/CookHomie.Web/server/api/inventory`.
+- MCP registers inventory, recipe, and shopping placeholder tools; only inventory currently calls the C# API.
+
 ## Design Decisions
 
 ### C# API is pure data
@@ -42,7 +50,7 @@ The Python MCP server calls the C# API for data, then adds AI reasoning on top. 
 - **Domain** — entities, interfaces, enums. No dependencies.
 - **Application** — use cases, DTOs, service interfaces. Depends on Domain only.
 - **Infrastructure** — EF Core, PostgreSQL repos. Depends on Application + Domain.
-- **WebApi** — controllers, DI wiring. Depends on Application.
+- **WebApi** — controllers, DI wiring, health checks, OpenAPI. Depends on Application + Infrastructure.
 
 ### No auth for MVP
 Local-only, single user. API key or JWT added in v2 when exposing beyond localhost.

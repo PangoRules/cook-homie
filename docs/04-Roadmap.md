@@ -10,35 +10,38 @@ tags: [project, cookhomie, roadmap]
 **Goal:** Working local web app with inventory, recipes, shopping list, and MCP tools.
 
 ### Milestone 1 — Foundation
-- [ ] Create monorepo folder structure
-- [ ] Set up Docker Compose (PostgreSQL + API + Web + MCP)
-- [ ] C# Domain layer (entities, enums, interfaces)
-- [ ] C# Application layer (use cases, DTOs)
-- [ ] C# Infrastructure (EF Core DbContext, repositories, migrations)
-- [ ] C# WebApi (controllers, DI wiring, Program.cs)
+- [x] Create monorepo folder structure
+- [x] Set up Docker Compose (PostgreSQL + API + Web + MCP)
+- [x] C# Domain layer (entities, enums, interfaces)
+- [x] C# Application layer (inventory use case and DTOs)
+- [x] C# Infrastructure (EF Core DbContext, repository, migrations)
+- [x] C# WebApi scaffold (controllers, DI wiring, Program.cs)
+- [ ] Tighten WebApi inventory POST to consistently use the application use case and return the intended add-item contract
 
 ### Milestone 2 — Frontend
-- [ ] Nuxt 3 scaffold with default layout (sidebar nav)
+- [x] Nuxt 3 scaffold with default layout and route skeletons
 - [ ] Dashboard page (expiring items, recipe matches, shopping count)
 - [ ] Inventory page + AddItemModal
 - [ ] Recipes page + RecipeCard + AddRecipeModal
 - [ ] Recipe detail page (ingredients with in-stock highlighting)
-- [ ] Shopping list page
+- [x] Shopping list page skeleton
 
 ### Milestone 3 — MCP Server
-- [ ] FastMCP scaffold + api_client.py
-- [ ] get_inventory tool
+- [x] FastMCP scaffold + api_client.py
+- [x] get_inventory tool
 - [ ] get_expiring_items tool
 - [ ] suggest_recipes tool
 - [ ] get_missing_ingredients tool
 - [ ] build_shopping_list tool
 - [ ] add_to_shopping_list tool
-- [ ] system.md prompt
+- [x] system.md prompt
 
 ### Milestone 4 — Integration
 - [ ] End-to-end: add item → suggest recipe → build shopping list
+- [ ] Add focused add-item E2E smoke script
+- [ ] Add CI workflow for API/Web/MCP checks
 - [ ] Wire MCP server into Claude Code / opencode
-- [ ] docker-compose.dev.yml with hot reload
+- [ ] Replace `docker-compose.dev.yml` placeholder commands with useful hot reload workflows
 
 ---
 

@@ -16,10 +16,12 @@ Thanks for helping build CookHomie.
 4. Use clear commit messages describing intent.
 5. Open a PR with a short summary and verification notes.
 
-## Spike verification command (Task 3)
+## API local test workflow
 
 - Use `dotnet test src/CookHomie.Api/CookHomie.SpikeApi.Tests/CookHomie.SpikeApi.Tests.csproj -f net10.0` for spike endpoint verification.
 - The API projects target .NET 10 (`net10.0`) across the solution.
+- Use `dotnet test src/CookHomie.Api/CookHomie.sln` for the normal API verification path.
+- The default Docker API runtime is `CookHomie.WebApi`; `CookHomie.SpikeApi` remains available only for historical spike checks.
 
 ## MCP local test workflow
 

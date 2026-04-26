@@ -6,7 +6,9 @@
 
 **Architecture:** Execute in three phases: (1) short spike proving service networking, (2) full scaffolding with clean boundaries, (3) first vertical slice (`add item`) implemented via TDD. Keep services decoupled through HTTP contracts and enforce C# Clean Architecture via project references.
 
-**Tech Stack:** ASP.NET Core 9 + EF Core + PostgreSQL, Nuxt 3 + Vue 3 + Vitest, Python 3.11 + FastMCP + httpx, Docker Compose.
+**Tech Stack:** ASP.NET Core 10 + EF Core + PostgreSQL 16, Nuxt 3 + Vue 3 + Vitest, Python 3.11+ + FastMCP + httpx, Docker Compose.
+
+**Current project state (2026-04-26):** Tasks 1-10 are scaffolded. The repository also contains partial later-task work: `CookHomie.WebApi` is already the default API Docker runtime, `GET/POST /api/inventory` exist in WebApi, Nuxt inventory proxy GET/POST routes exist, and MCP `get_inventory` calls the API. Remaining work should tighten the add-item vertical slice contract, add missing UI/modal pieces, add E2E/CI verification, and make spike validation optional or historical.
 
 ---
 
@@ -746,13 +748,15 @@ git commit -m "feat: scaffold mcp tools modules and server registration"
 
 ### Task 11: Implement API Add Item Vertical Slice
 
+**Current status:** Partially implemented. `CookHomie.WebApi/Controllers/InventoryController.cs` already exposes `GET /api/inventory` and `POST /api/inventory`, but `POST` currently writes through `IInventoryRepository` directly and returns `200 OK`. Complete this task by routing creation through the application use case or explicitly updating the planned contract, then align tests and docs with the chosen behavior.
+
 **Files:**
 - Modify: `src/CookHomie.Api/CookHomie.Application/UseCases/Inventory/AddInventoryItemUseCase.cs`
 - Modify: `src/CookHomie.Api/CookHomie.WebApi/Controllers/InventoryController.cs`
 - Modify: `src/CookHomie.Api/CookHomie.Infrastructure/Repositories/InventoryRepository.cs`
 - Test: `src/CookHomie.Api/tests/CookHomie.WebApi.Tests/InventoryControllerTests.cs`
 
-- [ ] **Step 1: Write failing controller test for POST /api/inventory**
+- [ ] **Step 1: Write failing controller test for the intended POST /api/inventory contract**
 
 ```csharp
 [Fact]
@@ -775,7 +779,7 @@ public async Task PostInventory_WithValidPayload_ReturnsCreated()
 - [ ] **Step 2: Run test to verify it fails**
 
 Run: `dotnet test src/CookHomie.Api/tests/CookHomie.WebApi.Tests --filter PostInventory_WithValidPayload_ReturnsCreated`
-Expected: FAIL (endpoint not implemented)
+Expected: FAIL in the current code because the endpoint exists but returns `200 OK` and bypasses the application use case.
 
 - [ ] **Step 3: Implement controller + use-case wiring**
 
@@ -812,6 +816,8 @@ git commit -m "feat: implement api add inventory item endpoint"
 ---
 
 ### Task 12: Implement Web Add Item Flow
+
+**Current status:** Partially implemented. `useInventory.ts` already has `addInventoryItem`, and Nuxt proxy routes exist for `GET` and `POST /api/inventory`. There is no `components/inventory/AddItemModal.vue` yet, and `pages/inventory.vue` currently renders a simple list with no add-item UI.
 
 **Files:**
 - Create: `src/CookHomie.Web/components/inventory/AddItemModal.vue`
@@ -881,6 +887,8 @@ git commit -m "feat: implement inventory add item modal and proxy"
 
 ### Task 13: Implement MCP `get_inventory` Tool
 
+**Current status:** Partially implemented. `api_client.py` already supports `get_inventory(location=None)`, and `tools/inventory.py` passes the optional location to the client. The current tool returns `{ "items": items }`; complete this task by deciding whether the tool contract should also include `count`, then align tests and documentation.
+
 **Files:**
 - Modify: `src/CookHomie.MCP/api_client.py`
 - Modify: `src/CookHomie.MCP/tools/inventory.py`
@@ -903,10 +911,10 @@ async def test_get_inventory_passes_location(monkeypatch):
     assert called["location"] == "Fridge"
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [ ] **Step 2: Run test to verify the current contract gap**
 
 Run: `cd src/CookHomie.MCP && pytest tests/test_inventory_tool.py -q`
-Expected: FAIL (tool does not pass location correctly)
+Expected: the location-passing test may already pass; add a failing assertion for any missing intended contract such as `count` if that remains required.
 
 - [ ] **Step 3: Implement API client GET /api/inventory and tool wrapper**
 
@@ -990,7 +998,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: '9.0.x'
+          dotnet-version: '10.0.x'
       - run: dotnet build src/CookHomie.Api/CookHomie.sln
       - uses: actions/setup-node@v4
         with:
@@ -1025,6 +1033,8 @@ git commit -m "chore: add e2e verification script ci stub and runbook"
 
 ### Task 15: Cut Over to WebApi and Retire Spike from Default Flow
 
+**Current status:** Partially implemented ahead of schedule. `docker/Dockerfile.api` already restores, publishes, and runs `CookHomie.WebApi.dll`, and `docker-compose.yml` supplies the WebApi connection string. The remaining work is to verify the cutover, update stale docs/scripts, and decide whether `scripts/verify_spike.sh` should skip by default or remain a historical manual check.
+
 **Files:**
 - Modify: `docker/Dockerfile.api`
 - Modify: `docker-compose.yml`
@@ -1032,12 +1042,12 @@ git commit -m "chore: add e2e verification script ci stub and runbook"
 - Modify: `README.md`
 - Modify: `scripts/verify_spike.sh`
 
-- [ ] **Step 1: Write failing runtime check proving compose is still on SpikeApi**
+- [ ] **Step 1: Verify runtime check proving compose points at WebApi**
 
 Run: `grep -q 'CookHomie.WebApi.dll' docker/Dockerfile.api`
-Expected: FAIL (non-zero) because file still points to `CookHomie.SpikeApi.dll`
+Expected: PASS because the Dockerfile already points to `CookHomie.WebApi.dll`
 
-- [ ] **Step 2: Switch API container build/publish target from SpikeApi to WebApi**
+- [ ] **Step 2: Keep API container build/publish target on WebApi**
 
 ```dockerfile
 # docker/Dockerfile.api (key lines)
@@ -1070,7 +1080,7 @@ api:
 ```md
 ## API Runtime
 - Default API service is now `CookHomie.WebApi` (production path).
-- Spike API remains optional for temporary debugging only and is not part of the default validation chain.
+- `CookHomie.SpikeApi` remains historical validation code and is not part of the default Docker validation chain.
 ```
 
 - [ ] **Step 4: Adjust spike verifier to be optional and non-blocking**
@@ -1103,7 +1113,7 @@ Expected: commands succeed, proving OpenAPI JSON and Swagger UI endpoint are rea
 - [ ] **Step 7: Commit**
 
 ```bash
-git add docker/Dockerfile.api docker-compose.yml docker-compose.dev.yml README.md scripts/verify_spike.sh
+git add docker/Dockerfile.api docker-compose.yml docker-compose.dev.yml README.md CONTRIBUTING.md docs scripts/verify_spike.sh
 git commit -m "chore: cut over default api runtime from spike to webapi"
 ```
 

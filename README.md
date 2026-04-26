@@ -16,15 +16,16 @@ CookHomie is the food and kitchen module of HomieOS. It is a local-first app for
 
 Notes:
 
-- The `api` service currently runs `CookHomie.SpikeApi` and exposes `http://localhost:5000/spike/hello`.
-- The `mcp` Docker service is still a placeholder container. Run MCP locally from `src/CookHomie.MCP` when validating MCP behavior.
+- The default `api` service runs `CookHomie.WebApi` and exposes inventory endpoints under `http://localhost:5000/api/inventory`.
+- Swagger is available in development at `http://localhost:5000/swagger`.
+- The spike API still exists in source for historical validation, but it is not the default Docker runtime.
 
-## Spike validation
+## Spike validation (historical)
 
-Use the end-to-end spike checker to validate both direct API reachability and the Nuxt proxy:
+Use the spike checker only when explicitly running `CookHomie.SpikeApi` locally. The default Docker stack runs `CookHomie.WebApi`, so this check is not part of the normal validation path.
 
 1. Run before services are up (expected to fail): `./scripts/verify_spike.sh`
-2. Start services needed for spike validation (avoids MCP port conflicts): `docker compose up --build -d postgres api web`
+2. Start a local spike API and Nuxt web process that proxies `/api/spike/hello`.
 3. Run again (expected to pass): `./scripts/verify_spike.sh`
 
 ## Stack verification checklist
@@ -35,6 +36,7 @@ Run these from repo root to verify the scaffolded stack:
 - API tests: `dotnet test src/CookHomie.Api/CookHomie.sln`
 - Web tests/build/audit: `cd src/CookHomie.Web && npm test && npm run build && npm audit`
 - MCP tests: `cd src/CookHomie.MCP && .venv/bin/python -m pytest -q`
+- Default API runtime check: `docker compose up --build -d postgres api && curl -fsS http://localhost:5000/health`
 
 ## Runtime versions
 

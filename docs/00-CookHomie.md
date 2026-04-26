@@ -29,20 +29,28 @@ A fully functional v1 with:
 | Layer | Tech |
 |-------|------|
 | Frontend | Nuxt 3 · Vue 3 |
-| Backend | ASP.NET Core 9 · Clean Architecture |
+| Backend | ASP.NET Core 10 · Clean Architecture |
 | Database | PostgreSQL · EF Core |
 | AI Gateway | Python MCP Server (FastMCP) |
 | Infra | Docker Compose |
 
+## Current Implementation State
+
+- API, Web, and MCP projects are scaffolded under `src/`.
+- The default Docker API runtime is `CookHomie.WebApi`; the spike API remains only as historical validation code.
+- Inventory domain, EF Core persistence, WebApi inventory endpoints, Nuxt inventory page/proxy routes, and MCP inventory tooling exist.
+- Recipes, shopping, and richer AI-assisted tools are still mostly skeletons.
+- End-to-end add-item verification and CI workflow are still pending.
+
 ## 🧩 Tasks
 
-- [ ] Scaffold monorepo structure
-- [ ] Set up Docker Compose (PostgreSQL + API + Web + MCP)
-- [ ] Build C# Domain + Application layers
-- [ ] Build C# Infrastructure (EF Core + migrations)
-- [ ] Build C# WebApi controllers
-- [ ] Build Nuxt frontend (Dashboard, Inventory, Recipes, Shopping)
-- [ ] Build Python MCP server with 6 tools
+- [x] Scaffold monorepo structure
+- [x] Set up Docker Compose (PostgreSQL + API + Web + MCP)
+- [x] Build C# Domain + Application layers
+- [x] Build C# Infrastructure (EF Core + migrations)
+- [x] Build C# WebApi inventory controller and health/OpenAPI endpoints
+- [ ] Build Nuxt frontend beyond inventory skeletons
+- [ ] Build full Python MCP server toolset
 - [ ] End-to-end test: add item → suggest recipe → build shopping list
 
 ## 🔗 Related

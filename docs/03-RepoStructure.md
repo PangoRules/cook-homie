@@ -11,59 +11,50 @@ tags: [project, cookhomie, structure]
 CookHomie/
 ├── src/
 │   ├── CookHomie.Api/                  # C# solution (Clean Architecture)
+│   │   ├── CookHomie.SpikeApi/          # Historical spike API; not default runtime
+│   │   ├── CookHomie.SpikeApi.Tests/
 │   │   ├── CookHomie.Domain/
 │   │   │   ├── Entities/               # InventoryItem, Recipe, RecipeIngredient, ShoppingItem
 │   │   │   ├── Enums/                  # Location, Priority
-│   │   │   └── Interfaces/             # IInventoryRepository, IRecipeRepository, IShoppingRepository
+│   │   │   └── Interfaces/             # IInventoryRepository
 │   │   ├── CookHomie.Application/
-│   │   │   ├── UseCases/               # GetInventory, AddItem, GetRecipeMatches, BuildShoppingList…
-│   │   │   ├── DTOs/                   # Request/Response objects
-│   │   │   └── Interfaces/             # IInventoryService, IRecipeService, IShoppingService
+│   │   │   ├── UseCases/               # Inventory use cases
+│   │   │   └── DTOs/                   # Request/Response objects
 │   │   ├── CookHomie.Infrastructure/
 │   │   │   ├── Persistence/            # AppDbContext (EF Core)
-│   │   │   ├── Repositories/           # InventoryRepository, RecipeRepository, ShoppingRepository
+│   │   │   ├── Repositories/           # InventoryRepository
 │   │   │   └── Migrations/
 │   │   └── CookHomie.WebApi/
-│   │       ├── Controllers/            # InventoryController, RecipesController, ShoppingController
+│   │       ├── Controllers/            # InventoryController
 │   │       ├── Program.cs
 │   │       └── appsettings.json
 │   │
 │   ├── CookHomie.Web/                  # Nuxt 3 frontend
 │   │   ├── pages/
 │   │   │   ├── index.vue               # Dashboard
-│   │   │   ├── inventory.vue           # Inventory list + AddItemModal
+│   │   │   ├── inventory.vue           # Inventory list skeleton
 │   │   │   ├── recipes/
-│   │   │   │   ├── index.vue           # Recipe browser + AddRecipeModal
+│   │   │   │   ├── index.vue           # Recipe browser skeleton
 │   │   │   │   └── [id].vue            # Recipe detail
-│   │   │   └── shopping.vue            # Shopping list
-│   │   ├── components/
-│   │   │   ├── inventory/
-│   │   │   │   ├── InventoryCard.vue
-│   │   │   │   ├── InventoryFilters.vue
-│   │   │   │   └── AddItemModal.vue
-│   │   │   ├── recipes/
-│   │   │   │   ├── RecipeCard.vue
-│   │   │   │   ├── IngredientList.vue
-│   │   │   │   └── AddRecipeModal.vue
-│   │   │   ├── shopping/
-│   │   │   │   └── ShoppingItem.vue
-│   │   │   └── ui/                     # Shared: Modal.vue, Badge.vue, ExpiryWarning.vue
+│   │   │   └── shopping.vue            # Shopping list skeleton
 │   │   ├── composables/
 │   │   │   ├── useInventory.ts
-│   │   │   ├── useRecipes.ts
-│   │   │   └── useShopping.ts
 │   │   ├── layouts/
 │   │   │   └── default.vue             # Sidebar nav
 │   │   ├── server/api/                 # Nuxt proxy to C# API
+│   │   │   ├── inventory/index.get.ts
+│   │   │   ├── inventory/index.post.ts
+│   │   │   └── spike/hello.get.ts      # Historical spike proxy
+│   │   ├── tests/
 │   │   └── nuxt.config.ts
 │   │
 │   └── CookHomie.MCP/                  # Python MCP server (AI gateway)
 │       ├── server.py                   # FastMCP app entry point
 │       ├── api_client.py               # HTTP client for C# API
 │       ├── tools/
-│       │   ├── inventory.py            # get_inventory, get_expiring_items
-│       │   ├── recipes.py              # suggest_recipes, get_missing_ingredients
-│       │   └── shopping.py             # build_shopping_list, add_to_shopping_list
+│       │   ├── inventory.py            # get_inventory
+│       │   ├── recipes.py              # get_recipes placeholder
+│       │   └── shopping.py             # get_shopping_list placeholder
 │       ├── prompts/
 │       │   └── system.md               # CookHomie AI personality & context
 │       └── pyproject.toml
@@ -83,15 +74,12 @@ CookHomie/
 ### /api/inventory
 | Method | Route | Description |
 |--------|-------|-------------|
-| GET | /api/inventory | List all · ?location=Fridge&expiring=true |
-| GET | /api/inventory/{id} | Single item |
-| POST | /api/inventory | Add item |
-| PUT | /api/inventory/{id} | Update item |
-| DELETE | /api/inventory/{id} | Remove item |
-| GET | /api/inventory/expiring | Items expiring within N days |
-| GET | /api/inventory/low | Items below minimum quantity |
+| GET | /api/inventory | List all inventory items |
+| POST | /api/inventory | Add item through the current WebApi controller |
 
-### /api/recipes
+Planned but not implemented yet: item-by-id lookup, update/delete, expiring-item filters, low-stock filters.
+
+### /api/recipes (planned)
 | Method | Route | Description |
 |--------|-------|-------------|
 | GET | /api/recipes | List all · ?tag=quick&maxMinutes=30 |
@@ -102,7 +90,7 @@ CookHomie/
 | GET | /api/recipes/matches | Cookable from current inventory (with match %) |
 | GET | /api/recipes/{id}/missing | Missing ingredients for recipe |
 
-### /api/shopping
+### /api/shopping (planned)
 | Method | Route | Description |
 |--------|-------|-------------|
 | GET | /api/shopping | Current shopping list |
@@ -116,12 +104,11 @@ CookHomie/
 
 | Tool | Description |
 |------|-------------|
-| get_inventory(location?) | Current kitchen inventory, optional location filter |
-| get_expiring_items(days?) | Items expiring within N days (default 3) |
-| suggest_recipes(preferences?) | AI-ranked recipe matches from current inventory |
-| get_missing_ingredients(recipe_id) | What's missing for a specific recipe |
-| build_shopping_list(goal?) | AI-generated smart shopping list |
-| add_to_shopping_list(items[]) | Write specific items to shopping list |
+| get_inventory(location?) | Implemented; calls the C# API and returns inventory items |
+| get_recipes(query?) | Placeholder; returns an empty recipe list |
+| get_shopping_list() | Placeholder; returns an empty shopping list |
+
+Planned but not implemented yet: `get_expiring_items`, `suggest_recipes`, `get_missing_ingredients`, `build_shopping_list`, and `add_to_shopping_list`.
 
 ## 🔗 Related
 

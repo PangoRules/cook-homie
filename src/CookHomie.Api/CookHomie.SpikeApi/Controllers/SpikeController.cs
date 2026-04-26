@@ -11,7 +11,7 @@ public class SpikeController : ControllerBase
     {
         return Ok(new
         {
-            message = "Hello from CookHomie Spike API",
+            message = "Hello from C#",
             timestamp = DateTimeOffset.UtcNow
         });
     }

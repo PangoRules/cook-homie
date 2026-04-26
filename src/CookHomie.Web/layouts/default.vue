@@ -1,17 +1,39 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <header class="bg-white shadow">
-      <div class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
-        <h1 class="text-3xl font-bold text-gray-900">CookHomie</h1>
-      </div>
+  <div class="app-layout">
+    <header class="header">
+      <nav>
+        <NuxtLink to="/">Home</NuxtLink>
+        <NuxtLink to="/inventory">Inventory</NuxtLink>
+        <NuxtLink to="/recipes">Recipes</NuxtLink>
+        <NuxtLink to="/shopping">Shopping</NuxtLink>
+      </nav>
     </header>
-    <main>
-      <div class="max-w-7xl mx-auto px-4 py-6 sm:px-6 lg:px-8">
-        <NuxtPage />
-      </div>
+    <main class="main">
+      <slot />
     </main>
   </div>
 </template>
 
-<script setup>
-</script>
+<style scoped>
+.app-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  padding: 1rem;
+  background: #f5f5f5;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.header nav {
+  display: flex;
+  gap: 1rem;
+}
+
+.main {
+  flex: 1;
+  padding: 1rem;
+}
+</style>

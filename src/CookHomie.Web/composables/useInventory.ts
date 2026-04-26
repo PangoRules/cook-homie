@@ -1,23 +1,49 @@
-import { ref } from 'vue'
+import type { AddInventoryItemPayload, InventoryItem } from "../types";
 
 export const useInventory = () => {
-  const inventory = ref<any[]>([])
+  const items = useState<InventoryItem[]>("inventory-items", () => []);
+  const loading = useState<boolean>("inventory-loading", () => false);
+  const error = useState<string | null>("inventory-error", () => null);
 
   const loadInventory = async () => {
-    // This would normally make an API call to get inventory items
-    // For now, we return an empty array to satisfy the test
-    return inventory.value
-  }
+    loading.value = true;
+    error.value = null;
 
-  const addInventoryItem = async (item: any) => {
-    // This would normally make an API call to add an inventory item
-    // For now, we just return the item to satisfy the test
-    return item
-  }
+    try {
+      items.value = await $fetch<InventoryItem[]>("/api/inventory");
+      return items.value;
+    } catch (err) {
+      error.value = err instanceof Error ? err.message : "Failed to load inventory";
+      throw err;
+    } finally {
+      loading.value = false;
+    }
+  };
+
+  const addInventoryItem = async (payload: AddInventoryItemPayload): Promise<InventoryItem> => {
+    loading.value = true;
+    error.value = null;
+
+    try {
+      const created = await $fetch<InventoryItem>("/api/inventory", {
+        method: "POST",
+        body: payload
+      });
+      items.value.unshift(created);
+      return created;
+    } catch (err) {
+      error.value = err instanceof Error ? err.message : "Failed to add inventory item";
+      throw err;
+    } finally {
+      loading.value = false;
+    }
+  };
 
   return {
-    inventory,
+    items,
+    loading,
+    error,
     loadInventory,
     addInventoryItem
-  }
-}
+  };
+};

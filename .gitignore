@@ -39,6 +39,16 @@ ScaffoldingReadMe.txt
 # dotenv environment variables file
 .env
 
+# Node.js / Nuxt
+node_modules/
+.nuxt/
+.output/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
 # local worktrees
 .worktrees/
 

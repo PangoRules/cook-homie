@@ -9,6 +9,51 @@ namespace CookHomie.Application.Tests;
 public class AddInventoryItemUseCaseTests
 {
     [Fact]
+    public async Task ExecuteAsync_WithBlankName_ThrowsArgumentException()
+    {
+        var repository = new FakeInventoryRepository();
+        var useCase = new AddInventoryItemUseCase(repository);
+        var request = new AddInventoryItemRequest
+        {
+            Name = "   ",
+            Quantity = 1,
+            Location = "Fridge"
+        };
+
+        await Assert.ThrowsAsync<ArgumentException>(() => useCase.ExecuteAsync(request));
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_WithNonPositiveQuantity_ThrowsArgumentOutOfRangeException()
+    {
+        var repository = new FakeInventoryRepository();
+        var useCase = new AddInventoryItemUseCase(repository);
+        var request = new AddInventoryItemRequest
+        {
+            Name = "Milk",
+            Quantity = 0,
+            Location = "Fridge"
+        };
+
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => useCase.ExecuteAsync(request));
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_WithInvalidLocation_ThrowsArgumentException()
+    {
+        var repository = new FakeInventoryRepository();
+        var useCase = new AddInventoryItemUseCase(repository);
+        var request = new AddInventoryItemRequest
+        {
+            Name = "Milk",
+            Quantity = 2,
+            Location = "Cellar"
+        };
+
+        await Assert.ThrowsAsync<ArgumentException>(() => useCase.ExecuteAsync(request));
+    }
+
+    [Fact]
     public async Task ExecuteAsync_WithValidInput_ReturnsCreatedItem()
     {
         var repository = new FakeInventoryRepository();

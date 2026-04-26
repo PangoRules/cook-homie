@@ -1,7 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <ItemGroup>
-    <ProjectReference Include="..\CookHomie.Application\CookHomie.Application.csproj" />
     <ProjectReference Include="..\CookHomie.Domain\CookHomie.Domain.csproj" />
   </ItemGroup>
 

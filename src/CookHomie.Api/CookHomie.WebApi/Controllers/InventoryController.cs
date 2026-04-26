@@ -2,6 +2,8 @@ using CookHomie.Domain.Entities;
 using CookHomie.Domain.Enums;
 using CookHomie.Domain.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using CookHomie.Application.DTOs;
+using CookHomie.Application.UseCases.Inventory;
 
 namespace CookHomie.WebApi.Controllers;
 
@@ -10,10 +12,14 @@ namespace CookHomie.WebApi.Controllers;
 public class InventoryController : ControllerBase
 {
     private readonly IInventoryRepository _inventoryRepository;
+    private readonly AddInventoryItemUseCase _addInventoryItem;
 
-    public InventoryController(IInventoryRepository inventoryRepository)
+    public InventoryController(
+        IInventoryRepository inventoryRepository,
+        AddInventoryItemUseCase addInventoryItem)
     {
         _inventoryRepository = inventoryRepository;
+        _addInventoryItem = addInventoryItem;
     }
 
     [HttpGet]
@@ -24,45 +30,29 @@ public class InventoryController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<InventoryItemResponse>> Post([FromBody] CreateInventoryItemRequest request, CancellationToken cancellationToken)
+    public async Task<ActionResult<InventoryItemDto>> Post(
+        [FromBody] AddInventoryItemRequest request,
+        CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(request.Name) ||
-            string.IsNullOrWhiteSpace(request.Category) ||
-            string.IsNullOrWhiteSpace(request.Location) ||
-            string.IsNullOrWhiteSpace(request.Unit) ||
-            request.Quantity <= 0)
+        try
+        {
+            var result = await _addInventoryItem.ExecuteAsync(request, cancellationToken);
+            return CreatedAtAction(nameof(Get), new { id = result.Id }, result);
+        }
+        catch (ArgumentOutOfRangeException ex)
         {
             return Problem(
                 statusCode: StatusCodes.Status400BadRequest,
                 title: "Invalid inventory payload",
-                detail: "Name, category, location, unit must be provided and quantity must be greater than zero.");
+                detail: ex.Message);
         }
-
-        if (!Enum.TryParse<Location>(request.Location, true, out var parsedLocation))
+        catch (ArgumentException ex)
         {
             return Problem(
                 statusCode: StatusCodes.Status400BadRequest,
-                title: "Invalid location",
-                detail: "Location must be one of Pantry, Fridge, Freezer, or Spices.");
+                title: "Invalid inventory payload",
+                detail: ex.Message);
         }
-
-        var now = DateTime.UtcNow;
-        var created = await _inventoryRepository.AddAsync(new InventoryItem
-        {
-            Id = Guid.NewGuid(),
-            Name = request.Name.Trim(),
-            Category = request.Category.Trim(),
-            Location = parsedLocation,
-            Quantity = request.Quantity,
-            Unit = request.Unit.Trim(),
-            ExpiresAt = request.ExpiresAt,
-            IsOpened = request.IsOpened,
-            Notes = request.Notes,
-            CreatedAt = now,
-            UpdatedAt = now
-        }, cancellationToken);
-
-        return Ok(MapToResponse(created));
     }
 
     private static InventoryItemResponse MapToResponse(InventoryItem item)
@@ -79,18 +69,6 @@ public class InventoryController : ControllerBase
             IsOpened = item.IsOpened,
             Notes = item.Notes
         };
-    }
-
-    public sealed class CreateInventoryItemRequest
-    {
-        public string Name { get; set; } = string.Empty;
-        public string Category { get; set; } = string.Empty;
-        public string Location { get; set; } = string.Empty;
-        public decimal Quantity { get; set; }
-        public string Unit { get; set; } = string.Empty;
-        public DateOnly? ExpiresAt { get; set; }
-        public bool IsOpened { get; set; }
-        public string? Notes { get; set; }
     }
 
     public sealed class InventoryItemResponse

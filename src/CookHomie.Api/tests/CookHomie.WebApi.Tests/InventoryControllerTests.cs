@@ -97,9 +97,16 @@ public class InventoryControllerTests : IClassFixture<WebApplicationFactory<Prog
         var postResponse = await client.PostAsJsonAsync("/api/inventory", payload);
         var created = await postResponse.Content.ReadFromJsonAsync<InventoryItemResponse>();
 
-        Assert.Equal(HttpStatusCode.OK, postResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.Created, postResponse.StatusCode);
+        Assert.NotNull(postResponse.Headers.Location);
+        Assert.Contains("api/inventory", postResponse.Headers.Location!.ToString());
         Assert.NotNull(created);
         Assert.Equal("Eggs", created!.Name);
+        Assert.Equal("Dairy", created.Category);
+        Assert.Equal("Fridge", created.Location);
+        Assert.Equal(12, created.Quantity);
+        Assert.Equal("units", created.Unit);
+        Assert.Equal(false, created.IsOpened);
 
         var listResponse = await client.GetAsync("/api/inventory");
         var items = await listResponse.Content.ReadFromJsonAsync<List<InventoryItemResponse>>();
@@ -170,5 +177,12 @@ public class InventoryControllerTests : IClassFixture<WebApplicationFactory<Prog
     {
         public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
+        public string Category { get; set; } = string.Empty;
+        public string Location { get; set; } = string.Empty;
+        public decimal Quantity { get; set; }
+        public string Unit { get; set; } = string.Empty;
+        public DateOnly? ExpiresAt { get; set; }
+        public bool IsOpened { get; set; }
+        public string? Notes { get; set; }
     }
 }

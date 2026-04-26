@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using CookHomie.Domain.Entities;
 using CookHomie.Domain.Enums;
 using System.Diagnostics;
+using CookHomie.Application.UseCases.Inventory;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +17,7 @@ builder.Services.AddProblemDetails();
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
+builder.Services.AddScoped<AddInventoryItemUseCase>();
 
 var app = builder.Build();
 

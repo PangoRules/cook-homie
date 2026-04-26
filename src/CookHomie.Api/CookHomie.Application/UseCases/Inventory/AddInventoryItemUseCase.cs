@@ -23,6 +23,16 @@ public class AddInventoryItemUseCase
             throw new ArgumentException("Name is required.", nameof(request));
         }
 
+        if (string.IsNullOrWhiteSpace(request.Category))
+        {
+            throw new ArgumentException("Category is required.", nameof(request));
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Unit))
+        {
+            throw new ArgumentException("Unit is required.", nameof(request));
+        }
+
         if (request.Quantity <= 0)
         {
             throw new ArgumentOutOfRangeException(nameof(request.Quantity), "Quantity must be greater than zero.");
@@ -33,16 +43,20 @@ public class AddInventoryItemUseCase
             throw new ArgumentException("Location is invalid.", nameof(request.Location));
         }
 
+        var now = DateTime.UtcNow;
         var item = new InventoryItem
         {
             Id = Guid.NewGuid(),
             Name = request.Name.Trim(),
-            Quantity = request.Quantity,
+            Category = request.Category.Trim(),
             Location = parsedLocation,
-            Category = string.Empty,
-            Unit = string.Empty,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
+            Quantity = request.Quantity,
+            Unit = request.Unit.Trim(),
+            ExpiresAt = request.ExpiresAt,
+            IsOpened = request.IsOpened,
+            Notes = string.IsNullOrWhiteSpace(request.Notes) ? null : request.Notes.Trim(),
+            CreatedAt = now,
+            UpdatedAt = now
         };
 
         var createdItem = await _inventoryRepository.AddAsync(item, cancellationToken);
@@ -51,8 +65,13 @@ public class AddInventoryItemUseCase
         {
             Id = createdItem.Id,
             Name = createdItem.Name,
+            Category = createdItem.Category,
+            Location = createdItem.Location.ToString(),
             Quantity = createdItem.Quantity,
-            Location = createdItem.Location.ToString()
+            Unit = createdItem.Unit,
+            ExpiresAt = createdItem.ExpiresAt,
+            IsOpened = createdItem.IsOpened,
+            Notes = createdItem.Notes
         };
     }
 }

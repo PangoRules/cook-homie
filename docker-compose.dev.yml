@@ -14,8 +14,15 @@ services:
     command: ["sh", "-c", "echo 'Web dev placeholder (hot reload pending scaffold)'; sleep infinity"]
 
   mcp:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.mcp
     environment:
-      MCP_ENV: development
+      - MCP_ENV=development
+      - API_BASE_URL=http://api:5000
     volumes:
       - ./src/CookHomie.MCP:/app
-    command: ["sh", "-c", "echo 'MCP dev placeholder (hot reload pending scaffold)'; sleep infinity"]
+    ports:
+      - "${MCP_PORT:-8000}:8000"
+    depends_on:
+      - api

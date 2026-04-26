@@ -18,10 +18,14 @@ Thanks for helping build CookHomie.
 
 ## Spike verification command (Task 3)
 
-- Use `dotnet test src/CookHomie.Api/CookHomie.SpikeApi.Tests/CookHomie.SpikeApi.Tests.csproj -f net10.0` for this environment's Task 3 spike verification.
-- Note: this `-f net10.0` command is a spike-environment workaround for local runtime availability.
+- Use `dotnet test src/CookHomie.Api/CookHomie.SpikeApi.Tests/CookHomie.SpikeApi.Tests.csproj -f net10.0` for spike endpoint verification.
+- The API projects target .NET 10 (`net10.0`) across the solution.
 
 ## MCP local test workflow
 
 - Run MCP tests from `src/CookHomie.MCP` using the project virtual environment, not system Python.
-- From repo root, run: `cd src/CookHomie.MCP && .venv/bin/pytest -q`.
+- From repo root, run: `cd src/CookHomie.MCP && .venv/bin/python -m pytest -q`.
+
+## Web local test workflow
+
+- From repo root, run: `cd src/CookHomie.Web && npm test && npm run build && npm audit`.

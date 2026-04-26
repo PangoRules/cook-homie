@@ -14,6 +14,13 @@ public class InventoryRepository : IInventoryRepository
         _context = context;
     }
 
+    public async Task<IReadOnlyList<InventoryItem>> GetAllAsync(CancellationToken cancellationToken = default)
+    {
+        return await _context.InventoryItems
+            .OrderByDescending(item => item.CreatedAt)
+            .ToListAsync(cancellationToken);
+    }
+
     public async Task<InventoryItem> AddAsync(InventoryItem item, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(item);

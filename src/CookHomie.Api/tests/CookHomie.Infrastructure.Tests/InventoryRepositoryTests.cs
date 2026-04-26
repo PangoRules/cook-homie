@@ -7,6 +7,25 @@ namespace CookHomie.Infrastructure.Tests;
 public class InventoryRepositoryTests
 {
     [Fact]
+    public async Task EnsureCreated_SeedsTwoItemsPerCategory()
+    {
+        var options = new DbContextOptionsBuilder<AppDbContext>()
+            .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
+            .Options;
+        await using var db = new AppDbContext(options);
+
+        await db.Database.EnsureCreatedAsync();
+
+        var groupedCounts = await db.InventoryItems
+            .GroupBy(i => i.Category)
+            .Select(group => new { Category = group.Key, Count = group.Count() })
+            .ToListAsync();
+
+        Assert.NotEmpty(groupedCounts);
+        Assert.All(groupedCounts, group => Assert.Equal(2, group.Count));
+    }
+
+    [Fact]
     public async Task AddAsync_PersistsInventoryItem()
     {
         // Arrange

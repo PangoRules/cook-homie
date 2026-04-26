@@ -2,11 +2,17 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 
 WORKDIR /src
 
-COPY src/CookHomie.Api/CookHomie.SpikeApi/CookHomie.SpikeApi.csproj ./CookHomie.SpikeApi/
-RUN dotnet restore ./CookHomie.SpikeApi/CookHomie.SpikeApi.csproj -p:TargetFramework=net10.0
+COPY src/CookHomie.Api/CookHomie.WebApi/CookHomie.WebApi.csproj ./CookHomie.WebApi/
+COPY src/CookHomie.Api/CookHomie.Application/CookHomie.Application.csproj ./CookHomie.Application/
+COPY src/CookHomie.Api/CookHomie.Infrastructure/CookHomie.Infrastructure.csproj ./CookHomie.Infrastructure/
+COPY src/CookHomie.Api/CookHomie.Domain/CookHomie.Domain.csproj ./CookHomie.Domain/
+RUN dotnet restore ./CookHomie.WebApi/CookHomie.WebApi.csproj -p:TargetFramework=net10.0
 
-COPY src/CookHomie.Api/CookHomie.SpikeApi/ ./CookHomie.SpikeApi/
-RUN dotnet publish ./CookHomie.SpikeApi/CookHomie.SpikeApi.csproj -c Release -f net10.0 -p:TargetFramework=net10.0 --no-restore -o /app/publish
+COPY src/CookHomie.Api/CookHomie.WebApi/ ./CookHomie.WebApi/
+COPY src/CookHomie.Api/CookHomie.Application/ ./CookHomie.Application/
+COPY src/CookHomie.Api/CookHomie.Infrastructure/ ./CookHomie.Infrastructure/
+COPY src/CookHomie.Api/CookHomie.Domain/ ./CookHomie.Domain/
+RUN dotnet publish ./CookHomie.WebApi/CookHomie.WebApi.csproj -c Release -f net10.0 -p:TargetFramework=net10.0 --no-restore -o /app/publish
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0
 
@@ -16,4 +22,4 @@ COPY --from=build /app/publish ./
 
 EXPOSE 5000
 
-ENTRYPOINT ["dotnet", "CookHomie.SpikeApi.dll"]
+ENTRYPOINT ["dotnet", "CookHomie.WebApi.dll"]

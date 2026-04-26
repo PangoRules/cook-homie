@@ -1107,6 +1107,12 @@ git add docker/Dockerfile.api docker-compose.yml docker-compose.dev.yml README.m
 git commit -m "chore: cut over default api runtime from spike to webapi"
 ```
 
+**Implementation note (required behavior):**
+- Swagger helper routes (`/swagger`, `/swagger/index.html`) must be reachable in dev but excluded from OpenAPI operation listing.
+- `/health` must validate both API readiness and database connectivity; return `200` only when both checks are healthy.
+- If any health check fails, return RFC7807 Problem Details (`application/problem+json`) with machine-readable check details.
+- Unhandled runtime exceptions in API endpoints must be emitted as Problem Details responses instead of raw stack/error text.
+
 ---
 
 ## Final Validation Checklist (Run After Task 15)

@@ -1,0 +1,21 @@
+services:
+  api:
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+    volumes:
+      - ./src/CookHomie.Api:/app
+    command: ["sh", "-c", "echo 'API dev placeholder (hot reload pending scaffold)'; sleep infinity"]
+
+  web:
+    environment:
+      NODE_ENV: development
+    volumes:
+      - ./src/CookHomie.Web:/app
+    command: ["sh", "-c", "echo 'Web dev placeholder (hot reload pending scaffold)'; sleep infinity"]
+
+  mcp:
+    environment:
+      MCP_ENV: development
+    volumes:
+      - ./src/CookHomie.MCP:/app
+    command: ["sh", "-c", "echo 'MCP dev placeholder (hot reload pending scaffold)'; sleep infinity"]

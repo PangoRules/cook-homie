@@ -39,12 +39,25 @@ ScaffoldingReadMe.txt
 # dotenv environment variables file
 .env
 
+# Node.js / Nuxt
+node_modules/
+.nuxt/
+.output/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+*.egg-info/
+
 # local worktrees
 .worktrees/
 
 # Others
 ~$*
 *~
+.DS_Store
 CodeCoverage/
 
 # MSBuild Binary and Structured Log

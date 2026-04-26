@@ -1,0 +1,6 @@
+FROM mcr.microsoft.com/dotnet/aspnet:9.0
+
+WORKDIR /app
+
+# Placeholder image until the API project is scaffolded.
+CMD ["sh", "-c", "echo 'CookHomie API placeholder container'; sleep infinity"]

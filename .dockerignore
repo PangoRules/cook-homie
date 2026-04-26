@@ -1,0 +1,12 @@
+.git
+.gitignore
+.worktrees
+node_modules
+**/bin
+**/obj
+**/__pycache__
+**/.pytest_cache
+**/.nuxt
+**/.output
+*.log
+.env

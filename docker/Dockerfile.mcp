@@ -1,0 +1,6 @@
+FROM python:3.12-slim
+
+WORKDIR /app
+
+# Placeholder image until the MCP server is scaffolded.
+CMD ["sh", "-c", "echo 'CookHomie MCP placeholder container'; sleep infinity"]

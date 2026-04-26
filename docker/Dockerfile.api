@@ -1,6 +1,19 @@
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+
+WORKDIR /src
+
+COPY src/CookHomie.Api/CookHomie.SpikeApi/CookHomie.SpikeApi.csproj ./CookHomie.SpikeApi/
+RUN dotnet restore ./CookHomie.SpikeApi/CookHomie.SpikeApi.csproj -p:TargetFramework=net9.0
+
+COPY src/CookHomie.Api/CookHomie.SpikeApi/ ./CookHomie.SpikeApi/
+RUN dotnet publish ./CookHomie.SpikeApi/CookHomie.SpikeApi.csproj -c Release -f net9.0 -p:TargetFramework=net9.0 --no-restore -o /app/publish
+
 FROM mcr.microsoft.com/dotnet/aspnet:9.0
 
 WORKDIR /app
 
-# Placeholder image until the API project is scaffolded.
-CMD ["sh", "-c", "echo 'CookHomie API placeholder container'; sleep infinity"]
+COPY --from=build /app/publish ./
+
+EXPOSE 5000
+
+ENTRYPOINT ["dotnet", "CookHomie.SpikeApi.dll"]

@@ -14,6 +14,14 @@ CookHomie is the food and kitchen module of HomieOS. It is a local-first app for
 2. Start local stack: `docker compose up --build`
 3. Open web app: `http://localhost:3000`
 
+## Spike validation
+
+Use the end-to-end spike checker to validate both direct API reachability and the Nuxt proxy:
+
+1. Run before services are up (expected to fail): `./scripts/verify_spike.sh`
+2. Start services: `docker compose up --build -d`
+3. Run again (expected to pass): `./scripts/verify_spike.sh`
+
 ## Default local ports
 
 | Service | Port |

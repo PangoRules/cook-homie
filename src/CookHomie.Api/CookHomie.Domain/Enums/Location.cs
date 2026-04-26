@@ -4,5 +4,6 @@ public enum Location
 {
     Pantry,
     Fridge,
-    Freezer
+    Freezer,
+    Spices
 }

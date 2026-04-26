@@ -38,7 +38,11 @@ public class AddInventoryItemUseCase
             Id = Guid.NewGuid(),
             Name = request.Name.Trim(),
             Quantity = request.Quantity,
-            Location = parsedLocation
+            Location = parsedLocation,
+            Category = string.Empty,
+            Unit = string.Empty,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
         };
 
         var createdItem = await _inventoryRepository.AddAsync(item, cancellationToken);

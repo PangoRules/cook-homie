@@ -21,8 +21,12 @@ public class SpikeControllerTests : IClassFixture<WebApplicationFactory<Program>
         var payload = await response.Content.ReadAsStringAsync();
         using var json = JsonDocument.Parse(payload);
         var message = json.RootElement.GetProperty("message").GetString();
+        var timestampValue = json.RootElement.GetProperty("timestamp").GetString();
+        var timestampIsParseable = DateTimeOffset.TryParse(timestampValue, out _);
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         Assert.Equal("Hello from C#", message);
+        Assert.False(string.IsNullOrWhiteSpace(timestampValue));
+        Assert.True(timestampIsParseable);
     }
 }

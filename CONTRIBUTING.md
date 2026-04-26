@@ -15,3 +15,8 @@ Thanks for helping build CookHomie.
 3. Run relevant checks locally before committing.
 4. Use clear commit messages describing intent.
 5. Open a PR with a short summary and verification notes.
+
+## Spike verification command (Task 3)
+
+- Use `dotnet test src/CookHomie.Api/CookHomie.SpikeApi.Tests/CookHomie.SpikeApi.Tests.csproj -f net10.0` for this environment's Task 3 spike verification.
+- Note: this `-f net10.0` command is a spike-environment workaround for local runtime availability.

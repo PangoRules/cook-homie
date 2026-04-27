@@ -24,10 +24,16 @@ CookHomie/
 │   │   │   ├── Persistence/            # AppDbContext (EF Core)
 │   │   │   ├── Repositories/           # InventoryRepository
 │   │   │   └── Migrations/
-│   │   └── CookHomie.WebApi/
+│   │   ├── CookHomie.WebApi/
 │   │       ├── Controllers/            # InventoryController
 │   │       ├── Program.cs
 │   │       └── appsettings.json
+│   │   └── tests/
+│   │       ├── CookHomie.Application.Tests/
+│   │       ├── CookHomie.Infrastructure.Tests/
+│   │       ├── CookHomie.WebApi.Tests/
+│   │       └── ApiTests/
+│   │           └── inventory-controller-tests.http
 │   │
 │   ├── CookHomie.Web/                  # Nuxt 3 frontend
 │   │   ├── pages/
@@ -75,7 +81,24 @@ CookHomie/
 | Method | Route | Description |
 |--------|-------|-------------|
 | GET | /api/inventory | List all inventory items |
-| POST | /api/inventory | Add item through the current WebApi controller |
+| POST | /api/inventory | Create inventory item via application use case; returns `201` with created item body |
+
+`POST /api/inventory` request fields currently expected by the API:
+
+| Field | Required | Notes |
+|------|----------|-------|
+| `name` | Yes | Non-empty |
+| `category` | Yes | Non-empty |
+| `location` | Yes | `Pantry`, `Fridge`, `Freezer`, or `Spices` |
+| `quantity` | Yes | Must be greater than `0` |
+| `unit` | Yes | Non-empty |
+| `expiresAt` | No | Optional date |
+| `isOpened` | No | Boolean |
+| `notes` | No | Optional text |
+
+Validation failures return `400` with `application/problem+json`.
+
+Current behavior note: clients should not rely on a `Location` response header for `POST /api/inventory` yet.
 
 Planned but not implemented yet: item-by-id lookup, update/delete, expiring-item filters, low-stock filters.
 

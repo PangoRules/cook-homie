@@ -17,6 +17,9 @@ CookHomie is the food and kitchen module of HomieOS. It is a local-first app for
 Notes:
 
 - The default `api` service runs `CookHomie.WebApi` and exposes inventory endpoints under `http://localhost:5000/api/inventory`.
+- `POST /api/inventory` routes creation through the application use case and validates required fields (`name`, `category`, `location`, `quantity > 0`, `unit`).
+- Invalid `POST /api/inventory` payloads return `400` with `application/problem+json`.
+- Current create response behavior is `201` with the created item body; clients should not rely on a `Location` header yet.
 - Swagger is available in development at `http://localhost:5000/swagger`.
 - The spike API still exists in source for historical validation, but it is not the default Docker runtime.
 
@@ -34,6 +37,7 @@ Run these from repo root to verify the scaffolded stack:
 
 - API build: `dotnet build src/CookHomie.Api/CookHomie.sln`
 - API tests: `dotnet test src/CookHomie.Api/CookHomie.sln`
+- Manual inventory API scenarios: run requests in `src/CookHomie.Api/tests/ApiTests/inventory-controller-tests.http`
 - Web tests/build/audit: `cd src/CookHomie.Web && npm test && npm run build && npm audit`
 - MCP tests: `cd src/CookHomie.MCP && .venv/bin/python -m pytest -q`
 - Default API runtime check: `docker compose up --build -d postgres api && curl -fsS http://localhost:5000/health`

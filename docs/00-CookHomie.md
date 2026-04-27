@@ -39,6 +39,7 @@ A fully functional v1 with:
 - API, Web, and MCP projects are scaffolded under `src/`.
 - The default Docker API runtime is `CookHomie.WebApi`; the spike API remains only as historical validation code.
 - Inventory domain, EF Core persistence, WebApi inventory endpoints, Nuxt inventory page/proxy routes, and MCP inventory tooling exist.
+- Inventory `POST /api/inventory` now creates items via the application-layer use case with validation for required fields (`Name`, `Category`, `Location`, `Quantity`, `Unit`).
 - Recipes, shopping, and richer AI-assisted tools are still mostly skeletons.
 - End-to-end add-item verification and CI workflow are still pending.
 

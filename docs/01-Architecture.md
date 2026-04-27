@@ -35,6 +35,8 @@ CookHomie uses a monorepo with three services communicating over HTTP locally, a
 - `docker-compose.yml` builds the API container from `src/CookHomie.Api/CookHomie.WebApi` and runs `CookHomie.WebApi.dll`.
 - `CookHomie.SpikeApi` still exists for historical spike validation, but it is not the default API runtime.
 - WebApi exposes `/api/inventory`, `/health`, and development OpenAPI/Swagger routes.
+- Inventory item creation flows through `AddInventoryItemUseCase` (application layer) instead of direct controller-to-repository writes.
+- WebApi validation errors for inventory create requests return RFC7807 Problem Details responses.
 - Nuxt proxies inventory calls through `src/CookHomie.Web/server/api/inventory`.
 - MCP registers inventory, recipe, and shopping placeholder tools; only inventory currently calls the C# API.
 

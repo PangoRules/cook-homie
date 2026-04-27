@@ -1,3 +1,5 @@
+version: "3.8"
+
 services:
   postgres:
     image: postgres:15
@@ -15,7 +17,8 @@ services:
 
   api:
     build:
-      context: docker/Dockerfile.api
+      context: .
+      dockerfile: docker/Dockerfile.api
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_URLS: http://+:5000
@@ -31,16 +34,22 @@ services:
         condition: service_healthy
 
   web:
+    build:
+      context: ./src/CookHomie.Web
+      dockerfile: Dockerfile.web
     environment:
       NODE_ENV: development
     volumes:
       - ./src/CookHomie.Web:/app
-    command: ["sh", "-c", "echo 'Web dev placeholder (hot reload pending scaffold)'; sleep infinity"]
+      - /app/node_modules
+    ports:
+      - "3000:3000"
+    command: ["npm", "run", "dev"]
 
   mcp:
     build:
-      context: .
-      dockerfile: docker/Dockerfile.mcp
+      context: ./src/CookHomie.MCP
+      dockerfile: Dockerfile.mcp
     environment:
       - MCP_ENV=development
       - API_BASE_URL=http://api:5000
@@ -50,3 +59,6 @@ services:
       - "${MCP_PORT:-8000}:8000"
     depends_on:
       - api
+
+volumes:
+  postgres_data:

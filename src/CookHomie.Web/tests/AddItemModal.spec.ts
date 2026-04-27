@@ -8,5 +8,6 @@ describe("AddItemModal", () => {
     await wrapper.find('input[name="name"]').setValue("Milk");
     await wrapper.find('button[type="submit"]').trigger("click");
     expect(wrapper.emitted("added")).toBeTruthy();
+    expect(wrapper.emitted("added")?.[0]).toEqual([{ name: "Milk" }]);
   });
 });

@@ -17,7 +17,6 @@ const form = ref({
 const emit = defineEmits(["added"]);
 
 const handleSubmit = async () => {
-  console.log("Form submitted with:", form.value);
   emit("added", form.value);
 }
 </script>

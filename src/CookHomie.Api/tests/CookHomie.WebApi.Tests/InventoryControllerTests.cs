@@ -21,8 +21,9 @@ public class InventoryControllerTests : IClassFixture<WebApplicationFactory<Prog
         {
             builder.ConfigureServices(services =>
             {
-                var dbDescriptor = services.SingleOrDefault(
-                    d => d.ServiceType == typeof(DbContextOptions<AppDbContext>));
+                var dbDescriptor = services.SingleOrDefault(d =>
+                    d.ServiceType == typeof(DbContextOptions<AppDbContext>)
+                );
 
                 if (dbDescriptor is not null)
                 {
@@ -30,7 +31,8 @@ public class InventoryControllerTests : IClassFixture<WebApplicationFactory<Prog
                 }
 
                 services.AddDbContext<AppDbContext>(options =>
-                    options.UseInMemoryDatabase("webapi-test-db", _databaseRoot));
+                    options.UseInMemoryDatabase("webapi-test-db", _databaseRoot)
+                );
             });
         });
 
@@ -49,7 +51,7 @@ public class InventoryControllerTests : IClassFixture<WebApplicationFactory<Prog
                 Unit = "liter",
                 IsOpened = false,
                 CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow
+                UpdatedAt = DateTime.UtcNow,
             },
             new InventoryItem
             {
@@ -61,8 +63,9 @@ public class InventoryControllerTests : IClassFixture<WebApplicationFactory<Prog
                 Unit = "packs",
                 IsOpened = false,
                 CreatedAt = DateTime.UtcNow,
-                UpdatedAt = DateTime.UtcNow
-            });
+                UpdatedAt = DateTime.UtcNow,
+            }
+        );
         db.SaveChanges();
     }
 
@@ -91,7 +94,7 @@ public class InventoryControllerTests : IClassFixture<WebApplicationFactory<Prog
             Location = "Fridge",
             Quantity = 12,
             Unit = "units",
-            IsOpened = false
+            IsOpened = false,
         };
 
         var postResponse = await client.PostAsJsonAsync("/api/inventory", payload);
@@ -106,7 +109,7 @@ public class InventoryControllerTests : IClassFixture<WebApplicationFactory<Prog
         Assert.Equal("Fridge", created.Location);
         Assert.Equal(12, created.Quantity);
         Assert.Equal("units", created.Unit);
-        Assert.Equal(false, created.IsOpened);
+        Assert.False(created.IsOpened);
 
         var listResponse = await client.GetAsync("/api/inventory");
         var items = await listResponse.Content.ReadFromJsonAsync<List<InventoryItemResponse>>();
@@ -125,14 +128,17 @@ public class InventoryControllerTests : IClassFixture<WebApplicationFactory<Prog
             Location = "",
             Quantity = 0,
             Unit = "",
-            IsOpened = false
+            IsOpened = false,
         };
 
         var response = await client.PostAsJsonAsync("/api/inventory", payload);
         var body = await response.Content.ReadAsStringAsync();
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-        Assert.Contains("application/problem+json", response.Content.Headers.ContentType?.ToString());
+        Assert.Contains(
+            "application/problem+json",
+            response.Content.Headers.ContentType?.ToString()
+        );
         Assert.Contains("Invalid inventory payload", body);
     }
 

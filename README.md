@@ -23,13 +23,14 @@ Notes:
 - Swagger is available in development at `http://localhost:5000/swagger`.
 - The spike API still exists in source for historical validation, but it is not the default Docker runtime.
 
-## Spike validation (historical)
+## Spike Validation (Optional)
 
-Use the spike checker only when explicitly running `CookHomie.SpikeApi` locally. The default Docker stack runs `CookHomie.WebApi`, so this check is not part of the normal validation path.
+The spike API (`CookHomie.SpikeApi`) is historical validation code. It is not part of the default Docker runtime.
 
-1. Run before services are up (expected to fail): `./scripts/verify_spike.sh`
-2. Start a local spike API and Nuxt web process that proxies `/api/spike/hello`.
-3. Run again (expected to pass): `./scripts/verify_spike.sh`
+To run spike verification:
+1. `export ENABLE_SPIKE_CHECK=1`
+2. Run: `bash scripts/verify_spike.sh`
+3. Unset when done: `unset ENABLE_SPIKE_CHECK`
 
 ## Stack verification checklist
 

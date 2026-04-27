@@ -13,6 +13,7 @@ async def test_get_inventory_returns_items_dict():
         assert "items" in result
         assert len(result["items"]) == 1
         assert result["items"][0]["name"] == "Milk"
+        assert result["count"] == 1
 
 
 @pytest.mark.asyncio

@@ -16,21 +16,45 @@ CookHomie is the food and kitchen module of HomieOS. It is a local-first app for
 
 Notes:
 
-- The default `api` service runs `CookHomie.WebApi` and exposes inventory endpoints under `http://localhost:5000/api/inventory`.
-- `POST /api/inventory` routes creation through the application use case and validates required fields (`name`, `category`, `location`, `quantity > 0`, `unit`).
-- Invalid `POST /api/inventory` payloads return `400` with `application/problem+json`.
-- Current create response behavior is `201` with the created item body; clients should not rely on a `Location` header yet.
-- Swagger is available in development at `http://localhost:5000/swagger`.
-- The spike API still exists in source for historical validation, but it is not the default Docker runtime.
+- The `api` service exposes inventory endpoints under `http://localhost:5000/api/inventory`.
+- `POST /api/inventory` validates required fields (`name`, `category`, `location`, `quantity > 0`, `unit`) and returns `201` with the created item.
+- Invalid payloads return `400` with `application/problem+json`.
+- Swagger UI is available in development at `http://localhost:5000/swagger`.
 
-## Spike Validation (Optional)
+## Common commands
 
-The spike API (`CookHomie.SpikeApi`) is historical validation code. It is not part of the default Docker runtime.
+### .NET API
 
-To run spike verification:
-1. `export ENABLE_SPIKE_CHECK=1`
-2. Run: `bash scripts/verify_spike.sh`
-3. Unset when done: `unset ENABLE_SPIKE_CHECK`
+```bash
+dotnet build src/CookHomie.Api/CookHomie.sln   # build
+dotnet clean src/CookHomie.Api/CookHomie.sln   # clean
+dotnet test  src/CookHomie.Api/CookHomie.sln   # run tests
+```
+
+### Frontend (Nuxt)
+
+```bash
+cd src/CookHomie.Web
+npm run dev    # dev server (http://localhost:3000)
+npm run build  # production build
+npm test       # run tests
+```
+
+### MCP server
+
+```bash
+cd src/CookHomie.MCP
+.venv/bin/python -m pytest -q  # run tests
+```
+
+### Docker
+
+```bash
+docker compose up -d                          # start all services (production-like)
+docker compose -f docker-compose.dev.yml up   # start with live reload via volumes
+docker compose down                           # stop all services
+docker compose logs -f                        # stream logs
+```
 
 ## Stack verification checklist
 

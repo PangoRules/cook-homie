@@ -16,12 +16,12 @@ tags: [project, cookhomie, roadmap]
 - [x] C# Application layer (inventory use case and DTOs)
 - [x] C# Infrastructure (EF Core DbContext, repository, migrations)
 - [x] C# WebApi scaffold (controllers, DI wiring, Program.cs)
-- [ ] Tighten WebApi inventory POST to consistently use the application use case and return the intended add-item contract
+- [x] Tighten WebApi inventory POST to consistently use the application use case and return the intended add-item contract
 
 ### Milestone 2 — Frontend
 - [x] Nuxt 3 scaffold with default layout and route skeletons
 - [ ] Dashboard page (expiring items, recipe matches, shopping count)
-- [ ] Inventory page + AddItemModal
+- [x] Inventory page + AddItemModal
 - [ ] Recipes page + RecipeCard + AddRecipeModal
 - [ ] Recipe detail page (ingredients with in-stock highlighting)
 - [x] Shopping list page skeleton

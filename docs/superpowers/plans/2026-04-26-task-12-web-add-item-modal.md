@@ -6,7 +6,7 @@
 
 ### Steps
 
-- [ ] **Step 1: Write failing modal submission test**
+- [x] **Step 1: Write failing modal submission test**
   ```ts
   describe("AddItemModal", () => {
     it("submits form and emits added event", async () => {
@@ -18,13 +18,13 @@
   });
   ```
 
-- [ ] **Step 2: Run test to verify failure**
+- [x] **Step 2: Run test to verify failure**
   ```bash
   cd src/CookHomie.Web && npm test -- AddItemModal.spec.ts
   ```
   Expected: Test fails (missing component/implementation).
 
-- [ ] **Step 3: Implement modal, composable, and proxy endpoint**
+- [x] **Step 3: Implement modal, composable, and proxy endpoint**
   ```vue
   <!-- components/inventory/AddItemModal.vue -->
   <template>
@@ -58,13 +58,13 @@
   });
   ```
 
-- [ ] **Step 4: Re-run tests**
+- [x] **Step 4: Re-run tests**
   ```bash
   cd src/CookHomie.Web && npm test
   ```
   Expected: All tests pass (modal, composables, proxy).
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
   ```bash
   git add src/CookHomie.Web
   git commit -m "feat: implement inventory add item modal and proxy"

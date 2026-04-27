@@ -71,3 +71,6 @@ CodeCoverage/
 *.VisualState.xml
 TestResult.xml
 nunit-*.xml
+
+# superpowers
+.superpowers/

@@ -30,3 +30,4 @@ async def test_get_inventory_handles_empty_result():
         mock_client.get_inventory = AsyncMock(return_value=[])
         result = await get_inventory()
         assert result["items"] == []
+        assert result["count"] == 0

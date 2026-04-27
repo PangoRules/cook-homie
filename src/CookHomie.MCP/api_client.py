@@ -13,3 +13,9 @@ class ApiClient:
             response = await client.get("/api/inventory", params=params)
             response.raise_for_status()
             return response.json()
+
+    async def get_hello(self) -> dict:
+        async with httpx.AsyncClient(base_url=self.base_url, timeout=10.0) as client:
+            response = await client.get("/api/hello")
+            response.raise_for_status()
+            return response.json()

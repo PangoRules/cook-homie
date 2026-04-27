@@ -11,8 +11,6 @@ tags: [project, cookhomie, structure]
 CookHomie/
 ├── src/
 │   ├── CookHomie.Api/                  # C# solution (Clean Architecture)
-│   │   ├── CookHomie.SpikeApi/          # Historical spike API; not default runtime
-│   │   ├── CookHomie.SpikeApi.Tests/
 │   │   ├── CookHomie.Domain/
 │   │   │   ├── Entities/               # InventoryItem, Recipe, RecipeIngredient, ShoppingItem
 │   │   │   ├── Enums/                  # Location, Priority
@@ -50,7 +48,6 @@ CookHomie/
 │   │   ├── server/api/                 # Nuxt proxy to C# API
 │   │   │   ├── inventory/index.get.ts
 │   │   │   ├── inventory/index.post.ts
-│   │   │   └── spike/hello.get.ts      # Historical spike proxy
 │   │   ├── tests/
 │   │   └── nuxt.config.ts
 │   │

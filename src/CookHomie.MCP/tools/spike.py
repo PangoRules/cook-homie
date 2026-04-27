@@ -8,7 +8,7 @@ def _build_api_client() -> ApiClient:
 
 
 async def _hello_world_with_client(client: ApiClient) -> dict:
-    return await client.get_spike_hello()
+    return await client.get_hello()
 
 
 async def hello_world() -> dict:

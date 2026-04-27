@@ -33,6 +33,22 @@ Thanks for helping build CookHomie.
 - Run MCP tests from `src/CookHomie.MCP` using the project virtual environment, not system Python.
 - From repo root, run: `cd src/CookHomie.MCP && .venv/bin/python -m pytest -q`.
 
+## E2E verification workflow
+
+The E2E smoke script verifies the add-item vertical slice end-to-end.
+
+1. Start the dev stack: `docker compose up --build`
+2. Run the E2E smoke check:
+   ```bash
+   bash scripts/verify_add_item_e2e.sh
+   ```
+3. Expected output: `[PASS] E2E add-item verification passed`
+
+Notes:
+- The script requires `curl` and the stack running on default ports.
+- It adds a temporary item ("Oat Milk") and verifies it appears in API and Web proxy responses.
+- Tear down with `docker compose down`.
+
 ## Web local test workflow
 
 - From repo root, run: `cd src/CookHomie.Web && npm test && npm run build && npm audit`.

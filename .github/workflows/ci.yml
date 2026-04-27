@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  api-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Restore API dependencies
+        run: dotnet restore src/CookHomie.Api/CookHomie.sln
+      - name: Build API
+        run: dotnet build src/CookHomie.Api/CookHomie.sln --no-restore
+      - name: Run API tests
+        run: dotnet test src/CookHomie.Api/CookHomie.sln --no-build
+
+  web-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: src/CookHomie.Web/package-lock.json
+      - name: Install Web dependencies
+        run: npm ci --prefix src/CookHomie.Web
+      - name: Build Web
+        run: npm run build --prefix src/CookHomie.Web
+      - name: Run Web tests
+        run: npm run test --prefix src/CookHomie.Web
+      - name: Run Web lint
+        run: npm run lint --prefix src/CookHomie.Web
+
+  mcp-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install MCP dependencies
+        run: pip install -e src/CookHomie.MCP
+      - name: Run MCP tests
+        run: python -m pytest src/CookHomie.MCP/tests -v

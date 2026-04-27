@@ -55,3 +55,12 @@ Run these from repo root to verify the scaffolded stack:
 | C# API | `5000` |
 | MCP Server | `8000` |
 | PostgreSQL | `5432` |
+
+## Local Development Runbook
+
+1. Copy env vars: `cp .env.example .env`
+2. Start the stack with Docker Compose: `docker compose up --build`
+3. Access the web app: `http://localhost:3000`
+4. Verify the stack is healthy: `curl -fsS http://localhost:5000/health`
+5. Run the E2E smoke check: `bash scripts/verify_add_item_e2e.sh`
+6. Tear down the stack: `docker compose down`

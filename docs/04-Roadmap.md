@@ -38,8 +38,8 @@ tags: [project, cookhomie, roadmap]
 
 ### Milestone 4 — Integration
 - [ ] End-to-end: add item → suggest recipe → build shopping list
-- [ ] Add focused add-item E2E smoke script
-- [ ] Add CI workflow for API/Web/MCP checks
+- [x] Add focused add-item E2E smoke script
+- [x] Add CI workflow for API/Web/MCP checks
 - [ ] Wire MCP server into Claude Code / opencode
 - [ ] Replace `docker-compose.dev.yml` placeholder commands with useful hot reload workflows
 

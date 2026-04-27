@@ -38,9 +38,9 @@ A fully functional v1 with:
 
 - API, Web, and MCP projects are scaffolded under `src/`.
 - Inventory domain, EF Core persistence, WebApi inventory endpoints, Nuxt inventory page/proxy routes, and MCP inventory tooling exist.
-- Inventory `POST /api/inventory` now creates items via the application-layer use case with validation for required fields (`Name`, `Category`, `Location`, `Quantity`, `Unit`).
+- Inventory `POST /api/inventory` creates items via the application-layer use case with validation for required fields (`Name`, `Category`, `Location`, `Quantity`, `Unit`).
+- End-to-end add-item smoke script and GitHub Actions CI workflow are in place.
 - Recipes, shopping, and richer AI-assisted tools are still mostly skeletons.
-- End-to-end add-item verification and CI workflow are still pending.
 
 ## 🧩 Tasks
 
@@ -51,7 +51,8 @@ A fully functional v1 with:
 - [x] Build C# WebApi inventory controller and health/OpenAPI endpoints
 - [ ] Build Nuxt frontend beyond inventory skeletons
 - [ ] Build full Python MCP server toolset
-- [ ] End-to-end test: add item → suggest recipe → build shopping list
+- [x] End-to-end add-item smoke test and CI workflow
+- [ ] End-to-end test: suggest recipe → build shopping list
 
 ## 🔗 Related
 

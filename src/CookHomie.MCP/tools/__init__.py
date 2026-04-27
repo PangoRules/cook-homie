@@ -1,4 +1,5 @@
-from tools.inventory import get_inventory, add_inventory_item
-from tools.spell_check import spell_check
+from tools.inventory import get_inventory
+from tools.recipes import get_recipes
+from tools.shopping import get_shopping_list
 
-__all__ = ["get_inventory", "add_inventory_item", "spell_check"]
+__all__ = ["get_inventory", "get_recipes", "get_shopping_list"]

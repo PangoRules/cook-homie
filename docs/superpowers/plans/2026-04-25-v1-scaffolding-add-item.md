@@ -748,6 +748,8 @@ git commit -m "feat: scaffold mcp tools modules and server registration"
 
 ### Task 11: Implement API Add Item Vertical Slice
 
+**Status:** ✅ Complete (2026-04-27).
+
 **Current status:** Partially implemented. `CookHomie.WebApi/Controllers/InventoryController.cs` already exposes `GET /api/inventory` and `POST /api/inventory`, but `POST` currently writes through `IInventoryRepository` directly and returns `200 OK`. Complete this task by routing creation through the application use case or explicitly updating the planned contract, then align tests and docs with the chosen behavior.
 
 **Files:**
@@ -756,7 +758,7 @@ git commit -m "feat: scaffold mcp tools modules and server registration"
 - Modify: `src/CookHomie.Api/CookHomie.Infrastructure/Repositories/InventoryRepository.cs`
 - Test: `src/CookHomie.Api/tests/CookHomie.WebApi.Tests/InventoryControllerTests.cs`
 
-- [ ] **Step 1: Write failing controller test for the intended POST /api/inventory contract**
+- [x] **Step 1: Write failing controller test for the intended POST /api/inventory contract**
 
 ```csharp
 [Fact]
@@ -776,12 +778,12 @@ public async Task PostInventory_WithValidPayload_ReturnsCreated()
 }
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `dotnet test src/CookHomie.Api/tests/CookHomie.WebApi.Tests --filter PostInventory_WithValidPayload_ReturnsCreated`
 Expected: FAIL in the current code because the endpoint exists but returns `200 OK` and bypasses the application use case.
 
-- [ ] **Step 3: Implement controller + use-case wiring**
+- [x] **Step 3: Implement controller + use-case wiring**
 
 ```csharp
 [ApiController]
@@ -801,12 +803,12 @@ public class InventoryController : ControllerBase
 }
 ```
 
-- [ ] **Step 4: Re-run targeted and full API tests**
+- [x] **Step 4: Re-run targeted and full API tests**
 
 Run: `dotnet test src/CookHomie.Api/tests`
 Expected: PASS for application/infrastructure/webapi tests
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/CookHomie.Api
@@ -817,6 +819,8 @@ git commit -m "feat: implement api add inventory item endpoint"
 
 ### Task 12: Implement Web Add Item Flow
 
+**Status:** ✅ Complete (2026-04-27).
+
 **Current status:** Partially implemented. `useInventory.ts` already has `addInventoryItem`, and Nuxt proxy routes exist for `GET` and `POST /api/inventory`. There is no `components/inventory/AddItemModal.vue` yet, and `pages/inventory.vue` currently renders a simple list with no add-item UI.
 
 **Files:**
@@ -826,7 +830,7 @@ git commit -m "feat: implement api add inventory item endpoint"
 - Create: `src/CookHomie.Web/server/api/inventory/index.post.ts`
 - Test: `src/CookHomie.Web/tests/AddItemModal.spec.ts`
 
-- [ ] **Step 1: Write failing modal submission test**
+- [x] **Step 1: Write failing modal submission test**
 
 ```ts
 import { mount } from "@vue/test-utils";
@@ -843,12 +847,12 @@ describe("AddItemModal", () => {
 });
 ```
 
-- [ ] **Step 2: Run test to verify it fails**
+- [x] **Step 2: Run test to verify it fails**
 
 Run: `cd src/CookHomie.Web && npm test -- AddItemModal.spec.ts`
 Expected: FAIL because component/proxy not implemented
 
-- [ ] **Step 3: Implement modal, composable add action, and proxy endpoint**
+- [x] **Step 3: Implement modal, composable add action, and proxy endpoint**
 
 ```ts
 // composables/useInventory.ts
@@ -871,12 +875,12 @@ export default defineEventHandler(async (event) => {
 });
 ```
 
-- [ ] **Step 4: Re-run tests**
+- [x] **Step 4: Re-run tests**
 
 Run: `cd src/CookHomie.Web && npm test`
 Expected: PASS for modal/composable tests
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/CookHomie.Web
@@ -1129,14 +1133,14 @@ git commit -m "chore: cut over default api runtime from spike to webapi"
 
 ## Final Validation Checklist (Run After Task 15)
 
-- [ ] `dotnet test src/CookHomie.Api/tests`
-- [ ] `cd src/CookHomie.Web && npm test`
-- [ ] `cd src/CookHomie.MCP && pytest -q`
-- [ ] `docker compose -f docker-compose.yml up --build -d`
-- [ ] `bash scripts/verify_add_item_e2e.sh`
-- [ ] `curl -fsS http://localhost:5000/swagger/v1/swagger.json >/dev/null`
-- [ ] `curl -fsSI http://localhost:5000/swagger >/dev/null`
-- [ ] `bash scripts/verify_spike.sh` (expect skip message unless `ENABLE_SPIKE_CHECK=1`)
-- [ ] `docker compose down`
+- [x] `dotnet test src/CookHomie.Api/tests`
+- [x] `cd src/CookHomie.Web && npm test`
+- [x] `cd src/CookHomie.MCP && pytest -q`
+- [x] `docker compose -f docker-compose.yml up --build -d`
+- [x] `bash scripts/verify_add_item_e2e.sh`
+- [x] `curl -fsS http://localhost:5000/swagger/v1/swagger.json >/dev/null`
+- [x] `curl -fsSI http://localhost:5000/swagger >/dev/null`
+- [x] `bash scripts/verify_spike.sh` (expect skip message unless `ENABLE_SPIKE_CHECK=1`)
+- [x] `docker compose down`
 
 Expected: all default checks succeed with `CookHomie.WebApi` as the primary API path; spike validation is optional.

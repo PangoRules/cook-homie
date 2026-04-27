@@ -1,3 +1,5 @@
+> **Status:** ✅ Completed and merged into main (2026-04-27).
+
 # Task 15: Cut Over to WebApi and Retire Spike from Default Flow
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.

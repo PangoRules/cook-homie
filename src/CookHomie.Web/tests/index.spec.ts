@@ -16,7 +16,7 @@ describe("index page", () => {
 
     const wrapper = mount(IndexPage);
 
-    expect(wrapper.find("h1").text()).toBe("CookHomie Spike Web");
+    expect(wrapper.find("h1").text()).toBe("CookHomie Web");
     expect(wrapper.text()).toContain("Message from API: Hello from C#");
   });
 
@@ -28,7 +28,7 @@ describe("index page", () => {
 
     const wrapper = mount(IndexPage);
 
-    expect(wrapper.text()).toContain("Loading spike message...");
+    expect(wrapper.text()).toContain("Loading message...");
   });
 
   it("renders error state when fetch fails", () => {
@@ -39,6 +39,6 @@ describe("index page", () => {
 
     const wrapper = mount(IndexPage);
 
-    expect(wrapper.text()).toContain("Unable to load spike message.");
+    expect(wrapper.text()).toContain("Unable to load message.");
   });
 });

@@ -1,3 +1,5 @@
+> **Status:** ✅ Completed and merged into main (2026-04-27).
+
 # Web Add Item Flow Implementation Plan
 
 **Goal:** Complete the UI flow for adding inventory items by implementing the missing modal, integrating with existing API, and validating through tests.

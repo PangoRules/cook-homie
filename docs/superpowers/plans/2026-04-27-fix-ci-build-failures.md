@@ -1,3 +1,5 @@
+> **Status:** ✅ Completed and merged into main (2026-04-27).
+
 # CI Build Failures — Fix Plan
 
 > **For agentic workers:** Implementation instructions for the three CI failures.

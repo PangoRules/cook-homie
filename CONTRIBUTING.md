@@ -18,7 +18,6 @@ Thanks for helping build CookHomie.
 
 ## API local test workflow
 
-- Use `dotnet test src/CookHomie.Api/CookHomie.SpikeApi.Tests/CookHomie.SpikeApi.Tests.csproj -f net10.0` for spike endpoint verification.
 - The API projects target .NET 10 (`net10.0`) across the solution.
 - Use `dotnet test src/CookHomie.Api/CookHomie.sln` for the normal API verification path.
 - For manual endpoint checks, run the HTTP scenarios in `src/CookHomie.Api/tests/ApiTests/inventory-controller-tests.http`.
@@ -26,7 +25,6 @@ Thanks for helping build CookHomie.
   - `GET /api/inventory` returns `200`
   - `POST /api/inventory` valid payload returns `201`
   - `POST /api/inventory` invalid payload returns `400` Problem Details
-- The default Docker API runtime is `CookHomie.WebApi`; `CookHomie.SpikeApi` remains available only for historical spike checks.
 
 ## MCP local test workflow
 
@@ -42,7 +40,7 @@ The E2E smoke script verifies the add-item vertical slice end-to-end.
    ```bash
    bash scripts/verify_add_item_e2e.sh
    ```
-3. Expected output: `[PASS] E2E add-item verification passed`
+3. Expected output: `🎉 All tests passed! The add-item vertical slice is working correctly.`
 
 Notes:
 - The script requires `curl` and the stack running on default ports.

@@ -1035,21 +1035,21 @@ git commit -m "chore: add e2e verification script ci stub and runbook"
 
 ### Task 15: Cut Over to WebApi and Retire Spike from Default Flow
 
-**Current status:** Partially implemented ahead of schedule. `docker/Dockerfile.api` already restores, publishes, and runs `CookHomie.WebApi.dll`, and `docker-compose.yml` supplies the WebApi connection string. The remaining work is to verify the cutover, update stale docs/scripts, and decide whether `scripts/verify_spike.sh` should skip by default or remain a historical manual check.
+**Status:** ✅ Complete (2026-04-27). `CookHomie.WebApi.dll` is the default API runtime, spike verification is optional via `ENABLE_SPIKE_CHECK=1`, and all Docker build contexts are corrected.
 
 **Files:**
-- Modify: `docker/Dockerfile.api`
-- Modify: `docker-compose.yml`
+- Modify: `docker/Dockerfile.api` (already correct - no changes needed)
+- Modify: `docker-compose.yml` (already correct - no changes needed)
 - Modify: `docker-compose.dev.yml`
 - Modify: `README.md`
 - Modify: `scripts/verify_spike.sh`
 
-- [ ] **Step 1: Verify runtime check proving compose points at WebApi**
+- [x] **Step 1: Verify runtime check proving compose points at WebApi**
 
 Run: `grep -q 'CookHomie.WebApi.dll' docker/Dockerfile.api`
 Expected: PASS because the Dockerfile already points to `CookHomie.WebApi.dll`
 
-- [ ] **Step 2: Keep API container build/publish target on WebApi**
+- [x] **Step 2: Keep API container build/publish target on WebApi**
 
 ```dockerfile
 # docker/Dockerfile.api (key lines)
@@ -1065,7 +1065,7 @@ RUN dotnet publish ./CookHomie.WebApi/CookHomie.WebApi.csproj -c Release -f net1
 ENTRYPOINT ["dotnet", "CookHomie.WebApi.dll"]
 ```
 
-- [ ] **Step 3: Update compose + docs to treat WebApi as the default API runtime**
+- [x] **Step 3: Update compose + docs to treat WebApi as the default API runtime**
 
 ```yaml
 # docker-compose.yml (api service)
@@ -1085,7 +1085,7 @@ api:
 - `CookHomie.SpikeApi` remains historical validation code and is not part of the default Docker validation chain.
 ```
 
-- [ ] **Step 4: Adjust spike verifier to be optional and non-blocking**
+- [x] **Step 4: Adjust spike verifier to be optional and non-blocking**
 
 ```bash
 # scripts/verify_spike.sh
@@ -1102,17 +1102,17 @@ curl -fsS http://localhost:3000/api/spike/hello >/dev/null
 echo "Spike verification passed"
 ```
 
-- [ ] **Step 5: Verify cutover end-to-end on default stack**
+- [x] **Step 5: Verify cutover end-to-end on default stack**
 
 Run: `docker compose -f docker-compose.yml up --build -d && bash scripts/verify_add_item_e2e.sh`
 Expected: `E2E add-item verification passed` with no dependency on spike endpoints
 
-- [ ] **Step 6: Verify Swagger is exposed from WebApi in local development**
+- [x] **Step 6: Verify Swagger is exposed from WebApi in local development**
 
 Run: `curl -fsS http://localhost:5000/swagger/v1/swagger.json >/dev/null && curl -fsSI http://localhost:5000/swagger | grep -q '200\|301\|302'`
 Expected: commands succeed, proving OpenAPI JSON and Swagger UI endpoint are reachable
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add docker/Dockerfile.api docker-compose.yml docker-compose.dev.yml README.md CONTRIBUTING.md docs scripts/verify_spike.sh

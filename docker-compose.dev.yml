@@ -48,8 +48,8 @@ services:
 
   mcp:
     build:
-      context: ./src/CookHomie.MCP
-      dockerfile: Dockerfile.mcp
+      context: .
+      dockerfile: docker/Dockerfile.mcp
     environment:
       - MCP_ENV=development
       - API_BASE_URL=http://api:5000

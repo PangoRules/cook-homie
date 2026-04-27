@@ -13,6 +13,7 @@ async def test_get_inventory_returns_items_dict():
         assert "items" in result
         assert len(result["items"]) == 1
         assert result["items"][0]["name"] == "Milk"
+        assert result["count"] == 1
 
 
 @pytest.mark.asyncio
@@ -29,3 +30,4 @@ async def test_get_inventory_handles_empty_result():
         mock_client.get_inventory = AsyncMock(return_value=[])
         result = await get_inventory()
         assert result["items"] == []
+        assert result["count"] == 0

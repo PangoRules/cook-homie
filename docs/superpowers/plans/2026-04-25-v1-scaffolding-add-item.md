@@ -887,6 +887,8 @@ git commit -m "feat: implement inventory add item modal and proxy"
 
 ### Task 13: Implement MCP `get_inventory` Tool
 
+**Status:** ✓ Complete (2026-04-27). Implemented `count` field in tool response.
+
 **Current status:** Partially implemented. `api_client.py` already supports `get_inventory(location=None)`, and `tools/inventory.py` passes the optional location to the client. The current tool returns `{ "items": items }`; complete this task by deciding whether the tool contract should also include `count`, then align tests and documentation.
 
 **Files:**

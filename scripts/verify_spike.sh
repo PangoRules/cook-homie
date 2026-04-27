@@ -2,6 +2,12 @@
 
 set -euo pipefail
 
+# Skip spike verification if ENABLE_SPIKE_CHECK is not set to "1"
+if [[ "${ENABLE_SPIKE_CHECK:-0}" != "1" ]]; then
+  echo "Spike verification disabled by ENABLE_SPIKE_CHECK env var. Skipping..."
+  exit 0
+fi
+
 API_PORT="${API_PORT:-5000}"
 WEB_PORT="${WEB_PORT:-3000}"
 

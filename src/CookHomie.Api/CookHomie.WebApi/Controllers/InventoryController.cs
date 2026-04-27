@@ -37,7 +37,7 @@ public class InventoryController : ControllerBase
         try
         {
             var result = await _addInventoryItem.ExecuteAsync(request, cancellationToken);
-            return StatusCode(StatusCodes.Status201Created, result);
+            return Created($"/api/inventory/{result.Id}", result);
         }
         catch (ArgumentOutOfRangeException ex)
         {

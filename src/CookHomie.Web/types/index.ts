@@ -1,3 +1,18 @@
+export interface RecipeIngredient {
+  name: string;
+  quantity?: number;
+  unit?: string;
+  isInStock?: boolean;
+}
+
+export interface DashboardSummary {
+  expiringCount: number;
+  recipeMatchCount: number;
+  shoppingCount: number;
+}
+
+export type AddRecipePayload = Omit<Recipe, "id">;
+
 export interface InventoryItem {
   id: string;
   name: string;

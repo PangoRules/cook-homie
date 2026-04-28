@@ -1,10 +1,10 @@
 # Milestone 2 — Page Polish + Integration Tests
 
-> **For agentic workers:** Each step is `- [ ]`. Implement task-by-task on its own branch. Commit after each task.
+> **For agentic workers:** Each step is `- [x]`. Task completed and merged into feat/milestone-2-frontend.
 
 **Goal:** Polish the existing inventory and shopping pages with skeletons, error states, and responsive layout; upgrade AddItemModal with full fields and toast feedback; add integration tests for critical flows; run final responsive verification.
 
-**Prerequisite:** Complete Tasks 1–3, 5, 6, 7, 8, 9, 10–16 (all foundation, mock, design system, dashboard, recipes, and detail work).
+**Prerequisite:** Complete Tasks 1–3, 5, 6, ✓ 7, ✓ 8, 9, 10–16 (all foundation, ✓ mock contract layer, ✓ dashboard/recipes detail work).
 
 ---
 

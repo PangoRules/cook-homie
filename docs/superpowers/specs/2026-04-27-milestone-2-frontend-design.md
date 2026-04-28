@@ -200,6 +200,26 @@ This milestone includes the foundation shell completed on `task/foundation-shell
 - Recipe types: `RecipeIngredient`, `DashboardSummary`, `AddRecipePayload`
 - All tests passing (19 tests across 7 files)
 
+## Mock Contract Layer Task ✅
+
+Mock contract layer completed with commit c3e6467:
+
+**Server/API Endpoints Created:**
+- `GET /api/recipes` - List all recipes
+- `POST /api/recipes` - Create new recipe
+- `GET /api/recipes/:id` - Get single recipe
+- `GET /api/dashboard/summary` - Dashboard summary data
+
+**Recipe Store Utility:**
+- In-memory recipe store managing recipe CRUD operations
+- Located at `src/CookHomie.Web/server/utils/recipeStore.ts`
+
+**Client-Side Components:**
+- Ingredient stock matching utility for ingredient inventory comparison
+- Located at `src/CookHomie.Web/utils/ingredientStock.ts`
+
+All mock contract layer tasks completed and verified on feat/milestone-2-frontend branch.
+
 ## 13) Milestone 2 Completion Criteria
 
 Milestone 2 is complete when all are true:

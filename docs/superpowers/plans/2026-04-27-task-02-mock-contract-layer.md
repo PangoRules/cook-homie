@@ -1,6 +1,14 @@
 # Milestone 2 — Mock Contract Layer
 
-> **For agentic workers:** Each step is `- [ ]`. Implement task-by-task on its own branch. Commit after each task.
+> **For agentic workers:** Each step is `- [x]`. Task completed and merged into feat/milestone-2-frontend.
+
+## ✅ COMPLETED
+
+The mock contract layer has been successfully implemented and merged with commit c3e6467.
+- Implementation files created in `src/CookHomie.Web/server/api/recipes/` and `src/CookHomie.Web/server/api/dashboard/`
+- Recipe store utility created in `src/CookHomie.Web/server/utils/recipeStore.ts`
+- Ingredient stock matching utility created in `src/CookHomie.Web/utils/ingredientStock.ts`
+- Test utilities added for validation
 
 **Goal:** Build the Nuxt server/api mock contract layer (in-memory recipe store + mock endpoints) and the client-side ingredient stock matching utility.
 

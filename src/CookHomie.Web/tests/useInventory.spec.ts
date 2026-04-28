@@ -15,7 +15,19 @@ describe("useInventory", () => {
 
   it("starts polling on start() and stops on stop()", async () => {
     vi.useFakeTimers();
-    const fetchSpy = vi.fn().mockResolvedValue([{ id: "1", name: "Milk", category: "dairy", location: "Fridge", quantity: 1, unit: "liter", isOpened: false }]);
+    const fetchSpy = vi
+      .fn()
+      .mockResolvedValue([
+        {
+          id: "1",
+          name: "Milk",
+          category: "dairy",
+          location: "Fridge",
+          quantity: 1,
+          unit: "liter",
+          isOpened: false,
+        },
+      ]);
     vi.stubGlobal("$fetch", fetchSpy);
     vi.stubGlobal("useState", (_key: string, init: () => unknown) => ref(init()));
 
@@ -34,7 +46,19 @@ describe("useInventory", () => {
   });
 
   it("refresh() forces a manual fetch", async () => {
-    const fetchSpy = vi.fn().mockResolvedValue([{ id: "2", name: "Eggs", category: "dairy", location: "Fridge", quantity: 12, unit: "units", isOpened: false }]);
+    const fetchSpy = vi
+      .fn()
+      .mockResolvedValue([
+        {
+          id: "2",
+          name: "Eggs",
+          category: "dairy",
+          location: "Fridge",
+          quantity: 12,
+          unit: "units",
+          isOpened: false,
+        },
+      ]);
     vi.stubGlobal("$fetch", fetchSpy);
     vi.stubGlobal("useState", (_key: string, init: () => unknown) => ref(init()));
 

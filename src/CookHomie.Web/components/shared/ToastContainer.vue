@@ -19,7 +19,7 @@
 </template>
 
 <script setup lang="ts">
-import { useToast } from "~/composables/useToast";
+import { useToast } from "@/composables/useToast";
 const { toasts, remove } = useToast();
 
 const toastIcon = (type: string) => {
@@ -58,15 +58,41 @@ const toastIcon = (type: string) => {
   font-size: 14px;
 }
 
-.toast--success { border-color: var(--color-success); }
-.toast--error { border-color: var(--color-error); }
-.toast--warning { border-color: var(--color-warning); }
-.toast--info { border-color: var(--color-info); }
+.toast--success {
+  border-color: var(--color-success);
+}
+.toast--error {
+  border-color: var(--color-error);
+}
+.toast--warning {
+  border-color: var(--color-warning);
+}
+.toast--info {
+  border-color: var(--color-info);
+}
 
-.toast__icon { font-size: 16px; }
-.toast__message { flex: 1; color: var(--color-text-primary); }
-.toast__close { background: none; border: none; cursor: pointer; font-size: 18px; color: var(--color-text-muted); }
+.toast__icon {
+  font-size: 16px;
+}
+.toast__message {
+  flex: 1;
+  color: var(--color-text-primary);
+}
+.toast__close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  color: var(--color-text-muted);
+}
 
-.toast-enter-active, .toast-leave-active { transition: all var(--transition-base); }
-.toast-enter-from, .toast-leave-to { opacity: 0; transform: translateX(20px); }
+.toast-enter-active,
+.toast-leave-active {
+  transition: all var(--transition-base);
+}
+.toast-enter-from,
+.toast-leave-to {
+  opacity: 0;
+  transform: translateX(20px);
+}
 </style>

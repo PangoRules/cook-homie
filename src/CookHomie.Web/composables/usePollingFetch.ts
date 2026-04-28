@@ -1,9 +1,12 @@
 // src/CookHomie.Web/composables/usePollingFetch.ts
-export const usePollingFetch = <T>(url: string, options?: {
-  pollIntervalMs?: number;
-  onSuccess?: (data: T) => void;
-  onError?: (err: Error) => void;
-}) => {
+export const usePollingFetch = <T>(
+  url: string,
+  options?: {
+    pollIntervalMs?: number;
+    onSuccess?: (data: T) => void;
+    onError?: (err: Error) => void;
+  }
+) => {
   const pollIntervalMs = options?.pollIntervalMs ?? 30000;
 
   const data = useState<T | null>(`poll-${url}`, () => null);
@@ -19,7 +22,7 @@ export const usePollingFetch = <T>(url: string, options?: {
     error.value = null;
 
     try {
-      const result = await $fetch<T>(url);
+      const result = (await $fetch<T>(url)) as T;
       data.value = result;
       isStale.value = false;
       options?.onSuccess?.(result);

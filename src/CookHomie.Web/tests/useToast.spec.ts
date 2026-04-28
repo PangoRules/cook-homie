@@ -11,16 +11,20 @@ describe("useToast", () => {
   it("pushes a success toast", () => {
     const { toasts, pushSuccess } = useToast();
     pushSuccess("Item added");
-    expect(toasts.value).toContainEqual(expect.objectContaining({ type: "success", message: "Item added" }));
+    expect(toasts.value).toContainEqual(
+      expect.objectContaining({ type: "success", message: "Item added" })
+    );
   });
 
   it("pushes an error toast with parsed message", () => {
     const { toasts, pushError } = useToast();
     pushError(new Error("Validation failed: name is required"));
-    expect(toasts.value).toContainEqual(expect.objectContaining({
-      type: "error",
-      message: expect.stringContaining("name is required")
-    }));
+    expect(toasts.value).toContainEqual(
+      expect.objectContaining({
+        type: "error",
+        message: expect.stringContaining("name is required"),
+      })
+    );
   });
 
   it("clears all toasts", () => {

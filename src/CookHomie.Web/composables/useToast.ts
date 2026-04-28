@@ -26,11 +26,13 @@ export const useToast = () => {
   const pushInfo = (message: string) => push("info", message);
 
   const remove = (id: string) => {
-    const idx = toasts.value.findIndex(t => t.id === id);
+    const idx = toasts.value.findIndex((t) => t.id === id);
     if (idx !== -1) toasts.value.splice(idx, 1);
   };
 
-  const clear = () => { toasts.value = []; };
+  const clear = () => {
+    toasts.value = [];
+  };
 
   return { toasts, pushSuccess, pushError, pushWarning, pushInfo, remove, clear };
 };

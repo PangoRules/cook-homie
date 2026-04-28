@@ -39,6 +39,7 @@ services:
       dockerfile: docker/Dockerfile.web
     environment:
       NODE_ENV: development
+      NUXT_PUBLIC_APP_ENV: development
     volumes:
       - ./src/CookHomie.Web:/app
       - /app/node_modules

@@ -20,7 +20,9 @@ tags: [project, cookhomie, roadmap]
 
 ### Milestone 2 — Frontend
 - [x] Nuxt 3 scaffold with default layout and route skeletons
-- [ ] Dashboard page (expiring items, recipe matches, shopping count)
+- [x] Dashboard page (expiring items, recipe matches, shopping count)
+- [x] DashboardStatCard and DashboardPanel components
+- [x] useDashboard composable with 30s polling
 - [x] Inventory page + AddItemModal
 - [ ] Recipes page + RecipeCard + AddRecipeModal
 - [ ] Recipe detail page (ingredients with in-stock highlighting)

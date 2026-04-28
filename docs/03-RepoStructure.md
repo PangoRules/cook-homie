@@ -40,11 +40,23 @@ CookHomie/
 │   │   │   ├── recipes/
 │   │   │   │   ├── index.vue           # Recipe browser skeleton
 │   │   │   │   └── [id].vue            # Recipe detail
-│   │   │   └── shopping.vue            # Shopping list skeleton
-│   │   ├── composables/
-│   │   │   ├── useInventory.ts
-│   │   ├── layouts/
-│   │   │   └── default.vue             # Sidebar nav
+│   │   │   │   └── shopping.vue            # Shopping list skeleton
+│   │   │   │   ├── components/
+│   │   │   │   │   ├── inventory/
+│   │   │   │   │   ├── recipes/
+│   │   │   │   │   ├── shared/
+│   │   │   │   │   │   ├── ErrorBanner.vue
+│   │   │   │   │   │   ├── SkeletonBlock.vue
+│   │   │   │   │   │   └── StaleIndicator.vue
+│   │   │   │   │   └── dashboard/
+│   │   │   │   │       ├── DashboardStatCard.vue
+│   │   │   │   │       └── DashboardPanel.vue
+│   │   │   │   ├── composables/
+│   │   │   │   │   ├── useDashboard.ts        # Dashboard composable with 30s polling
+│   │   │   │   │   ├── usePollingFetch.ts      # Generic polling composable
+│   │   │   │   │   └── useInventory.ts
+│   │   │   │   └── layouts/
+│   │   │   │       └── default.vue             # Sidebar nav
 │   │   ├── server/api/                 # Nuxt proxy to C# API
 │   │   │   ├── inventory/index.get.ts
 │   │   │   ├── inventory/index.post.ts

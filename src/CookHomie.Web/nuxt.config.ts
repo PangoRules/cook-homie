@@ -7,5 +7,5 @@ export default defineNuxtConfig({
       appEnv: process.env.NODE_ENV ?? "development",
     },
   },
-  css: ["@/assets/css/tokens.css"],
+  css: ["~/assets/css/tokens.css", "~/assets/css/base.css", "~/assets/css/components.css"],
 });

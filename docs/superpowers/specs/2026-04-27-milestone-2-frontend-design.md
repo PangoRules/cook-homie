@@ -188,6 +188,18 @@ Automate highest-value paths:
 
 Verify primary breakpoints for phone, tablet/iPad, desktop on key pages.
 
+### Completed Foundation Work ✅
+
+This milestone includes the foundation shell completed on `task/foundation-shell`:
+
+- Design tokens (`tokens.css`) + nuxt.config.ts integration
+- `usePollingFetch` composable with polling lifecycle
+- `useToast` composable + ToastContainer component
+- Shared UI primitives: SkeletonBlock, ErrorBanner, StaleIndicator
+- Polling lifecycle added to `useInventory` composable
+- Recipe types: `RecipeIngredient`, `DashboardSummary`, `AddRecipePayload`
+- All tests passing (19 tests across 7 files)
+
 ## 13) Milestone 2 Completion Criteria
 
 Milestone 2 is complete when all are true:

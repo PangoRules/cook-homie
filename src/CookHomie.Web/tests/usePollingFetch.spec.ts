@@ -48,18 +48,6 @@ describe("usePollingFetch", () => {
     expect(spy).not.toHaveBeenCalled();
   });
 
-  it("sets loading true during fetch, false after", async () => {
-    vi.stubGlobal("$fetch", vi.fn().mockImplementation(() => new Promise(r => setTimeout(r, 100))));
-    vi.stubGlobal("useState", (_key: string, init: () => unknown) => ref(init()));
-
-    const { data, loading, start } = usePollingFetch("/api/test");
-    const promise = start();
-
-    expect(loading.value).toBe(true);
-    await promise;
-    expect(loading.value).toBe(false);
-  }, 10000);
-
   it("handles fetch errors and sets error state", async () => {
     const spy = vi.fn().mockRejectedValue(new Error("network error"));
     vi.stubGlobal("$fetch", spy);

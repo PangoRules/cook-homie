@@ -15,7 +15,7 @@
 - Create: `src/CookHomie.Web/assets/css/components.css`
 - Modify: `src/CookHomie.Web/nuxt.config.ts`
 
-- [ ] **Step 1: Write base.css**
+- [x] **Step 1: Write base.css**
 
 ```css
 /* src/CookHomie.Web/assets/css/base.css */
@@ -49,7 +49,7 @@ button { font-family: var(--font-body); }
 input, textarea, select { font-family: var(--font-body); }
 ```
 
-- [ ] **Step 2: Write components.css**
+- [x] **Step 2: Write components.css**
 
 ```css
 /* src/CookHomie.Web/assets/css/components.css */
@@ -98,7 +98,7 @@ input, textarea, select { font-family: var(--font-body); }
 .input:focus { outline: none; border-color: var(--color-accent); }
 ```
 
-- [ ] **Step 3: Update nuxt.config.ts**
+- [x] **Step 3: Update nuxt.config.ts**
 
 Update the `css` array in `defineNuxtConfig`:
 
@@ -106,12 +106,12 @@ Update the `css` array in `defineNuxtConfig`:
 css: ["~/assets/css/tokens.css", "~/assets/css/base.css", "~/assets/css/components.css"]
 ```
 
-- [ ] **Step 4: Verify dev server**
+- [x] **Step 4: Verify dev server**
 
 Run: `cd src/CookHomie.Web && npm run dev`
 Expected: Nuxt starts without errors; fonts load from Google Fonts CDN
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/CookHomie.Web/assets/css/base.css src/CookHomie.Web/assets/css/components.css src/CookHomie.Web/nuxt.config.ts

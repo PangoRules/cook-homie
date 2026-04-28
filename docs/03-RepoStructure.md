@@ -132,7 +132,26 @@ Planned but not implemented yet: `get_expiring_items`, `suggest_recipes`, `get_m
 
 ## 🔗 Related
 
-- [[00-CookHomie|Overview]]
+- [[00-CookHomie|### /api/recipes
+| Method | Route | Description |
+|--------|-------|-------------|
+| GET | /api/recipes | List all |
+| GET | /api/recipes/{id} | Single recipe |
+| POST | /api/recipes | Add recipe |
+| GET | /api/recipes/matches | Cookable from current inventory |
+| GET | /api/recipes/{id}/missing | Missing ingredients for recipe |
+
+### /api/dashboard (web only)
+| Method | Route | Description |
+|--------|-------|-------------|
+| GET | /api/dashboard/summary | Dashboard summary (web proxy) |
+
+### /api/dev (web only)
+| Method | Route | Description |
+|--------|-------|-------------|
+| GET | /api/dev/mode | Get dev mode status |
+| POST | /api/dev/inventory-seed | Seed inventory for development |
+| DELETE | /api/dev/inventory-seed | Clear seeded inventory |Overview]]
 - [[01-Architecture]]
 - [[02-DataModel]]
 - [[04-Roadmap]]

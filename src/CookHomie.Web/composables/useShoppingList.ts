@@ -1,20 +1,20 @@
-import type { AddInventoryItemPayload, InventoryItem } from "../types";
+import type { ShoppingItem } from "../types";
 
-export const useInventory = () => {
-  const items = useState<InventoryItem[]>("inventory-items", () => []);
-  const loading = useState<boolean>("inventory-loading", () => false);
-  const error = useState<string | null>("inventory-error", () => null);
-  const isStale = useState<boolean>("inventory-stale", () => false);
+export const useShoppingList = () => {
+  const items = useState<ShoppingItem[]>("shopping-items", () => []);
+  const loading = useState<boolean>("shopping-loading", () => false);
+  const error = useState<string | null>("shopping-error", () => null);
+  const isStale = useState<boolean>("shopping-stale", () => false);
 
   const fetchItems = async () => {
     loading.value = true;
     error.value = null;
     try {
-      const result = await $fetch<InventoryItem[]>("/api/inventory");
+      const result = await $fetch<ShoppingItem[]>("/api/shopping");
       items.value = result;
       isStale.value = false;
     } catch (err) {
-      error.value = err instanceof Error ? err.message : "Failed to load inventory";
+      error.value = err instanceof Error ? err.message : "Failed to load shopping list";
       isStale.value = items.value.length > 0;
       throw err;
     } finally {
@@ -40,22 +40,22 @@ export const useInventory = () => {
     await fetchItems();
   };
 
-  const loadInventory = async () => {
+  const loadList = async () => {
     await fetchItems();
   };
 
-  const addInventoryItem = async (payload: AddInventoryItemPayload): Promise<InventoryItem> => {
+  const addToList = async (ingredientNames: string[]): Promise<ShoppingItem[]> => {
     loading.value = true;
     error.value = null;
     try {
-      const created = await $fetch<InventoryItem>("/api/inventory", {
+      const created = await $fetch<ShoppingItem[]>("/api/shopping", {
         method: "POST",
-        body: payload,
+        body: { ingredientNames },
       });
-      items.value.unshift(created);
+      items.value.push(...created);
       return created;
     } catch (err) {
-      error.value = err instanceof Error ? err.message : "Failed to add inventory item";
+      error.value = err instanceof Error ? err.message : "Failed to add items to shopping list";
       throw err;
     } finally {
       loading.value = false;
@@ -67,10 +67,10 @@ export const useInventory = () => {
     loading,
     error,
     isStale,
-    loadInventory,
+    loadList,
     startPolling,
     stopPolling,
     refresh,
-    addInventoryItem,
+    addToList,
   };
 };

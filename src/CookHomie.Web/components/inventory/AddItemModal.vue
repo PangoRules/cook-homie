@@ -11,12 +11,12 @@
 import { ref } from "vue";
 
 const form = ref({
-  name: ""
+  name: "",
 });
 
 const emit = defineEmits(["added"]);
 
 const handleSubmit = async () => {
   emit("added", form.value);
-}
+};
 </script>

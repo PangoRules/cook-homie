@@ -1,6 +1,8 @@
-export default defineEventHandler(async (event) => {
+import type { InventoryItem } from "../../../types";
+
+export default defineEventHandler(async (_event): Promise<InventoryItem[]> => {
   const config = useRuntimeConfig();
-  return await $fetch("/api/inventory", {
-    baseURL: config.apiBaseUrl
+  return await $fetch<InventoryItem[]>("/api/inventory", {
+    baseURL: config.apiBaseUrl,
   });
 });

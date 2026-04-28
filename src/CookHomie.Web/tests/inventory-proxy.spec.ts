@@ -16,9 +16,10 @@ describe("inventory proxy routes", () => {
 
     const { default: handler } = await import("../server/api/inventory/index.get");
 
-    await expect(handler({})).resolves.toEqual(payload);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await expect(handler({} as any)).resolves.toEqual(payload);
     expect(fetchSpy).toHaveBeenCalledWith("/api/inventory", {
-      baseURL: "http://api:5000"
+      baseURL: "http://api:5000",
     });
   });
 
@@ -34,11 +35,12 @@ describe("inventory proxy routes", () => {
 
     const { default: handler } = await import("../server/api/inventory/index.post");
 
-    await expect(handler({})).resolves.toEqual(payload);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    await expect(handler({} as any)).resolves.toEqual(payload);
     expect(fetchSpy).toHaveBeenCalledWith("/api/inventory", {
       baseURL: "http://api:5000",
       method: "POST",
-      body
+      body,
     });
   });
 });

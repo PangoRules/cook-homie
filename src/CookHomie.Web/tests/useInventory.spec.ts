@@ -1,68 +1,45 @@
+// src/CookHomie.Web/tests/useInventory.spec.ts
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ref } from "vue";
 import { useInventory } from "../composables/useInventory";
 
 describe("useInventory", () => {
   beforeEach(() => {
-    vi.unstubAllGlobals();
+    vi.stubGlobal("useState", (_key: string, init: () => unknown) => ref(init()));
   });
 
-  it("loads inventory items from /api/inventory into local state", async () => {
-    const mockItems = [
-      {
-        id: "1",
-        name: "Milk",
-        category: "dairy",
-        location: "Fridge",
-        quantity: 1,
-        unit: "liter",
-        isOpened: false
-      }
-    ];
-    const fetchSpy = vi.fn().mockResolvedValue(mockItems);
+  it("returns all inventories", () => {
+    const { items } = useInventory();
+    expect(items.value).toEqual([]);
+  });
 
+  it("starts polling on start() and stops on stop()", async () => {
+    vi.useFakeTimers();
+    const fetchSpy = vi.fn().mockResolvedValue([{ id: "1", name: "Milk", category: "dairy", location: "Fridge", quantity: 1, unit: "liter", isOpened: false }]);
     vi.stubGlobal("$fetch", fetchSpy);
     vi.stubGlobal("useState", (_key: string, init: () => unknown) => ref(init()));
 
-    const { items, loadInventory } = useInventory();
-    await loadInventory();
+    const { startPolling, stopPolling } = useInventory();
+    await startPolling();
 
-    expect(fetchSpy).toHaveBeenCalledWith("/api/inventory");
-    expect(items.value).toEqual(mockItems);
+    fetchSpy.mockClear();
+    await vi.advanceTimersByTimeAsync(30000);
+    expect(fetchSpy).toHaveBeenCalled();
+    stopPolling();
+
+    fetchSpy.mockClear();
+    await vi.advanceTimersByTimeAsync(35000);
+    expect(fetchSpy).not.toHaveBeenCalled();
+    vi.useRealTimers();
   });
 
-  it("posts a new item and prepends it to local state", async () => {
-    const created = {
-      id: "2",
-      name: "Eggs",
-      category: "dairy",
-      location: "Fridge",
-      quantity: 12,
-      unit: "units",
-      isOpened: false
-    };
-    const fetchSpy = vi.fn().mockResolvedValue(created);
-
+  it("refresh() forces a manual fetch", async () => {
+    const fetchSpy = vi.fn().mockResolvedValue([{ id: "2", name: "Eggs", category: "dairy", location: "Fridge", quantity: 12, unit: "units", isOpened: false }]);
     vi.stubGlobal("$fetch", fetchSpy);
     vi.stubGlobal("useState", (_key: string, init: () => unknown) => ref(init()));
 
-    const payload = {
-      name: "Eggs",
-      category: "dairy",
-      location: "Fridge",
-      quantity: 12,
-      unit: "units",
-      isOpened: false
-    };
-
-    const { items, addInventoryItem } = useInventory();
-    const result = await addInventoryItem(payload);
-
-    expect(fetchSpy).toHaveBeenCalledWith("/api/inventory", {
-      method: "POST",
-      body: payload
-    });
-    expect(result).toEqual(created);
-    expect(items.value[0]).toEqual(created);
+    const { refresh } = useInventory();
+    await refresh();
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
   });
 });

@@ -11,6 +11,7 @@
     <main class="main">
       <slot />
     </main>
+    <ToastContainer />
   </div>
 </template>
 

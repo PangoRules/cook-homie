@@ -1,5 +1,8 @@
 # Milestone 2 — Dashboard
 
+**Branch:** `task/dashboard`
+**Parent branch:** `feat/milestone-2-frontend`
+
 > **For agentic workers:** Each step is `- [ ]`. Implement task-by-task on its own branch. Commit after each task.
 
 **Goal:** Build the full Dashboard page with DashboardStatCard, DashboardPanel components, the useDashboard composable, and wire everything together with 30s polling.

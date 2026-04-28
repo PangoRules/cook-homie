@@ -1,5 +1,8 @@
 # Milestone 2 — Recipe Detail
 
+**Branch:** `task/recipe-detail`
+**Parent branch:** `feat/milestone-2-frontend`
+
 > **For agentic workers:** Each step is `- [ ]`. Implement task-by-task on its own branch. Commit after each task.
 
 **Goal:** Build the full Recipe detail page with IngredientStockBadge component, useRecipeDetail composable, and in-stock highlighting using exact normalized string match.

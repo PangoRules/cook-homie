@@ -1,5 +1,8 @@
 # Milestone 2 — Recipes Browser
 
+**Branch:** `task/recipes-browser`
+**Parent branch:** `feat/milestone-2-frontend`
+
 > **For agentic workers:** Each step is `- [ ]`. Implement task-by-task on its own branch. Commit after each task.
 
 **Goal:** Build the Recipes index page with RecipeCard grid, AddRecipeModal form, useRecipes composable, and all the wiring for 30s polling.

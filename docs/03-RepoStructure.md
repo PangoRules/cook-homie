@@ -36,28 +36,28 @@ CookHomie/
 │   ├── CookHomie.Web/                  # Nuxt 3 frontend
 │   │   ├── pages/
 │   │   │   ├── index.vue               # Dashboard
-│   │   │   ├── inventory.vue           # Inventory list skeleton
+│   │   │   ├── inventory.vue           # Inventory list
+│   │   │   ├── shopping.vue            # Shopping list
+│   │   │   └── recipes/
+│   │   │       ├── index.vue           # Recipe browser
+│   │   │       └── [id].vue            # Recipe detail
+│   │   ├── components/
+│   │   │   ├── dashboard/
+│   │   │   │   ├── DashboardStatCard.vue
+│   │   │   │   └── DashboardPanel.vue
+│   │   │   ├── inventory/
 │   │   │   ├── recipes/
-│   │   │   │   ├── index.vue           # Recipe browser skeleton
-│   │   │   │   └── [id].vue            # Recipe detail
-│   │   │   │   └── shopping.vue            # Shopping list skeleton
-│   │   │   │   ├── components/
-│   │   │   │   │   ├── inventory/
-│   │   │   │   │   ├── recipes/
-│   │   │   │   │   ├── shared/
-│   │   │   │   │   │   ├── ErrorBanner.vue
-│   │   │   │   │   │   ├── SkeletonBlock.vue
-│   │   │   │   │   │   └── StaleIndicator.vue
-│   │   │   │   │   └── dashboard/
-│   │   │   │   │       ├── DashboardStatCard.vue
-│   │   │   │   │       └── DashboardPanel.vue
-│   │   │   │   ├── composables/
-│   │   │   │   │   ├── useDashboard.ts        # Dashboard composable with 30s polling
-│   │   │   │   │   ├── usePollingFetch.ts      # Generic polling composable
-│   │   │   │   │   └── useInventory.ts
-│   │   │   │   └── layouts/
-│   │   │   │       └── default.vue             # Sidebar nav
-│   │   ├── server/api/                 # Nuxt proxy to C# API
+│   │   │   └── shared/
+│   │   │       ├── ErrorBanner.vue
+│   │   │       ├── SkeletonBlock.vue
+│   │   │       └── StaleIndicator.vue
+│   │   ├── composables/
+│   │   │   ├── useDashboard.ts        # Dashboard composable with 30s polling
+│   │   │   ├── usePollingFetch.ts     # Generic polling composable
+│   │   │   └── useInventory.ts
+│   │   ├── layouts/
+│   │   │   └── default.vue            # Sidebar nav
+│   │   ├── server/api/                # Nuxt proxy to C# API
 │   │   │   ├── inventory/index.get.ts
 │   │   │   ├── inventory/index.post.ts
 │   │   ├── tests/
@@ -142,17 +142,6 @@ Planned but not implemented yet: item-by-id lookup, update/delete, expiring-item
 
 Planned but not implemented yet: `get_expiring_items`, `suggest_recipes`, `get_missing_ingredients`, `build_shopping_list`, and `add_to_shopping_list`.
 
-## 🔗 Related
-
-- [[00-CookHomie|### /api/recipes
-| Method | Route | Description |
-|--------|-------|-------------|
-| GET | /api/recipes | List all |
-| GET | /api/recipes/{id} | Single recipe |
-| POST | /api/recipes | Add recipe |
-| GET | /api/recipes/matches | Cookable from current inventory |
-| GET | /api/recipes/{id}/missing | Missing ingredients for recipe |
-
 ### /api/dashboard (web only)
 | Method | Route | Description |
 |--------|-------|-------------|
@@ -163,7 +152,11 @@ Planned but not implemented yet: `get_expiring_items`, `suggest_recipes`, `get_m
 |--------|-------|-------------|
 | GET | /api/dev/mode | Get dev mode status |
 | POST | /api/dev/inventory-seed | Seed inventory for development |
-| DELETE | /api/dev/inventory-seed | Clear seeded inventory |Overview]]
+| DELETE | /api/dev/inventory-seed | Clear seeded inventory |
+
+## 🔗 Related
+
+- [[00-CookHomie|Overview]]
 - [[01-Architecture]]
 - [[02-DataModel]]
 - [[04-Roadmap]]

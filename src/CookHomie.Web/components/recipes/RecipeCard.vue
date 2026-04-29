@@ -1,119 +1,63 @@
 <template>
-  <div class="recipe-card">
-    <div class="recipe-header">
-      <h3>{{ recipe.name }}</h3>
-      <div class="recipe-meta">
-        <span class="prep-time">Prep: {{ recipe.prepMinutes }}m</span>
-        <span class="cook-time">Cook: {{ recipe.cookMinutes }}m</span>
+  <article class="recipe-card" @click="handleClick">
+    <div class="recipe-card__body">
+      <div class="recipe-card__tags">
+        <span v-for="tag in recipe.tags" :key="tag" class="tag">{{ tag }}</span>
       </div>
-    </div>
-
-    <div class="recipe-tags">
-      <span v-for="tag in recipe.tags" :key="tag" class="tag">
-        {{ tag }}
-      </span>
-    </div>
-
-    <div class="recipe-description">
-      <p>
-        {{ recipe.instructions.substring(0, 150)
-        }}{{ recipe.instructions.length > 150 ? "..." : "" }}
+      <h3 class="recipe-card__name">{{ recipe.name }}</h3>
+      <p class="recipe-card__meta">
+        {{ recipe.prepMinutes + recipe.cookMinutes }} min · {{ recipe.instructions.slice(0, 60) }}...
       </p>
     </div>
-
-    <div class="recipe-actions">
-      <button class="add-to-shopping-btn" @click="addToShoppingList">Add to Shopping List</button>
-    </div>
-  </div>
+  </article>
 </template>
 
 <script setup lang="ts">
-import type { Recipe } from "@/types";
-
-const props = defineProps<{
-  recipe: Recipe;
-}>();
-
-const { addToList } = useShoppingList();
-const { pushSuccess, pushError } = useToast();
-
-const addToShoppingList = async () => {
-  try {
-    // For simplicity, we'll add all ingredients to shopping list
-    // In a real implementation, you would want to select ingredients
-    await addToList(props.recipe.ingredients.map((i) => i.ingredientName));
-    pushSuccess("Recipe ingredients added to shopping list!");
-  } catch (err) {
-    pushError("Failed to add recipe ingredients to shopping list");
-    console.error(err);
-  }
+import type { Recipe } from "~/types";
+const props = defineProps<{ recipe: Recipe }>();
+const emit = defineEmits(["click"]);
+const handleClick = () => {
+  emit("click", props.recipe.id);
 };
 </script>
 
 <style scoped>
 .recipe-card {
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 16px;
-  margin-bottom: 16px;
-  background: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  box-shadow: var(--shadow-sm);
 }
+.recipe-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
 
-.recipe-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 12px;
-}
-
-.recipe-header h3 {
-  margin: 0;
-  font-size: 1.2em;
-}
-
-.recipe-meta {
-  display: flex;
-  gap: 12px;
-  font-size: 0.9em;
-  color: #666;
-}
-
-.recipe-tags {
-  margin: 12px 0;
-}
+.recipe-card__tags { display: flex; gap: var(--space-2); flex-wrap: wrap; margin-bottom: var(--space-3); }
 
 .tag {
-  background-color: #e0f7fa;
-  color: #00838f;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-size: 0.8em;
-  margin-right: 8px;
+  background: var(--color-accent-subtle);
+  color: var(--color-accent);
+  border-radius: var(--radius-full);
+  padding: var(--space-1) var(--space-3);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
-.recipe-description {
-  margin: 12px 0;
-  color: #333;
+.recipe-card__name {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin: 0 0 var(--space-2);
+}
+
+.recipe-card__meta {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  margin: 0;
   line-height: 1.4;
-}
-
-.recipe-actions {
-  display: flex;
-  justify-content: flex-end;
-}
-
-.add-to-shopping-btn {
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 0.9em;
-}
-
-.add-to-shopping-btn:hover {
-  background-color: #388e3c;
 }
 </style>

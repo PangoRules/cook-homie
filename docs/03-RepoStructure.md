@@ -34,27 +34,27 @@ CookHomie/
 │   │           └── inventory-controller-tests.http
 │   │
 │   ├── CookHomie.Web/                  # Nuxt 3 frontend
-  │   │   ├── pages/
-  │   │   │   ├── index.vue               # Dashboard
-  │   │   │   ├── inventory.vue           # Inventory list
-  │   │   │   ├── recipes.vue             # Recipe browser
-  │   │   │   ├── shopping.vue            # Shopping list
-  │   │   │   ├── recipes/
-  │   │   │   │   ├── [id].vue            # Recipe detail
-  │   │   │   │   └── index.vue           # (placeholder, recipes.vue used)
-  │   │   ├── components/
-  │   │   │   ├── dashboard/
-  │   │   │   │   ├── DashboardStatCard.vue
-  │   │   │   │   └── DashboardPanel.vue
-  │   │   │   ├── inventory/
-  │   │   │   ├── recipes/
-  │   │   │   │   ├── AddRecipeForm.vue   # Legacy form (deprecated)
-  │   │   │   │   ├── AddRecipeModal.vue  # Add recipe wizard
-  │   │   │   │   └── RecipeCard.vue      # Recipe display component
-  │   │   │   └── shared/
-  │   │   │       ├── ErrorBanner.vue
-  │   │   │       ├── SkeletonBlock.vue
-  │   │   │       └── StaleIndicator.vue
+│   │   ├── pages/
+│   │   │   ├── index.vue               # Dashboard
+│   │   │   ├── inventory.vue           # Inventory list
+│   │   │   ├── recipes.vue             # Recipe browser
+│   │   │   ├── shopping.vue            # Shopping list
+│   │   │   ├── recipes/
+│   │   │   │   ├── [id].vue            # Recipe detail
+│   │   │   │   └── index.vue           # (placeholder, recipes.vue used)
+│   │   ├── components/
+│   │   │   ├── dashboard/
+│   │   │   │   ├── DashboardStatCard.vue
+│   │   │   │   └── DashboardPanel.vue
+│   │   │   ├── inventory/
+│   │   │   ├── recipes/
+│   │   │   │   ├── AddRecipeForm.vue   # Legacy form (deprecated)
+│   │   │   │   ├── AddRecipeModal.vue  # Add recipe wizard
+│   │   │   │   └── RecipeCard.vue      # Recipe display component
+│   │   │   └── shared/
+│   │   │       ├── ErrorBanner.vue
+│   │   │       ├── SkeletonBlock.vue
+│   │   │       └── StaleIndicator.vue
 │   │   ├── composables/
 │   │   │   ├── useDashboard.ts        # Dashboard composable with 30s polling
 │   │   │   ├── usePollingFetch.ts     # Generic polling composable

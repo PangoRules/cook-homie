@@ -74,3 +74,10 @@ nunit-*.xml
 
 # superpowers
 .superpowers/
+
+# graphify — keep graph.json, graph.html, GRAPH_REPORT.md; ignore build artifacts
+graphify-out/cache/
+graphify-out/cost.json
+graphify-out/manifest.json
+graphify-out/.graphify_python
+graphify-out/.graphify_root

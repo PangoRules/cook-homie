@@ -12,7 +12,11 @@ describe("AddRecipeModal", () => {
 
     const wrapper = mount(AddRecipeModal, { global: { stubs: { Teleport: false } } });
     await wrapper.find('input[placeholder*="Banana"]').setValue("Test Recipe");
-    await wrapper.find("form").trigger("submit");
+    await wrapper.find('textarea[placeholder*="Step by step"]').setValue("Step 1: ...\nStep 2: ...");
+    // Use nextTick to ensure DOM updates happen
+    await wrapper.find("button[type='submit']").trigger("click");
+    // Wait a bit more to ensure async operations complete
+    await new Promise(resolve => setTimeout(resolve, 10));
     expect(wrapper.emitted("added")).toBeTruthy();
   });
 });

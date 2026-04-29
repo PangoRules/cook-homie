@@ -48,41 +48,79 @@
 
 <script setup lang="ts">
 import { ref, reactive } from "vue";
-import type { AddRecipePayload } from "~/types";
+import { useToast } from "@/composables/useToast";
 
 const emit = defineEmits(["added", "close"]);
 
-const form = reactive<AddRecipePayload>({
+const form = reactive({
   name: "",
-  instructions: "",
   prepMinutes: 0,
   cookMinutes: 0,
-  tags: []
+  instructions: "",
+  tags: [] as string[],
 });
 
 const tagsInput = ref("");
-const errors = reactive({ name: "", instructions: "" });
+const errors = reactive({
+  name: "",
+  instructions: "",
+});
+
 const submitting = ref(false);
-const { pushSuccess, pushError } = useToast();
 
 const validate = () => {
+  let isValid = true;
+  if (!form.name.trim()) {
+    errors.name = "Recipe name is required";
+    isValid = false;
+  } else {
+    errors.name = "";
+  }
+
+  if (!form.instructions.trim()) {
+    errors.instructions = "Instructions are required";
+    isValid = false;
+  } else {
+    errors.instructions = "";
+  }
+
+  return isValid;
+};
+
+const resetForm = () => {
+  form.name = "";
+  form.prepMinutes = 0;
+  form.cookMinutes = 0;
+  form.instructions = "";
+  tagsInput.value = "";
   errors.name = "";
   errors.instructions = "";
-  if (!form.name.trim()) errors.name = "Name is required";
-  if (!form.instructions.trim()) errors.instructions = "Instructions are required";
-  return !errors.name && !errors.instructions;
 };
 
 const handleSubmit = async () => {
   if (!validate()) return;
+
   submitting.value = true;
+
   try {
-    form.tags = tagsInput.value.split(",").map(t => t.trim()).filter(Boolean);
-    const created = await $fetch("/api/recipes", { method: "POST", body: form });
-    emit("added", created);
-    pushSuccess(`"${form.name}" added!`);
-  } catch (err) {
-    pushError(err instanceof Error ? err : new Error("Failed to add recipe"));
+    const toast = useToast();
+    const response = await $fetch("/api/recipes", {
+      method: "POST",
+      body: {
+        ...form,
+        tags: tagsInput.value
+          .split(",")
+          .map((tag) => tag.trim())
+          .filter((tag) => tag.length > 0),
+      },
+    });
+
+    emit("added", response);
+    resetForm();
+    toast.pushSuccess("Recipe added successfully!");
+  } catch (error) {
+    const toast = useToast();
+    toast.pushError("Failed to add recipe");
   } finally {
     submitting.value = false;
   }
@@ -92,83 +130,128 @@ const handleSubmit = async () => {
 <style scoped>
 .modal-backdrop {
   position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.4);
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
   display: flex;
-  align-items: center;
   justify-content: center;
-  z-index: 100;
+  align-items: center;
+  z-index: 1000;
 }
 
 .modal {
-  background: var(--color-surface);
-  border-radius: var(--radius-lg);
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   width: 90%;
-  max-width: 480px;
-  box-shadow: var(--shadow-lg);
-  overflow: hidden;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto;
 }
 
 .modal__header {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #eee;
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  padding: var(--space-4) var(--space-5);
-  border-bottom: 1px solid var(--color-border);
+  align-items: center;
 }
 
 .modal__title {
   font-family: var(--font-display);
-  font-size: 18px;
-  font-weight: 600;
+  font-size: 1.25rem;
   margin: 0;
 }
 
-.modal__close { background: none; border: none; font-size: 22px; cursor: pointer; color: var(--color-text-muted); }
-
-.modal__form { padding: var(--space-5); display: flex; flex-direction: column; gap: var(--space-4); }
-
-.field { display: flex; flex-direction: column; gap: var(--space-1); }
-.field__label { font-size: 13px; font-weight: 600; color: var(--color-text-secondary); }
-.field__input {
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  padding: var(--space-2) var(--space-3);
-  font-size: 14px;
-  font-family: var(--font-body);
-  background: var(--color-bg);
-  color: var(--color-text-primary);
-  width: 100%;
-  box-sizing: border-box;
+.modal__close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #666;
 }
-.field__input:focus { outline: none; border-color: var(--color-accent); }
-.field__error { font-size: 12px; color: var(--color-error); }
 
-.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+.modal__form {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
 
-.modal__actions { display: flex; justify-content: flex-end; gap: var(--space-3); margin-top: var(--space-2); }
+.field {
+  display: flex;
+  flex-direction: column;
+}
+
+.field__label {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  color: #333;
+}
+
+.field__input {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.field__input:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+.field__error {
+  color: #e74c3c;
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.modal__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid #eee;
+}
+
+.btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s;
+}
 
 .btn-primary {
-  background: var(--color-accent);
+  background-color: #007bff;
   color: white;
-  border: none;
-  border-radius: var(--radius-md);
-  padding: var(--space-2) var(--space-5);
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background var(--transition-fast);
 }
-.btn-primary:hover:not(:disabled) { background: var(--color-accent-hover); }
-.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-primary:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 
 .btn-secondary {
-  background: none;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  padding: var(--space-2) var(--space-5);
-  font-size: 14px;
-  cursor: pointer;
-  color: var(--color-text-secondary);
+  background-color: #6c757d;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background-color: #545b62;
 }
 </style>

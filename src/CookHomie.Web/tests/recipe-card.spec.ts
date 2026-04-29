@@ -9,7 +9,8 @@ describe("RecipeCard", () => {
     instructions: "Mix and cook.",
     prepMinutes: 5,
     cookMinutes: 10,
-    tags: ["breakfast"]
+    tags: ["breakfast"],
+    ingredients: []
   };
 
   it("renders recipe name", () => {

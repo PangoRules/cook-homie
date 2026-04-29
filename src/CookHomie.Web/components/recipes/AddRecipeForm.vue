@@ -67,7 +67,7 @@ const emit = defineEmits<{
   (e: "recipeAdded"): void;
 }>();
 
-const { loading, addRecipe } = useRecipes();
+const loading = ref(false);
 const { pushSuccess, pushError } = useToast();
 
 const submitForm = async () => {
@@ -77,7 +77,11 @@ const submitForm = async () => {
       return;
     }
 
-    await addRecipe(formData.value);
+    loading.value = true;
+    await $fetch<Recipe>("/api/recipes", {
+      method: "POST",
+      body: formData.value
+    });
     emit("recipeAdded");
     pushSuccess("Recipe added successfully!");
 
@@ -93,6 +97,8 @@ const submitForm = async () => {
   } catch (err) {
     pushError("Failed to add recipe");
     console.error(err);
+  } finally {
+    loading.value = false;
   }
 };
 </script>

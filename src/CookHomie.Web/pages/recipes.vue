@@ -2,19 +2,19 @@
   <div class="recipes-page">
     <h1>Recipes</h1>
 
-    <AddRecipeForm @recipe-added="handleRecipeAdded" />
+    <AddRecipeModal @added="handleRecipeAdded" />
 
     <div class="recipes-list">
       <SkeletonBlock v-if="loading && recipes.length === 0" :count="3" />
 
-      <ErrorBanner v-else-if="error" :message="error" @retry="loadRecipes" />
+      <ErrorBanner v-else-if="error" :message="error" @retry="refresh" />
 
       <div v-else-if="recipes.length === 0">
         <p>No recipes found. Add your first recipe using the form above.</p>
       </div>
 
       <div v-else>
-        <StaleIndicator v-if="isStale" @refresh="loadRecipes" />
+        <StaleIndicator v-if="isStale" @refresh="refresh" />
 
         <div class="recipes-grid">
           <RecipeCard v-for="recipe in recipes" :key="recipe.id" :recipe="recipe" />
@@ -25,34 +25,38 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from "vue";
+import { onMounted, onUnmounted } from "vue";
 import { useRecipes } from "@/composables/useRecipes";
 import { useToast } from "@/composables/useToast";
-import AddRecipeForm from "@/components/recipes/AddRecipeForm.vue";
+import AddRecipeModal from "@/components/recipes/AddRecipeModal.vue";
 import RecipeCard from "@/components/recipes/RecipeCard.vue";
 import SkeletonBlock from "@/components/shared/SkeletonBlock.vue";
 import ErrorBanner from "@/components/shared/ErrorBanner.vue";
 import StaleIndicator from "@/components/shared/StaleIndicator.vue";
 
-const { recipes, loading, error, isStale, loadRecipes, startPolling } = useRecipes();
+const { recipes, loading, error, isStale, start, stop, refresh } = useRecipes();
 const { pushError } = useToast();
 
 const handleRecipeAdded = () => {
   // This will trigger a refresh which will include the new recipe
-  loadRecipes().catch((err) => {
+  refresh().catch((err: unknown) => {
     pushError("Failed to refresh recipes after adding new one");
     console.error(err);
   });
 };
 
 onMounted(() => {
-  startPolling();
+  start();
 
   // Initial load
-  loadRecipes().catch((err) => {
+  refresh().catch((err: unknown) => {
     pushError("Failed to load recipes");
     console.error(err);
   });
+});
+
+onUnmounted(() => {
+  stop();
 });
 </script>
 

@@ -3,12 +3,10 @@ import { ref } from "vue";
 import { useRecipes } from "../composables/useRecipes";
 
 describe("useRecipes", () => {
-  beforeEach(() => {
-    vi.stubGlobal("useState", (_k: string, init: () => unknown) => ref(init()));
-  });
-
   it("fetches recipes from /api/recipes", async () => {
-    const mockRecipes = [{ id: "r1", name: "Pancakes", instructions: "Mix.", prepMinutes: 5, cookMinutes: 10, tags: [] }];
+    vi.stubGlobal("useState", (_k: string, init: () => unknown) => ref(init()));
+    
+    const mockRecipes = [{ id: "r1", name: "Pancakes", instructions: "Mix.", prepMinutes: 5, cookMinutes: 10, tags: [], ingredients: [] }];
     vi.stubGlobal("$fetch", vi.fn().mockResolvedValue(mockRecipes));
 
     const { recipes, start } = useRecipes();

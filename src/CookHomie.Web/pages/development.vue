@@ -21,10 +21,10 @@
     <!-- Inventory tab -->
     <div v-if="activeTab === 'inventory'">
       <div class="flex gap-2 mb-5 flex-wrap">
-        <button :disabled="seeding" class="btn btn-primary" @click="seedInventory">Seed Inventory</button>
-        <button class="btn btn-secondary" @click="refreshInventory">Refresh</button>
-        <button :disabled="inventoryPolling" class="btn btn-secondary" @click="startInventoryPolling">Start Polling</button>
-        <button :disabled="!inventoryPolling" class="btn btn-secondary" @click="stopInventoryPolling">Stop Polling</button>
+        <SharedButton :disabled="seeding" @click="seedInventory">Seed Inventory</SharedButton>
+        <SharedButton variant="secondary" @click="refreshInventory">Refresh</SharedButton>
+        <SharedButton variant="secondary" :disabled="inventoryPolling" @click="startInventoryPolling">Start Polling</SharedButton>
+        <SharedButton variant="secondary" :disabled="!inventoryPolling" @click="stopInventoryPolling">Stop Polling</SharedButton>
       </div>
 
       <form class="flex flex-col gap-3 mb-5 max-w-sm" @submit.prevent="addItem">
@@ -36,7 +36,7 @@
         </select>
         <input v-model="newItem.category" class="input" placeholder="Category" />
         <input v-model="newItem.expiresAt" type="date" class="input" placeholder="Expiry date" />
-        <button type="submit" class="btn btn-primary">Add Item</button>
+        <SharedButton type="submit">Add Item</SharedButton>
       </form>
 
       <div v-if="loading" class="flex flex-col gap-2">
@@ -72,8 +72,8 @@
           <p class="text-sm text-text-secondary m-0">Polling interval: {{ pollingInterval }}ms</p>
         </div>
         <div class="flex gap-2">
-          <button :disabled="pollingActive" class="btn btn-primary" @click="startPollingData">Start Polling</button>
-          <button :disabled="!pollingActive" class="btn btn-secondary" @click="stopPollingData">Stop Polling</button>
+          <SharedButton :disabled="pollingActive" @click="startPollingData">Start Polling</SharedButton>
+          <SharedButton variant="secondary" :disabled="!pollingActive" @click="stopPollingData">Stop Polling</SharedButton>
         </div>
       </div>
 

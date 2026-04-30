@@ -2,7 +2,7 @@
   <div class="max-w-[960px] mx-auto p-6">
     <header class="flex items-center justify-between mb-6 max-sm:flex-col max-sm:items-start max-sm:gap-3">
       <h1 class="font-display text-[28px] font-bold">Recipes</h1>
-      <button class="btn btn-primary" @click="showModal = true">+ Add Recipe</button>
+      <SharedButton @click="showModal = true">+ Add Recipe</SharedButton>
     </header>
 
     <DashboardPanel

@@ -1,36 +1,31 @@
 <template>
   <div class="bg-surface p-5 rounded-lg shadow-sm mb-5">
     <h2 class="text-text-primary mt-0 mb-4">Add New Recipe</h2>
-    <form @submit.prevent="submitForm">
-      <div class="mb-4">
-        <label class="block mb-1 text-sm font-semibold text-text-secondary" for="name">Recipe Name *</label>
+    <form class="flex flex-col gap-4" @submit.prevent="submitForm">
+      <SharedFormField label="Recipe Name" required>
         <input id="name" v-model="formData.name" type="text" class="input" required />
-      </div>
+      </SharedFormField>
 
-      <div class="flex gap-4 mb-4 max-sm:flex-col max-sm:gap-0">
-        <div class="flex-1 mb-4">
-          <label class="block mb-1 text-sm font-semibold text-text-secondary" for="prepMinutes">Prep Time (minutes)</label>
+      <div class="flex gap-4 max-sm:flex-col">
+        <SharedFormField label="Prep Time (minutes)" class="flex-1">
           <input id="prepMinutes" v-model.number="formData.prepMinutes" type="number" min="0" class="input" />
-        </div>
-        <div class="flex-1 mb-4">
-          <label class="block mb-1 text-sm font-semibold text-text-secondary" for="cookMinutes">Cook Time (minutes)</label>
+        </SharedFormField>
+        <SharedFormField label="Cook Time (minutes)" class="flex-1">
           <input id="cookMinutes" v-model.number="formData.cookMinutes" type="number" min="0" class="input" />
-        </div>
+        </SharedFormField>
       </div>
 
-      <div class="mb-4">
-        <label class="block mb-1 text-sm font-semibold text-text-secondary" for="tags">Tags (comma separated)</label>
+      <SharedFormField label="Tags (comma separated)">
         <input id="tags" v-model="tagsInput" type="text" class="input" placeholder="e.g. dinner, quick, healthy" />
-      </div>
+      </SharedFormField>
 
-      <div class="mb-4">
-        <label class="block mb-1 text-sm font-semibold text-text-secondary" for="instructions">Instructions *</label>
+      <SharedFormField label="Instructions" required>
         <textarea id="instructions" v-model="formData.instructions" class="input" required rows="4" />
-      </div>
+      </SharedFormField>
 
-      <button type="submit" :disabled="loading" class="btn btn-primary">
+      <SharedButton type="submit" :disabled="loading">
         {{ loading ? "Adding..." : "Add Recipe" }}
-      </button>
+      </SharedButton>
     </form>
   </div>
 </template>

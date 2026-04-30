@@ -1,15 +1,42 @@
-import { describe, expect, it, vi } from "vitest";
 import { mount } from "@vue/test-utils";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import AddRecipeModal from "../components/recipes/AddRecipeModal.vue";
 
-describe("AddRecipeModal", () => {
-  it("emits added event with form data on submit", async () => {
-    vi.stubGlobal("useToast", () => ({
-      pushSuccess: vi.fn(),
-      pushError: vi.fn(),
-    }));
+vi.mock("@/composables/useToast", () => ({
+  useToast: () => ({
+    pushSuccess: vi.fn(),
+    pushError: vi.fn(),
+  }),
+}));
 
-    vi.stubGlobal("$fetch", vi.fn().mockResolvedValue({ id: "test-id" }));
+describe("AddRecipeModal", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("validates form and shows error for empty name", async () => {
+    const wrapper = mount(AddRecipeModal, {
+      global: {
+        stubs: {
+          SharedModal: { template: '<div class="stub-modal"><slot /><slot name="footer" /></div>' },
+          SharedFormField: { template: '<div class="stub-field"><slot /></div>', props: ['label', 'error', 'required'] },
+          SharedButton: { template: '<button class="stub-button"><slot /></button>', props: ['variant', 'disabled'] },
+          Teleport: true,
+        }
+      }
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const vm = wrapper.vm as any;
+    const result = vm.validate();
+
+    expect(result).toBe(false);
+    expect(vm.errors.name).toBe("Recipe name is required");
+  });
+
+  it("emits added event when form is valid", async () => {
+    const $fetchMock = vi.fn().mockResolvedValue({ id: "test-id" });
+    vi.stubGlobal("$fetch", $fetchMock);
 
     const wrapper = mount(AddRecipeModal, {
       global: {
@@ -19,18 +46,20 @@ describe("AddRecipeModal", () => {
           SharedButton: { template: '<button class="stub-button"><slot /></button>', props: ['variant', 'disabled'] },
           Teleport: true,
         },
-        mocks: {
-          useRouter: () => ({ push: vi.fn() }),
-          $fetch: vi.fn().mockResolvedValue({ id: "test-id" }),
-        }
       }
     });
 
-    await wrapper.find('input[placeholder*="Banana"]').setValue("Test Recipe");
-    // Find the submit button directly by its text content
-    const submitButton = wrapper.find("button:contains('Add Recipe')");
-    await submitButton.trigger("click");
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const vm = wrapper.vm as any;
+    vm.form.name = "Test Recipe";
+    vm.form.instructions = "Test instructions";
+    await wrapper.vm.$nextTick();
 
+    expect(vm.validate()).toBe(true);
+    await vm.handleSubmit();
+    await wrapper.vm.$nextTick();
+
+    expect($fetchMock).toHaveBeenCalled();
     expect(wrapper.emitted("added")).toBeTruthy();
   });
 });

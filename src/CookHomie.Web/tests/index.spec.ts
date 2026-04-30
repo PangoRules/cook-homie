@@ -24,8 +24,14 @@ describe("index page", () => {
     const wrapper = mount(IndexPage, {
       global: {
         stubs: {
-          DashboardStatCard: { template: '<div><slot /></div>' },
-          DashboardPanel: { template: '<div><slot /></div>' },
+          DashboardStatCard: { 
+            template: '<div class="stat-card"><span>{{ label }}</span></div>', 
+            props: ['label', 'value', 'sub', 'variant'] 
+          },
+          DashboardPanel: { 
+            template: '<div class="panel"><h2>{{ title }}</h2><slot /></div>', 
+            props: ['title', 'loading', 'error', 'isStale', 'hasData', 'showRefresh'] 
+          },
         }
       }
     });
@@ -50,8 +56,14 @@ describe("index page", () => {
     const wrapper = mount(IndexPage, {
       global: {
         stubs: {
-          DashboardStatCard: { template: '<div><slot /></div>' },
-          DashboardPanel: { template: '<div><slot /></div>' },
+          DashboardStatCard: { 
+            template: '<div class="stat-card"><span>{{ label }}</span></div>', 
+            props: ['label', 'value', 'sub', 'variant'] 
+          },
+          DashboardPanel: { 
+            template: '<div class="panel"><h2>{{ title }}</h2><slot /></div>', 
+            props: ['title', 'loading', 'error', 'isStale', 'hasData', 'showRefresh'] 
+          },
         }
       }
     });
@@ -73,8 +85,14 @@ describe("index page", () => {
     const wrapper = mount(IndexPage, {
       global: {
         stubs: {
-          DashboardStatCard: { template: '<div><slot /></div>' },
-          DashboardPanel: { template: '<div><slot /></div>' },
+          DashboardStatCard: { 
+            template: '<div class="stat-card"><span>{{ label }}</span></div>', 
+            props: ['label', 'value', 'sub', 'variant'] 
+          },
+          DashboardPanel: { 
+            template: '<div class="panel"><h2>{{ title }}</h2><slot /></div>', 
+            props: ['title', 'loading', 'error', 'isStale', 'hasData', 'showRefresh'] 
+          },
         }
       }
     });

@@ -66,6 +66,8 @@
 </template>
 
 <script setup lang="ts">
+import { computed, onMounted, onUnmounted } from "vue";
+
 const { data, loading, error, isStale, start, stop, refresh } = useDashboard();
 
 const hasData = computed(() => data.value !== null);

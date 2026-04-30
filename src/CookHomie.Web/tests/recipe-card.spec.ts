@@ -15,12 +15,13 @@ describe("RecipeCard", () => {
 
   it("renders recipe name", () => {
     const wrapper = mount(RecipeCard, { props: { recipe } });
-    expect(wrapper.find(".recipe-card__name").text()).toBe("Pancakes");
+    expect(wrapper.find("h3").text()).toBe("Pancakes");
   });
 
   it("renders tags", () => {
     const wrapper = mount(RecipeCard, { props: { recipe } });
-    expect(wrapper.find(".tag").text()).toBe("breakfast");
+    expect(wrapper.findAll("span").length).toBe(1);
+    expect(wrapper.findAll("span")[0].text()).toBe("breakfast");
   });
 
   it("emits click with recipe id", async () => {

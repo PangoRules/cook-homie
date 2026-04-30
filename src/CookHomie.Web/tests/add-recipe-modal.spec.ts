@@ -4,19 +4,33 @@ import AddRecipeModal from "../components/recipes/AddRecipeModal.vue";
 
 describe("AddRecipeModal", () => {
   it("emits added event with form data on submit", async () => {
-    const mockUseToast = { pushSuccess: vi.fn(), pushError: vi.fn() };
-    const mockFetch = vi.fn().mockResolvedValue({ id: "new", name: "Test" });
-    
-    vi.stubGlobal("useToast", () => mockUseToast);
-    vi.stubGlobal("$fetch", mockFetch);
+    vi.stubGlobal("useToast", () => ({
+      pushSuccess: vi.fn(),
+      pushError: vi.fn(),
+    }));
 
-    const wrapper = mount(AddRecipeModal, { global: { stubs: { Teleport: false } } });
+    vi.stubGlobal("$fetch", vi.fn().mockResolvedValue({ id: "test-id" }));
+
+    const wrapper = mount(AddRecipeModal, {
+      global: {
+        stubs: {
+          SharedModal: { template: '<div class="stub-modal"><slot /><slot name="footer" /></div>' },
+          SharedFormField: { template: '<div class="stub-field"><slot /></div>', props: ['label', 'error', 'required'] },
+          SharedButton: { template: '<button class="stub-button"><slot /></button>', props: ['variant', 'disabled'] },
+          Teleport: true,
+        },
+        mocks: {
+          useRouter: () => ({ push: vi.fn() }),
+          $fetch: vi.fn().mockResolvedValue({ id: "test-id" }),
+        }
+      }
+    });
+
     await wrapper.find('input[placeholder*="Banana"]').setValue("Test Recipe");
-    await wrapper.find('textarea[placeholder*="Step by step"]').setValue("Step 1: ...\nStep 2: ...");
-    // Use nextTick to ensure DOM updates happen
-    await wrapper.find("button[type='submit']").trigger("click");
-    // Wait a bit more to ensure async operations complete
-    await new Promise(resolve => setTimeout(resolve, 10));
+    // Find the submit button directly by its text content
+    const submitButton = wrapper.find("button:contains('Add Recipe')");
+    await submitButton.trigger("click");
+
     expect(wrapper.emitted("added")).toBeTruthy();
   });
 });

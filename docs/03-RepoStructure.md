@@ -55,8 +55,11 @@ CookHomie/
 │   │   │   │   ├── AddRecipeModal.vue    → <RecipesAddRecipeModal />
 │   │   │   │   └── RecipeCard.vue        → <RecipesRecipeCard />
 │   │   │   └── shared/                # Auto-import: <SharedXxx />
+│   │   │       ├── Button.vue            → <SharedButton />
 │   │   │       ├── DevModeGuard.vue      → <SharedDevModeGuard />
 │   │   │       ├── ErrorBanner.vue       → <SharedErrorBanner />
+│   │   │       ├── FormField.vue         → <SharedFormField />
+│   │   │       ├── Modal.vue             → <SharedModal />
 │   │   │       ├── SkeletonBlock.vue     → <SharedSkeletonBlock />
 │   │   │       ├── StaleIndicator.vue    → <SharedStaleIndicator />
 │   │   │       └── ToastContainer.vue    → <SharedToastContainer />
@@ -112,8 +115,11 @@ shared/StaleIndicator.vue     →  <SharedStaleIndicator /> ✅ ("Shared" prefix
 
 | File | Use in templates as |
 |------|-------------------|
+| `shared/Button.vue` | `<SharedButton />` |
 | `shared/DevModeGuard.vue` | `<SharedDevModeGuard />` |
 | `shared/ErrorBanner.vue` | `<SharedErrorBanner />` |
+| `shared/FormField.vue` | `<SharedFormField />` |
+| `shared/Modal.vue` | `<SharedModal />` |
 | `shared/SkeletonBlock.vue` | `<SharedSkeletonBlock />` |
 | `shared/StaleIndicator.vue` | `<SharedStaleIndicator />` |
 | `shared/ToastContainer.vue` | `<SharedToastContainer />` |

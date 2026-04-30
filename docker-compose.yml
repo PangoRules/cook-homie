@@ -31,6 +31,7 @@ services:
       postgres:
         condition: service_healthy
   web:
+    profiles: [ui]
     volumes:
       - ./src/CookHomie.Web:/app
       - /app/.nuxt
@@ -47,6 +48,7 @@ services:
       - api
 
   mcp:
+    profiles: [ui]
     build:
       context: .
       dockerfile: docker/Dockerfile.mcp

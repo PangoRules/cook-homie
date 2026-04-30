@@ -42,25 +42,30 @@ CookHomie/
 │   │   │   ├── recipes/
 │   │   │   │   ├── [id].vue            # Recipe detail
 │   │   │   │   └── index.vue           # (placeholder, recipes.vue used)
+│   │   ├── assets/css/
+│   │   │   └── main.css               # Tailwind v4 entry: @theme tokens, @layer base/components
 │   │   ├── components/
-│   │   │   ├── dashboard/
-│   │   │   │   ├── DashboardStatCard.vue
-│   │   │   │   └── DashboardPanel.vue
-│   │   │   ├── inventory/
-│   │   │   ├── recipes/
-│   │   │   │   ├── AddRecipeForm.vue   # Legacy form (deprecated)
-│   │   │   │   ├── AddRecipeModal.vue  # Add recipe wizard
-│   │   │   │   └── RecipeCard.vue      # Recipe display component
-│   │   │   └── shared/
-│   │   │       ├── ErrorBanner.vue
-│   │   │       ├── SkeletonBlock.vue
-│   │   │       └── StaleIndicator.vue
+│   │   │   ├── dashboard/             # Auto-import: <DashboardXxx /> (prefix deduplicated)
+│   │   │   │   ├── DashboardStatCard.vue  → <DashboardStatCard />
+│   │   │   │   └── DashboardPanel.vue    → <DashboardPanel />
+│   │   │   ├── inventory/             # Auto-import: <InventoryXxx />
+│   │   │   │   └── AddItemModal.vue      → <InventoryAddItemModal />
+│   │   │   ├── recipes/               # Auto-import: <RecipesXxx />
+│   │   │   │   ├── AddRecipeForm.vue     → <RecipesAddRecipeForm />  (legacy, deprecated)
+│   │   │   │   ├── AddRecipeModal.vue    → <RecipesAddRecipeModal />
+│   │   │   │   └── RecipeCard.vue        → <RecipesRecipeCard />
+│   │   │   └── shared/                # Auto-import: <SharedXxx />
+│   │   │       ├── DevModeGuard.vue      → <SharedDevModeGuard />
+│   │   │       ├── ErrorBanner.vue       → <SharedErrorBanner />
+│   │   │       ├── SkeletonBlock.vue     → <SharedSkeletonBlock />
+│   │   │       ├── StaleIndicator.vue    → <SharedStaleIndicator />
+│   │   │       └── ToastContainer.vue    → <SharedToastContainer />
 │   │   ├── composables/
 │   │   │   ├── useDashboard.ts        # Dashboard composable with 30s polling
 │   │   │   ├── usePollingFetch.ts     # Generic polling composable
 │   │   │   └── useInventory.ts
 │   │   ├── layouts/
-│   │   │   └── default.vue            # Sidebar nav
+│   │   │   └── default.vue            # App shell: header nav + <slot> + toast
 │   │   ├── server/api/                # Nuxt proxy to C# API
 │   │   │   ├── inventory/index.get.ts
 │   │   │   ├── inventory/index.post.ts
@@ -87,6 +92,39 @@ CookHomie/
 ├── .env.example
 └── README.md
 ```
+
+## Nuxt Component Auto-Import Naming
+
+Nuxt generates component names from their path relative to `components/`:
+
+```
+components/<Folder>/<Name>.vue  →  <FolderName />
+```
+
+**Deduplication rule:** if the filename already starts with the folder name (case-insensitive), the folder prefix is dropped.
+
+```
+dashboard/DashboardPanel.vue  →  <DashboardPanel />      ✅ (not DashboardDashboardPanel)
+shared/StaleIndicator.vue     →  <SharedStaleIndicator /> ✅ ("Shared" prefix added)
+```
+
+### Full reference
+
+| File | Use in templates as |
+|------|-------------------|
+| `shared/DevModeGuard.vue` | `<SharedDevModeGuard />` |
+| `shared/ErrorBanner.vue` | `<SharedErrorBanner />` |
+| `shared/SkeletonBlock.vue` | `<SharedSkeletonBlock />` |
+| `shared/StaleIndicator.vue` | `<SharedStaleIndicator />` |
+| `shared/ToastContainer.vue` | `<SharedToastContainer />` |
+| `dashboard/DashboardPanel.vue` | `<DashboardPanel />` |
+| `dashboard/DashboardStatCard.vue` | `<DashboardStatCard />` |
+| `recipes/AddRecipeForm.vue` | `<RecipesAddRecipeForm />` |
+| `recipes/AddRecipeModal.vue` | `<RecipesAddRecipeModal />` |
+| `recipes/RecipeCard.vue` | `<RecipesRecipeCard />` |
+| `inventory/AddItemModal.vue` | `<InventoryAddItemModal />` |
+
+---
 
 ## API Endpoints Reference
 

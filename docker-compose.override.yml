@@ -1,9 +1,11 @@
 services:
   api:
+    build:
+      target: dev
     volumes:
       - ./src/CookHomie.Api:/src
     working_dir: /src/CookHomie.WebApi
-    command: ["dotnet", "run", "--project", "CookHomie.WebApi.csproj"]
+    command: ["dotnet", "run", "--project", "CookHomie.WebApi.csproj", "--no-launch-profile"]
 
   web:
     environment:

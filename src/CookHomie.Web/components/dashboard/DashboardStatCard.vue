@@ -1,14 +1,21 @@
 <template>
-  <div :class="['stat-card', variant]" @click="$emit('click')">
-    <div class="stat-card__label">{{ label }}</div>
-    <div class="stat-card__value">{{ displayValue }}</div>
-    <div v-if="sub" class="stat-card__sub">{{ sub }}</div>
+  <div
+    :class="[
+      'bg-surface border border-border rounded-lg p-5 shadow-sm cursor-pointer transition-all flex flex-col gap-1 hover:shadow-md hover:-translate-y-px',
+      variant === 'warning' && 'border-l-4 border-l-warning',
+      variant === 'success' && 'border-l-4 border-l-success',
+    ]"
+    @click="$emit('click')"
+  >
+    <div class="text-xs font-semibold uppercase tracking-[0.06em] text-text-secondary">{{ label }}</div>
+    <div class="text-[26px] sm:text-[32px] font-bold text-text-primary font-display leading-[1.1]">{{ displayValue }}</div>
+    <div v-if="sub" class="text-xs text-text-muted mt-1">{{ sub }}</div>
     <slot />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed } from 'vue';
 
 const props = defineProps<{
   label: string;
@@ -23,53 +30,3 @@ const displayValue = computed(() =>
   typeof props.value === "number" ? props.value.toLocaleString() : props.value
 );
 </script>
-
-<style scoped>
-.stat-card {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-5);
-  box-shadow: var(--shadow-sm);
-  cursor: pointer;
-  transition: box-shadow var(--transition-fast), transform var(--transition-fast);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-}
-
-.stat-card:hover {
-  box-shadow: var(--shadow-md);
-  transform: translateY(-1px);
-}
-
-.stat-card__label {
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--color-text-secondary);
-  font-family: var(--font-body);
-}
-
-.stat-card__value {
-  font-size: 32px;
-  font-weight: 700;
-  color: var(--color-text-primary);
-  font-family: var(--font-display);
-  line-height: 1.1;
-}
-
-.stat-card__sub {
-  font-size: 12px;
-  color: var(--color-text-muted);
-  margin-top: var(--space-1);
-}
-
-.stat-card.warning { border-left: 4px solid var(--color-warning); }
-.stat-card.success { border-left: 4px solid var(--color-success); }
-
-@media (max-width: 480px) {
-  .stat-card__value { font-size: 26px; }
-}
-</style>

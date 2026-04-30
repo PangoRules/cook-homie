@@ -1,5 +1,5 @@
 <template>
-  <div class="recipe-detail">
+  <div class="p-6">
     <h1>Recipe Detail</h1>
     <p>This is the recipe detail page.</p>
     <p>Recipe ID: {{ $route.params.id }}</p>
@@ -9,9 +9,3 @@
 <script setup>
 //
 </script>
-
-<style scoped>
-.recipe-detail {
-  padding: 20px;
-}
-</style>

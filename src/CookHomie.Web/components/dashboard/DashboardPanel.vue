@@ -1,17 +1,27 @@
 <template>
-  <section class="panel">
-    <header class="panel__header">
-      <h2 class="panel__title">{{ title }}</h2>
-      <button v-if="showRefresh" class="panel__refresh" @click="$emit('refresh')" :disabled="loading">
+  <section class="bg-surface border border-border rounded-lg overflow-hidden">
+    <header class="flex items-center justify-between px-5 py-4 border-b border-border">
+      <h2 class="font-display text-base font-semibold text-text-primary">{{ title }}</h2>
+      <button
+        v-if="showRefresh"
+        class="bg-transparent border border-border rounded-sm w-7 h-7 cursor-pointer text-text-secondary flex items-center justify-center transition-all hover:bg-surface-hover hover:text-text-primary disabled:opacity-40 disabled:cursor-not-allowed"
+        :disabled="loading"
+        @click="$emit('refresh')"
+      >
         ↻
       </button>
     </header>
-    <div v-if="loading && !hasData" class="panel__loading">
-      <SkeletonBlock height="80px" />
+    <div v-if="loading && !hasData" class="p-5">
+      <SharedSkeletonBlock height="80px" />
     </div>
-    <ErrorBanner v-else-if="error && !hasData" :message="error" show-retry @retry="$emit('refresh')" />
-    <StaleIndicator v-else-if="isStale && hasData" @refresh="$emit('refresh')" />
-    <div v-show="!loading || hasData" class="panel__body">
+    <SharedErrorBanner
+      v-else-if="error && !hasData"
+      :message="error"
+      show-retry
+      @retry="$emit('refresh')"
+    />
+    <SharedStaleIndicator v-else-if="isStale && hasData" @refresh="$emit('refresh')" />
+    <div v-show="!loading || hasData" class="p-5">
       <slot />
     </div>
   </section>
@@ -28,51 +38,3 @@ defineProps<{
 }>();
 defineEmits(["refresh"]);
 </script>
-
-<style scoped>
-.panel {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-}
-
-.panel__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--space-4) var(--space-5);
-  border-bottom: 1px solid var(--color-border);
-}
-
-.panel__title {
-  font-family: var(--font-display);
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--color-text-primary);
-  margin: 0;
-}
-
-.panel__refresh {
-  background: none;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  width: 28px;
-  height: 28px;
-  cursor: pointer;
-  color: var(--color-text-secondary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all var(--transition-fast);
-}
-
-.panel__refresh:hover:not(:disabled) {
-  background: var(--color-surface-hover);
-  color: var(--color-text-primary);
-}
-
-.panel__refresh:disabled { opacity: 0.4; cursor: not-allowed; }
-
-.panel__loading, .panel__body { padding: var(--space-5); }
-</style>

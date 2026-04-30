@@ -59,6 +59,27 @@ Local-only, single user. API key or JWT added in v2 when exposing beyond localho
 ### Nuxt server/api proxy
 Nuxt routes frontend requests through its own `server/api/` layer to the C# API. Avoids CORS issues in local dev and keeps the API base URL in one place.
 
+### Frontend styling — Tailwind v4
+Styling uses Tailwind CSS v4 via `@tailwindcss/vite`. A single file (`assets/css/main.css`) owns the entire style layer:
+
+- **`@import "tailwindcss"`** — Tailwind base, preflight, and utility generation.
+- **`@theme {}`** — custom design tokens: the "Calm Utility" color palette, `font-display`/`font-body`/`font-mono`, and border radii. These generate first-class utilities (`bg-accent`, `text-text-primary`, `font-display`, `rounded-md`, etc.). Spacing, shadows, and sizing use Tailwind defaults.
+- **`@layer base {}`** — global element resets and typography defaults.
+- **`@layer components {}`** — shared multi-element classes: `.btn`, `.btn-primary`, `.btn-secondary`, `.card`, `.input`, `.skeleton`. Used in templates via class attribute; no scoped `<style>` blocks exist in any component.
+
+No `tailwind.config.js` is used — Tailwind v4 is fully CSS-first.
+
+### Nuxt component auto-import naming
+Nuxt auto-imports all components from `components/` using their folder path as a prefix:
+
+```
+components/<Folder>/<Name>.vue → <FolderName />
+```
+
+**Exception (deduplication):** if the filename already starts with the folder name, the prefix is dropped — `dashboard/DashboardPanel.vue` → `<DashboardPanel />` not `<DashboardDashboardPanel />`.
+
+See `03-RepoStructure.md` for the full reference table.
+
 ## Service Ports (local dev)
 
 | Service | Port |

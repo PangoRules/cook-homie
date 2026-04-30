@@ -1,0 +1,109 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono&family=DM+Sans:wght@400;500;600;700&family=Literata:wght@400;600;700&display=swap');
+
+/* ─── Design tokens ──────────────────────────────────────── */
+@theme {
+  /* Colors — "Calm Utility" palette */
+  --color-bg:             #fafaf8;
+  --color-surface:        #ffffff;
+  --color-surface-hover:  #f5f4f0;
+  --color-border:         #e8e6e1;
+  --color-border-strong:  #ccc9c3;
+  --color-text-primary:   #1a1918;
+  --color-text-secondary: #6b6860;
+  --color-text-muted:     #9c9991;
+  --color-accent:         #c8602a;
+  --color-accent-hover:   #b5541f;
+  --color-accent-subtle:  #fdf0e9;
+  --color-success:        #3d7a4f;
+  --color-success-subtle: #edf5f0;
+  --color-warning:        #a06723;
+  --color-warning-subtle: #fff3e0;
+  --color-error:          #b83232;
+  --color-error-subtle:   #fef2f2;
+  --color-info:           #2563a8;
+  --color-info-subtle:    #eff6ff;
+
+  /* Fonts */
+  --font-display: "Literata", Georgia, serif;
+  --font-body:    "DM Sans", system-ui, sans-serif;
+  --font-mono:    "DM Mono", monospace;
+
+  /* Border radius (preserved — softer than Tailwind defaults) */
+  --radius-sm:   6px;
+  --radius-md:   10px;
+  --radius-lg:   16px;
+  --radius-full: 9999px;
+
+  /* Shimmer animation for skeleton loader */
+  --animate-shimmer: shimmer 1.4s ease infinite;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ─── Base layer ─────────────────────────────────────────── */
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html  { @apply scroll-smooth antialiased text-base; }
+  body  { @apply font-body bg-bg text-text-primary leading-normal m-0; }
+
+  h1, h2, h3, h4, h5, h6 { @apply font-display leading-tight m-0; }
+
+  a    { @apply text-accent; }
+  img  { @apply max-w-full; }
+  button, input, textarea, select { @apply font-body; }
+}
+
+/* ─── Shared component classes ───────────────────────────── */
+@layer components {
+  .card {
+    @apply bg-surface border border-border rounded-lg shadow-sm;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2
+           rounded-md px-5 py-2 text-sm font-semibold
+           cursor-pointer transition-all border-0;
+  }
+  .btn-primary {
+    @apply bg-accent text-white
+           hover:bg-accent-hover
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-secondary {
+    @apply bg-transparent border border-border text-text-secondary
+           hover:bg-surface-hover;
+  }
+
+  .input {
+    @apply w-full border border-border rounded-md px-3 py-2
+           text-sm bg-bg text-text-primary
+           transition-colors outline-none focus:border-accent;
+  }
+
+  /* Skeleton shimmer block */
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      var(--color-border) 25%,
+      var(--color-surface-hover) 50%,
+      var(--color-border) 75%
+    );
+    background-size: 200% 100%;
+    @apply animate-shimmer rounded-md;
+  }
+
+  /* Toast transition (Vue TransitionGroup name="toast") */
+  .toast-enter-active,
+  .toast-leave-active {
+    @apply transition-all duration-200;
+  }
+  .toast-enter-from,
+  .toast-leave-to {
+    @apply opacity-0 translate-x-5;
+  }
+}

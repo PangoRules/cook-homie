@@ -14,6 +14,12 @@ COPY src/CookHomie.Api/CookHomie.Infrastructure/ ./CookHomie.Infrastructure/
 COPY src/CookHomie.Api/CookHomie.Domain/ ./CookHomie.Domain/
 RUN dotnet publish ./CookHomie.WebApi/CookHomie.WebApi.csproj -c Release -f net10.0 -p:TargetFramework=net10.0 --no-restore -o /app/publish
 
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS dev
+
+WORKDIR /src
+
+EXPOSE 5000
+
 FROM mcr.microsoft.com/dotnet/aspnet:10.0
 
 WORKDIR /app

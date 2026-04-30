@@ -2,7 +2,7 @@ import type { Recipe } from "~/types";
 
 export const useRecipes = () => {
   const recipes = useState<Recipe[]>("recipes", () => []);
-  const loading = useState("recipes-loading", () => false);
+  const loading = useState("recipes-loading", () => true);
   const error = useState<string | null>("recipes-error", () => null);
   const isStale = useState("recipes-stale", () => false);
 
@@ -22,9 +22,18 @@ export const useRecipes = () => {
     }
   };
 
-  const start = () => { fetchRecipes(); intervalId = setInterval(fetchRecipes, 30000); };
-  const stop = () => { if (intervalId) { clearInterval(intervalId); intervalId = null; } };
+  const start = () => {
+    fetchRecipes();
+    intervalId = setInterval(fetchRecipes, 30000);
+  };
+  const stop = () => {
+    if (intervalId) {
+      clearInterval(intervalId);
+      intervalId = null;
+    }
+  };
   const refresh = () => fetchRecipes();
 
   return { recipes, loading, error, isStale, start, stop, refresh };
 };
+

@@ -16,7 +16,9 @@
 
       <div v-else>
         <SharedStaleIndicator v-if="isStale" @refresh="refresh" />
-        <div class="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-5 mt-5 max-sm:grid-cols-1">
+        <div
+          class="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-5 mt-5 max-sm:grid-cols-1"
+        >
           <RecipesRecipeCard v-for="recipe in recipes" :key="recipe.id" :recipe="recipe" />
         </div>
       </div>
@@ -45,10 +47,6 @@ const handleRecipeAdded = () => {
 
 onMounted(() => {
   start();
-  refresh().catch((err: unknown) => {
-    pushError("Failed to load recipes");
-    console.error(err);
-  });
 });
 
 onUnmounted(() => stop());

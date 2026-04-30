@@ -81,3 +81,6 @@ graphify-out/cost.json
 graphify-out/manifest.json
 graphify-out/.graphify_python
 graphify-out/.graphify_root
+
+# local override for development
+docker-compose.override.yml

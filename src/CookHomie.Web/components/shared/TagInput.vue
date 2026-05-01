@@ -18,7 +18,7 @@
         {{ tag }}
         <button
           type="button"
-          class="leading-none text-current opacity-60 hover:opacity-100"
+          class="leading-none text-lg opacity-50 hover:opacity-100"
           @click="removeTag(index)"
         >
           ×
@@ -60,4 +60,3 @@ const removeTag = (index: number) => {
   emit("update:modelValue", updated);
 };
 </script>
-

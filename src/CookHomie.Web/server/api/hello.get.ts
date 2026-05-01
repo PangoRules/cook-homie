@@ -1,9 +1,8 @@
-export default defineEventHandler(async (_event) => {
+export default defineEventHandler(async (_event): Promise<{ message: string }> => {
   const config = useRuntimeConfig();
 
-  return await $fetch("/api/hello", {
+  return await $fetch<{ message: string }>("/api/hello", {
     baseURL: config.apiBaseUrl,
-    method: "GET",
     headers: {
       Accept: "application/json",
     },

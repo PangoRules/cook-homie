@@ -11,7 +11,7 @@
       {{ label }}
     </div>
     <div v-if="loading" class="p-5">
-      <SharedSkeletonBlock height="h-5" />
+      <SharedSkeletonBlock class="h-5" />
     </div>
     <div
       v-else

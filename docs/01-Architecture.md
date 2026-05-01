@@ -69,6 +69,8 @@ Styling uses Tailwind CSS v4 via `@tailwindcss/vite`. A single file (`assets/css
 
 No `tailwind.config.js` is used — Tailwind v4 is fully CSS-first.
 
+The wiring happens in `nuxt.config.ts`: the `@tailwindcss/vite` plugin (line 26) processes `@import "tailwindcss"` directives at build time, and `css: ["~/assets/css/main.css"]` (line 34) includes the file globally in every page via Nuxt's built-in CSS pipeline.
+
 ### DRY
 All items must follow the principle. If a UI component uses more than 3 classes and it's used in 2 or more places across the UI, it must be extracted into a single shared component in `components/shared/` and used consistently everywhere. The same applies to all code layers — duplicated logic in MCP tools, C# application/infrastructure classes, or composables must be pulled into shared, reusable units rather than copy-pasted.
 

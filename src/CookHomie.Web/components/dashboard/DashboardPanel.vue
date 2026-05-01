@@ -12,7 +12,7 @@
       </button>
     </header>
     <div v-if="loading && !hasData" class="p-5">
-      <SharedSkeletonBlock height="80px" />
+      <SharedSkeletonBlock class="h-[80px]" />
     </div>
     <SharedErrorBanner
       v-else-if="error && !hasData"

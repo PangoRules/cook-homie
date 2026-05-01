@@ -1,7 +1,8 @@
 <template>
   <div
     class="skeleton"
-    :style="{ width, height, borderRadius: radius }"
+    :class="$attrs.class"
+    :style="{ borderRadius: radius }"
     aria-hidden="true"
   />
 </template>

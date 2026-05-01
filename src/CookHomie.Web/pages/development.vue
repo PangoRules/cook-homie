@@ -40,7 +40,7 @@
       </form>
 
       <div v-if="loading" class="flex flex-col gap-2">
-        <SharedSkeletonBlock v-for="i in 5" :key="i" height="40px" />
+        <SharedSkeletonBlock v-for="i in 5" :key="i" class="h-10" />
       </div>
       <SharedErrorBanner v-else-if="error" :message="error" />
       <p v-else-if="items.length === 0" class="text-text-muted text-sm">No items in inventory</p>
@@ -80,7 +80,7 @@
       <div>
         <h3 class="text-base font-semibold mb-3">Simulated Polling Data</h3>
         <div v-if="pollingLoading" class="flex flex-col gap-2">
-          <SharedSkeletonBlock v-for="i in 3" :key="i" height="40px" />
+          <SharedSkeletonBlock v-for="i in 3" :key="i" class="h-10" />
         </div>
         <SharedErrorBanner v-else-if="pollingError" :message="pollingError" :show-retry="true" @retry="refreshPollingData" />
         <div v-else-if="pollingData" class="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-4 mb-5">

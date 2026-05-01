@@ -5,18 +5,18 @@ import DashboardPanel from "../components/dashboard/DashboardPanel.vue";
 
 describe("DashboardStatCard", () => {
   it("renders label and value", () => {
-    const wrapper = mount(DashboardStatCard, { props: { label: "Expiring", value: 3 } });
+    const wrapper = mount(DashboardStatCard, { props: { label: "Expiring", value: 3, loading: false } });
     expect(wrapper.find(".font-semibold.uppercase").text()).toBe("Expiring");
     expect(wrapper.find(".text-\\[26px\\]").text()).toBe("3");
   });
 
   it("formats number values with locale", () => {
-    const wrapper = mount(DashboardStatCard, { props: { label: "Items", value: 1234 } });
+    const wrapper = mount(DashboardStatCard, { props: { label: "Items", value: 1234, loading: false } });
     expect(wrapper.find(".text-\\[26px\\]").text()).toBe("1,234");
   });
 
   it("applies warning variant class", () => {
-    const wrapper = mount(DashboardStatCard, { props: { label: "Warn", value: 5, variant: "warning" } });
+    const wrapper = mount(DashboardStatCard, { props: { label: "Warn", value: 5, variant: "warning", loading: false } });
     expect(wrapper.classes()).toContain("border-l-4");
     expect(wrapper.classes()).toContain("border-l-warning");
   });

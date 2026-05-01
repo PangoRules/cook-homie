@@ -6,7 +6,7 @@
     </header>
 
     <div class="mt-4">
-      <SharedSkeletonBlock v-if="loading && recipes.length === 0" height="120px" />
+      <SharedSkeletonBlock v-if="loading && recipes.length === 0" class="h-[120px]" />
 
       <SharedErrorBanner v-else-if="error" :message="error" @retry="refresh" />
 

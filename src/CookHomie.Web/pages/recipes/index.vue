@@ -15,7 +15,7 @@
       @refresh="refresh"
     >
       <div v-if="loading && recipes.length === 0" class="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-4">
-        <SharedSkeletonBlock v-for="i in 3" :key="i" height="120px" />
+        <SharedSkeletonBlock v-for="i in 3" :key="i" class="h-[120px]" />
       </div>
       <div v-else-if="error && recipes.length === 0">
         <SharedErrorBanner :message="error" show-retry @retry="refresh" />

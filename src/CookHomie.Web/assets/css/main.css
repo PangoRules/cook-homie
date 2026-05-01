@@ -119,4 +119,11 @@
   .toast-leave-to {
     @apply opacity-0 translate-x-5;
   }
+
+  /* Tag chip */
+  .tag-chip {
+    @apply bg-accent-subtle text-accent rounded-full px-3 py-1
+           text-[11px] font-semibold uppercase tracking-[0.05em]
+           inline-flex items-center gap-1;
+  }
 }

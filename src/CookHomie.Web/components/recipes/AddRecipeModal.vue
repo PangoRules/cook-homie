@@ -2,15 +2,15 @@
   <SharedModal title="Add Recipe" @close="$emit('close')">
     <form class="flex flex-col gap-4" @submit.prevent="handleSubmit">
       <SharedFormField label="Name" :error="errors.name" required>
-        <input v-model="form.name" class="input" placeholder="e.g. Banana Bread" />
+        <input v-model="form.name" class="input" placeholder="e.g. Banana Bread" >
       </SharedFormField>
 
       <div class="grid grid-cols-2 gap-4">
         <SharedFormField label="Prep (min)">
-          <input v-model.number="form.prepMinutes" type="number" min="0" class="input" />
+          <input v-model.number="form.prepMinutes" type="number" min="0" class="input" >
         </SharedFormField>
         <SharedFormField label="Cook (min)">
-          <input v-model.number="form.cookMinutes" type="number" min="0" class="input" />
+          <input v-model.number="form.cookMinutes" type="number" min="0" class="input" >
         </SharedFormField>
       </div>
 
@@ -18,8 +18,8 @@
         <textarea v-model="form.instructions" class="input" rows="4" placeholder="Step by step..." />
       </SharedFormField>
 
-      <SharedFormField label="Tags (comma separated)">
-        <input v-model="tagsInput" class="input" placeholder="quick, vegetarian" />
+      <SharedFormField label="Tags">
+        <SharedTagInput v-model="form.tags" placeholder="Type tag, press Enter" />
       </SharedFormField>
     </form>
 
@@ -46,7 +46,6 @@ const form = reactive({
   tags: [] as string[],
 });
 
-const tagsInput = ref("");
 const errors = reactive({ name: "", instructions: "" });
 const submitting = ref(false);
 
@@ -61,7 +60,7 @@ const validate = () => {
 
 const resetForm = () => {
   form.name = ""; form.prepMinutes = 0; form.cookMinutes = 0; form.instructions = "";
-  tagsInput.value = ""; errors.name = ""; errors.instructions = "";
+  form.tags = []; errors.name = ""; errors.instructions = "";
 };
 
 const handleSubmit = async () => {
@@ -71,10 +70,7 @@ const handleSubmit = async () => {
     const toast = useToast();
     const response = await $fetch("/api/recipes", {
       method: "POST",
-      body: {
-        ...form,
-        tags: tagsInput.value.split(",").map((t) => t.trim()).filter((t) => t.length > 0),
-      },
+      body: { ...form },
     });
     emit("added", response);
     resetForm();

@@ -1,7 +1,7 @@
 <template>
   <div>
     <form @submit.prevent="handleSubmit">
-      <input v-model="form.name" name="name" />
+      <input v-model="form.name" name="name" >
       <button type="submit" @click.prevent="handleSubmit">Add</button>
     </form>
   </div>

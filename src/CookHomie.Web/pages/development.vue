@@ -28,14 +28,14 @@
       </div>
 
       <form class="flex flex-col gap-3 mb-5 max-w-sm" @submit.prevent="addItem">
-        <input v-model="newItem.name" class="input" placeholder="Item name" required />
-        <input v-model="newItem.quantity" type="number" class="input" placeholder="Quantity" required />
+        <input v-model="newItem.name" class="input" placeholder="Item name" required >
+        <input v-model="newItem.quantity" type="number" class="input" placeholder="Quantity" required >
         <select v-model="newItem.unit" class="input" required>
           <option value="">Select unit</option>
           <option v-for="u in ['pieces','grams','kilograms','milliliters','liters','packages','boxes','cans']" :key="u" :value="u">{{ u }}</option>
         </select>
-        <input v-model="newItem.category" class="input" placeholder="Category" />
-        <input v-model="newItem.expiresAt" type="date" class="input" placeholder="Expiry date" />
+        <input v-model="newItem.category" class="input" placeholder="Category" >
+        <input v-model="newItem.expiresAt" type="date" class="input" placeholder="Expiry date" >
         <SharedButton type="submit">Add Item</SharedButton>
       </form>
 

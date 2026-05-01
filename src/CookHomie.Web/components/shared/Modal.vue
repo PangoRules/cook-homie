@@ -40,7 +40,9 @@ withDefaults(defineProps<{
   maxWidth?: string;
   maxHeight?: string;
 }>(), {
-  maxWidth: 'max-w-lg',
+  title: "",
+  maxWidth: "max-w-lg",
+  maxHeight: "",
 });
 
 defineEmits(['close']);

@@ -41,7 +41,6 @@ Nuxt deduplicates folder prefix when filename already starts with it. Reference 
 |------|-----------------|
 | `dashboard/DashboardPanel.vue` | `<DashboardPanel />` |
 | `dashboard/DashboardStatCard.vue` | `<DashboardStatCard />` |
-| `recipes/AddRecipeForm.vue` | `<RecipesAddRecipeForm />` |
 | `recipes/AddRecipeModal.vue` | `<RecipesAddRecipeModal />` |
 | `recipes/RecipeCard.vue` | `<RecipesRecipeCard />` |
 | `shared/*` | `<Shared* />` |

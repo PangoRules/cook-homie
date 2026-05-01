@@ -51,7 +51,6 @@ CookHomie/
 │   │   │   ├── inventory/             # Auto-import: <InventoryXxx />
 │   │   │   │   └── AddItemModal.vue      → <InventoryAddItemModal />
 │   │   │   ├── recipes/               # Auto-import: <RecipesXxx />
-│   │   │   │   ├── AddRecipeForm.vue     → <RecipesAddRecipeForm />  (legacy, deprecated)
 │   │   │   │   ├── AddRecipeModal.vue    → <RecipesAddRecipeModal />
 │   │   │   │   └── RecipeCard.vue        → <RecipesRecipeCard />
 │   │   │   └── shared/                # Auto-import: <SharedXxx />

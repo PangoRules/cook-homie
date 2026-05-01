@@ -26,6 +26,7 @@
 
 <script setup lang="ts">
 import { computed } from "vue";
+import { useLocale } from "~/composables/useLocale";
 
 const props = defineProps<{
   label: string;
@@ -37,7 +38,9 @@ const props = defineProps<{
 
 defineEmits(["click"]);
 
+const { formatNumber } = useLocale();
+
 const displayValue = computed(() =>
-  typeof props.value === "number" ? props.value.toLocaleString() : props.value
+  typeof props.value === "number" ? formatNumber(props.value) : props.value
 );
 </script>

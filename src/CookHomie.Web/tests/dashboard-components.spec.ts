@@ -1,7 +1,16 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { mount } from "@vue/test-utils";
 import DashboardStatCard from "../components/dashboard/DashboardStatCard.vue";
 import DashboardPanel from "../components/dashboard/DashboardPanel.vue";
+
+vi.mock("../composables/useLocale", () => ({
+  useLocale: () => ({
+    locale: { value: "en-US" },
+    setLocale: () => {},
+    formatNumber: (v: number | string) =>
+      typeof v === "number" ? v.toLocaleString("en-US") : v,
+  }),
+}));
 
 describe("DashboardStatCard", () => {
   it("renders label and value", () => {

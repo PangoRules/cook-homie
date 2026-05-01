@@ -1,10 +1,11 @@
 export default defineEventHandler(async (_event) => {
-  const response = await $fetch("http://api:5000/api/hello", {
+  const config = useRuntimeConfig();
+
+  return await $fetch("/api/hello", {
+    baseURL: config.apiBaseUrl,
     method: "GET",
     headers: {
       Accept: "application/json",
     },
   });
-
-  return response;
 });

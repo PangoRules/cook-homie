@@ -14,6 +14,7 @@
     <div class="grid grid-cols-3 gap-4 mb-6 max-md:grid-cols-1">
       <DashboardStatCard
         label="Expiring Soon"
+        :loading="loading"
         :value="data?.expiringCount ?? 0"
         sub="items within 3 days"
         :variant="(data?.expiringCount ?? 0) > 0 ? 'warning' : 'success'"
@@ -21,12 +22,14 @@
       />
       <DashboardStatCard
         label="Recipe Matches"
+        :loading="loading"
         :value="data?.recipeMatchCount ?? 0"
         sub="cookable from inventory"
         @click="navigateTo('/recipes')"
       />
       <DashboardStatCard
         label="Shopping List"
+        :loading="loading"
         :value="data?.shoppingCount ?? 0"
         sub="items pending"
         @click="navigateTo('/shopping')"
@@ -72,6 +75,6 @@ const { data, loading, error, isStale, start, stop, refresh } = useDashboard();
 
 const hasData = computed(() => data.value !== null);
 
-onMounted(() => start());
+onMounted(async () => await start());
 onUnmounted(() => stop());
 </script>

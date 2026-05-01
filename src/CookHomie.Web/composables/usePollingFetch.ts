@@ -10,14 +10,15 @@ export const usePollingFetch = <T>(
   const pollIntervalMs = options?.pollIntervalMs ?? 30000;
 
   const data = useState<T | null>(`poll-${url}`, () => null);
-  const loading = useState<boolean>(`poll-loading-${url}`, () => false);
+  const loading = useState<boolean>(`poll-loading-${url}`, () => true);
+  const hasFetched = useState<boolean>(`poll-fetched-${url}`, () => false);
   const error = useState<string | null>(`poll-error-${url}`, () => null);
   const isStale = useState<boolean>(`poll-stale-${url}`, () => false);
 
   let intervalId: ReturnType<typeof setInterval> | null = null;
 
   const fetchData = async () => {
-    if (loading.value) return;
+    if (loading.value && hasFetched.value) return;
     loading.value = true;
     error.value = null;
 
@@ -33,6 +34,7 @@ export const usePollingFetch = <T>(
       options?.onError?.(err instanceof Error ? err : new Error(msg));
     } finally {
       loading.value = false;
+      hasFetched.value = true;
     }
   };
 

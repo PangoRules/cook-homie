@@ -21,6 +21,7 @@ describe("AddRecipeModal", () => {
           SharedModal: { template: '<div class="stub-modal"><slot /><slot name="footer" /></div>' },
           SharedFormField: { template: '<div class="stub-field"><slot /></div>', props: ['label', 'error', 'required'] },
           SharedButton: { template: '<button class="stub-button"><slot /></button>', props: ['variant', 'disabled'] },
+          SharedTagInput: { template: '<input class="stub-tag-input" />' },
           Teleport: true,
         }
       }
@@ -44,6 +45,7 @@ describe("AddRecipeModal", () => {
           SharedModal: { template: '<div class="stub-modal"><slot /><slot name="footer" /></div>' },
           SharedFormField: { template: '<div class="stub-field"><slot /></div>', props: ['label', 'error', 'required'] },
           SharedButton: { template: '<button class="stub-button"><slot /></button>', props: ['variant', 'disabled'] },
+          SharedTagInput: { template: '<input class="stub-tag-input" />' },
           Teleport: true,
         },
       }

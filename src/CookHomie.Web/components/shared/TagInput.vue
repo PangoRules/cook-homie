@@ -8,7 +8,7 @@
         class="input flex-1 min-w-[160px]"
         :placeholder="placeholder"
         @keydown.enter.prevent="addTag"
-      />
+      >
       <SharedButton type="button" variant="secondary" @click="addTag"> + Add </SharedButton>
     </div>
 

@@ -21,7 +21,6 @@
     <!-- Inventory tab -->
     <div v-if="activeTab === 'inventory'">
       <div class="flex gap-2 mb-5 flex-wrap">
-        <SharedButton :disabled="seeding" @click="seedInventory">Seed Inventory</SharedButton>
         <SharedButton variant="secondary" @click="refreshInventory">Refresh</SharedButton>
         <SharedButton variant="secondary" :disabled="inventoryPolling" @click="startInventoryPolling">Start Polling</SharedButton>
         <SharedButton variant="secondary" :disabled="!inventoryPolling" @click="stopInventoryPolling">Stop Polling</SharedButton>
@@ -113,7 +112,6 @@ const activeTab = ref("inventory");
 const { items, loading, error, isStale, loadInventory, startPolling, stopPolling, refresh, addInventoryItem } = useInventory();
 const { pushSuccess, pushError } = useToast();
 
-const seeding = ref(false);
 const inventoryPolling = ref(false);
 const newItem = ref({ name: "", quantity: 1, unit: "", category: "", location: "", expiresAt: "" });
 
@@ -142,13 +140,6 @@ function formatTimestamp(timestamp: number) { return new Date(timestamp).toLocal
 function formatDate(dateString: string | null) { return dateString ? new Date(dateString).toLocaleDateString() : ""; }
 
 try { await loadInventory(); } catch { /* handled by composable */ }
-
-async function seedInventory() {
-  seeding.value = true;
-  try { await $fetch("/api/dev/inventory-seed", { method: "POST" }); await loadInventory(); pushSuccess("Inventory seeded successfully"); }
-  catch (err) { pushError("Failed to seed inventory"); console.error(err); }
-  finally { seeding.value = false; }
-}
 
 async function refreshInventory() {
   try { await refresh(); pushSuccess("Inventory refreshed"); }

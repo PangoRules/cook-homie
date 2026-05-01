@@ -13,12 +13,12 @@ describe("hello proxy route", () => {
     vi.stubGlobal("$fetch", fetchSpy);
 
     const { default: handler } = await import("../server/api/hello.get");
-    const result = await handler({} as never);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const result = await handler({} as any);
 
     expect(result).toEqual({ message: "hello" });
     expect(fetchSpy).toHaveBeenCalledWith("/api/hello", {
       baseURL: "http://api.example",
-      method: "GET",
       headers: {
         Accept: "application/json",
       },

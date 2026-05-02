@@ -2,7 +2,7 @@
   <div>
     <form @submit.prevent="handleSubmit">
       <input v-model="form.name" name="name" >
-      <button type="submit" @click.prevent="handleSubmit">Add</button>
+      <button type="submit">Add</button>
     </form>
   </div>
 </template>

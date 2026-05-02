@@ -49,6 +49,48 @@ src/
 - **No auth for MVP**: Single user, local-only
 - **Nuxt server/api proxy**: Avoids CORS in local development
 
+## Validation — MANDATORY Before Any PR
+
+Run these against whichever layer you touched. All must pass before signalling done or handing off to the git agent.
+
+### Frontend — `src/CookHomie.Web/`
+
+```bash
+cd src/CookHomie.Web
+
+npm run validate        # typecheck + lint + build in one shot (use this)
+
+# individually if you need to isolate a failure:
+npm run typecheck       # vue-tsc — catches type errors across .vue and .ts
+npm run lint            # eslint — catches style and correctness issues
+npm run build           # nuxt build — proves the app bundles without errors
+npm run test            # vitest — runs unit tests
+npm run format:check    # prettier — check formatting without fixing
+```
+
+### Backend — `src/CookHomie.Api/`
+
+```bash
+cd src/CookHomie.Api
+
+dotnet build CookHomie.sln          # compile — catches type and reference errors
+dotnet test CookHomie.sln           # run all test projects
+```
+
+### MCP Server — `src/CookHomie.MCP/`
+
+```bash
+cd src/CookHomie.MCP
+python -m py_compile server.py api_client.py   # syntax check
+```
+
+### Rules
+
+- Run only the layers you touched — no need to run all three for a frontend-only change.
+- If `npm run validate` fails, fix it before committing. Do not commit with known lint or type errors.
+- Test failures are blockers. Do not hand off to the git agent with failing tests.
+- `graphify-out/` is read-only — query it with `graphify query`, never modify or delete it.
+
 ## Documentation
 Full architecture, data model, and roadmap documentation in the `docs/` directory:
 - [[00-CookHomie]]

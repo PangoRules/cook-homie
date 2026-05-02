@@ -1,5 +1,5 @@
 <template>
-  <div class="shop">
+  <div class="p-6">
     <h1>Shopping List</h1>
     <p>This is the shopping list page.</p>
   </div>
@@ -8,9 +8,3 @@
 <script setup>
 //
 </script>
-
-<style scoped>
-.shop {
-  padding: 20px;
-}
-</style>

@@ -1,80 +1,62 @@
 <template>
-  <div class="recipes-page">
-    <h1>Recipes</h1>
+  <div class="p-6">
+    <header class="flex items-center justify-between mb-6">
+      <h1 class="font-display text-[28px] font-bold">Recipes</h1>
+      <SharedButton @click="showModal = true">+ Add Recipe</SharedButton>
+    </header>
 
-    <AddRecipeForm @recipe-added="handleRecipeAdded" />
+    <div class="mt-4">
+      <SharedSkeletonBlock v-if="loading && recipes.length === 0" class="h-[120px]" />
 
-    <div class="recipes-list">
-      <SkeletonBlock v-if="loading && recipes.length === 0" :count="3" />
+      <SharedErrorBanner v-else-if="error" :message="error" @retry="refresh" />
 
-      <ErrorBanner v-else-if="error" :message="error" @retry="loadRecipes" />
-
-      <div v-else-if="recipes.length === 0">
-        <p>No recipes found. Add your first recipe using the form above.</p>
-      </div>
+      <p v-else-if="recipes.length === 0" class="text-text-muted text-sm">
+        No recipes found. Add your first recipe!
+      </p>
 
       <div v-else>
-        <StaleIndicator v-if="isStale" @refresh="loadRecipes" />
-
-        <div class="recipes-grid">
-          <RecipeCard v-for="recipe in recipes" :key="recipe.id" :recipe="recipe" />
+        <SharedStaleIndicator v-if="isStale" @refresh="refresh" />
+        <div
+          class="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-5 mt-5 max-sm:grid-cols-1"
+        >
+          <RecipesRecipeCard v-for="recipe in recipes" :key="recipe.id" :recipe="recipe" />
         </div>
       </div>
     </div>
+
+    <RecipesAddRecipeModal v-if="showModal" @added="handleRecipeAdded" @close="onModalClose" />
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted } from "vue";
+import { onMounted, onUnmounted } from "vue";
 import { useRecipes } from "@/composables/useRecipes";
 import { useToast } from "@/composables/useToast";
-import AddRecipeForm from "@/components/recipes/AddRecipeForm.vue";
-import RecipeCard from "@/components/recipes/RecipeCard.vue";
-import SkeletonBlock from "@/components/shared/SkeletonBlock.vue";
-import ErrorBanner from "@/components/shared/ErrorBanner.vue";
-import StaleIndicator from "@/components/shared/StaleIndicator.vue";
 
-const { recipes, loading, error, isStale, loadRecipes, startPolling } = useRecipes();
+const { recipes, loading, error, isStale, start, stop, refresh } = useRecipes();
 const { pushError } = useToast();
+const showModal = ref(false);
+const closing = ref(false);
+
+const onModalClose = () => {
+  closing.value = true;
+  setTimeout(() => {
+    showModal.value = false;
+    closing.value = false;
+  }, 200);
+};
 
 const handleRecipeAdded = () => {
-  // This will trigger a refresh which will include the new recipe
-  loadRecipes().catch((err) => {
+  showModal.value = false;
+  refresh().catch((err: unknown) => {
     pushError("Failed to refresh recipes after adding new one");
     console.error(err);
   });
 };
 
 onMounted(() => {
-  startPolling();
-
-  // Initial load
-  loadRecipes().catch((err) => {
-    pushError("Failed to load recipes");
-    console.error(err);
-  });
+  start();
 });
+
+onUnmounted(() => stop());
 </script>
-
-<style scoped>
-.recipes-page {
-  padding: 20px;
-}
-
-.recipes-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 20px;
-  margin-top: 20px;
-}
-
-@media (max-width: 768px) {
-  .recipes-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .recipes-page {
-    padding: 10px;
-  }
-}
-</style>

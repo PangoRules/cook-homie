@@ -24,7 +24,7 @@ tags: [project, cookhomie, roadmap]
 - [x] DashboardStatCard and DashboardPanel components
 - [x] useDashboard composable with 30s polling
 - [x] Inventory page + AddItemModal
-- [ ] Recipes page + RecipeCard + AddRecipeModal
+- [x] Recipes page + RecipeCard + AddRecipeModal
 - [ ] Recipe detail page (ingredients with in-stock highlighting)
 - [x] Shopping list page skeleton
 

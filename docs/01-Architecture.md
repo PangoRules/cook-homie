@@ -59,6 +59,32 @@ Local-only, single user. API key or JWT added in v2 when exposing beyond localho
 ### Nuxt server/api proxy
 Nuxt routes frontend requests through its own `server/api/` layer to the C# API. Avoids CORS issues in local dev and keeps the API base URL in one place.
 
+### Frontend styling — Tailwind v4
+Styling uses Tailwind CSS v4 via `@tailwindcss/vite`. A single file (`assets/css/main.css`) owns the entire style layer:
+
+- **`@import "tailwindcss"`** — Tailwind base, preflight, and utility generation.
+- **`@theme {}`** — custom design tokens: the "Calm Utility" color palette, `font-display`/`font-body`/`font-mono`, and border radii. These generate first-class utilities (`bg-accent`, `text-text-primary`, `font-display`, `rounded-md`, etc.). Spacing, shadows, and sizing use Tailwind defaults.
+- **`@layer base {}`** — global element resets and typography defaults.
+- **`@layer components {}`** — shared multi-element classes: `.btn`, `.btn-primary`, `.btn-secondary`, `.card`, `.input`, `.skeleton`. Used in templates via class attribute; no scoped `<style>` blocks exist in any component.
+
+No `tailwind.config.js` is used — Tailwind v4 is fully CSS-first.
+
+The wiring happens in `nuxt.config.ts`: the `@tailwindcss/vite` plugin (line 26) processes `@import "tailwindcss"` directives at build time, and `css: ["~/assets/css/main.css"]` (line 34) includes the file globally in every page via Nuxt's built-in CSS pipeline.
+
+### DRY
+All items must follow the principle. If a UI component uses more than 3 classes and it's used in 2 or more places across the UI, it must be extracted into a single shared component in `components/shared/` and used consistently everywhere. The same applies to all code layers — duplicated logic in MCP tools, C# application/infrastructure classes, or composables must be pulled into shared, reusable units rather than copy-pasted.
+
+### Nuxt component auto-import naming
+Nuxt auto-imports all components from `components/` using their folder path as a prefix:
+
+```
+components/<Folder>/<Name>.vue → <FolderName />
+```
+
+**Exception (deduplication):** if the filename already starts with the folder name, the prefix is dropped — `dashboard/DashboardPanel.vue` → `<DashboardPanel />` not `<DashboardDashboardPanel />`.
+
+See `03-RepoStructure.md` for the full reference table.
+
 ## Service Ports (local dev)
 
 | Service | Port |

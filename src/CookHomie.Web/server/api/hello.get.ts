@@ -1,10 +1,10 @@
-export default defineEventHandler(async (_event) => {
-  const response = await $fetch("http://api:5000/api/hello", {
-    method: "GET",
+export default defineEventHandler(async (_event): Promise<{ message: string }> => {
+  const config = useRuntimeConfig();
+
+  return await $fetch<{ message: string }>("/api/hello", {
+    baseURL: config.apiBaseUrl,
     headers: {
       Accept: "application/json",
     },
   });
-
-  return response;
 });

@@ -22,46 +22,22 @@
 ```vue
 <!-- src/CookHomie.Web/components/recipes/detail/IngredientStockBadge.vue -->
 <template>
-  <span :class="['stock-badge', isInStock ? 'stock-badge--in' : 'stock-badge--out']">
-    <span class="stock-badge__dot" />
-    {{ isInStock ? "In stock" : "Missing" }}
+  <span
+    :class="[
+      'inline-flex items-center gap-1 px-2 py-1 rounded-full text-[11px] font-semibold uppercase tracking-[0.05em]',
+      isInStock
+        ? 'bg-success-subtle text-success'
+        : 'bg-error-subtle text-error'
+    ]"
+  >
+    <span class="w-1.5 h-1.5 rounded-full bg-current" />
+    {{ isInStock ? 'In stock' : 'Missing' }}
   </span>
 </template>
 
 <script setup lang="ts">
 defineProps<{ isInStock: boolean }>();
 </script>
-
-<style scoped>
-.stock-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  padding: var(--space-1) var(--space-2);
-  border-radius: var(--radius-full);
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.stock-badge--in {
-  background: var(--color-success-subtle);
-  color: var(--color-success);
-}
-
-.stock-badge--out {
-  background: var(--color-error-subtle);
-  color: var(--color-error);
-}
-
-.stock-badge__dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: currentColor;
-}
-</style>
 ```
 
 - [ ] **Step 2: Write tests**
@@ -76,13 +52,13 @@ describe("IngredientStockBadge", () => {
   it("shows 'In stock' when isInStock is true", () => {
     const wrapper = mount(IngredientStockBadge, { props: { isInStock: true } });
     expect(wrapper.text()).toContain("In stock");
-    expect(wrapper.find(".stock-badge--in").exists()).toBe(true);
+    expect(wrapper.find(".bg-success-subtle").exists()).toBe(true);
   });
 
   it("shows 'Missing' when isInStock is false", () => {
     const wrapper = mount(IngredientStockBadge, { props: { isInStock: false } });
     expect(wrapper.text()).toContain("Missing");
-    expect(wrapper.find(".stock-badge--out").exists()).toBe(true);
+    expect(wrapper.find(".bg-error-subtle").exists()).toBe(true);
   });
 });
 ```
@@ -187,7 +163,7 @@ Replace `src/CookHomie.Web/pages/recipes/[id].vue`:
 
 ```vue
 <template>
-  <div class="recipe-detail-page">
+  <div class="max-w-[720px] mx-auto">
     <div v-if="loading && !recipe">
       <SkeletonBlock height="40px" width="60%" class="mb-4" />
       <SkeletonBlock height="200px" />
@@ -195,30 +171,42 @@ Replace `src/CookHomie.Web/pages/recipes/[id].vue`:
     <ErrorBanner v-else-if="error" :message="error" :show-retry="true" @retry="fetchRecipe" />
 
     <template v-else-if="recipe">
-      <header class="recipe-detail__header">
-        <NuxtLink to="/recipes" class="back-link">← Recipes</NuxtLink>
-        <h1 class="recipe-detail__title">{{ recipe.name }}</h1>
-        <div class="recipe-detail__tags">
-          <span v-for="tag in recipe.tags" :key="tag" class="tag">{{ tag }}</span>
+      <header class="mb-8">
+        <NuxtLink to="/recipes" class="inline-block mb-4 text-accent no-underline text-sm">← Recipes</NuxtLink>
+        <h1 class="font-display text-[32px] font-bold mb-3">{{ recipe.name }}</h1>
+        <div class="flex gap-2 flex-wrap mb-3">
+          <span
+            v-for="tag in recipe.tags"
+            :key="tag"
+            class="bg-accent-subtle text-accent rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.05em]"
+          >{{ tag }}</span>
         </div>
-        <p class="recipe-detail__meta">
+        <p class="text-text-muted text-sm m-0">
           {{ recipe.prepMinutes + recipe.cookMinutes }} min total
           ({{ recipe.prepMinutes }} prep + {{ recipe.cookMinutes }} cook)
         </p>
       </header>
 
-      <div class="recipe-detail__body">
-        <section class="recipe-detail__section">
-          <h2>Instructions</h2>
-          <p class="recipe-detail__instructions">{{ recipe.instructions }}</p>
+      <div class="flex flex-col gap-8">
+        <section>
+          <h2 class="font-display text-[20px] font-semibold mb-4 pb-2 border-b border-border">Instructions</h2>
+          <p class="text-[15px] leading-[1.7] text-text-primary m-0">{{ recipe.instructions }}</p>
         </section>
 
-        <section class="recipe-detail__section" v-if="enrichedIngredients.length > 0">
-          <h2>Ingredients</h2>
-          <ul class="ingredient-list">
-            <li v-for="ing in enrichedIngredients" :key="ing.id" class="ingredient-item">
-              <span class="ingredient-name">{{ ing.ingredientName }}</span>
-              <span v-if="ing.quantity" class="ingredient-qty">{{ ing.quantity }}{{ ing.unit }}</span>
+        <section v-if="enrichedIngredients.length > 0">
+          <h2 class="font-display text-[20px] font-semibold mb-4 pb-2 border-b border-border">Ingredients</h2>
+          <ul class="list-none p-0 m-0 flex flex-col gap-3">
+            <li
+              v-for="ing in enrichedIngredients"
+              :key="ing.id"
+              class="flex items-center justify-between gap-3 p-3 bg-surface border border-border rounded-md"
+            >
+              <div class="flex flex-col">
+                <span class="font-medium">{{ ing.ingredientName }}</span>
+                <span v-if="ing.quantity" class="text-text-muted text-[13px]">
+                  {{ ing.quantity }}{{ ing.unit }}
+                </span>
+              </div>
               <IngredientStockBadge :is-in-stock="ing.isInStock ?? false" />
             </li>
           </ul>
@@ -234,86 +222,7 @@ const { recipe, loading, error, enrichedIngredients, start, fetchRecipe } = useR
 
 onMounted(() => start());
 </script>
-
-<style scoped>
-.recipe-detail-page { max-width: 720px; margin: 0 auto; }
-
-.back-link {
-  display: inline-block;
-  margin-bottom: var(--space-4);
-  color: var(--color-accent);
-  text-decoration: none;
-  font-size: 14px;
-}
-
-.recipe-detail__header { margin-bottom: var(--space-8); }
-
-.recipe-detail__title {
-  font-family: var(--font-display);
-  font-size: 32px;
-  font-weight: 700;
-  margin: 0 0 var(--space-3);
-}
-
-.recipe-detail__tags { display: flex; gap: var(--space-2); flex-wrap: wrap; margin-bottom: var(--space-3); }
-
-.tag {
-  background: var(--color-accent-subtle);
-  color: var(--color-accent);
-  border-radius: var(--radius-full);
-  padding: var(--space-1) var(--space-3);
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-}
-
-.recipe-detail__meta { color: var(--color-text-muted); font-size: 14px; margin: 0; }
-
-.recipe-detail__body { display: flex; flex-direction: column; gap: var(--space-8); }
-
-.recipe-detail__section h2 {
-  font-family: var(--font-display);
-  font-size: 20px;
-  font-weight: 600;
-  margin: 0 0 var(--space-4);
-  padding-bottom: var(--space-2);
-  border-bottom: 1px solid var(--color-border);
-}
-
-.recipe-detail__instructions {
-  font-size: 15px;
-  line-height: 1.7;
-  color: var(--color-text-primary);
-  margin: 0;
-}
-
-.ingredient-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: var(--space-3); }
-
-.ingredient-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--space-3);
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  gap: var(--space-3);
-}
-
-.ingredient-name { font-weight: 500; }
-.ingredient-qty { color: var(--color-text-muted); font-size: 13px; margin-right: auto; }
-
-@media (max-width: 480px) {
-  .recipe-detail__title { font-size: 24px; }
-}
-</style>
 ```
-
-- [ ] **Step 4: Verify page renders**
-
-Start dev server: `cd src/CookHomie.Web && npm run dev`
-Visit `http://localhost:3000/recipes/r1`
-Expected: Recipe name, tags, instructions, ingredient list with In Stock / Missing badges
 
 - [ ] **Step 5: Run tests**
 

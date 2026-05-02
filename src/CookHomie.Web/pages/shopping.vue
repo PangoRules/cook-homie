@@ -1,82 +1,49 @@
 <template>
-  <DashboardPanel
-    title="Shopping List"
-    :loading="loading"
-    :error="error"
-    :is-stale="isStale"
-    :has-data="items.length > 0"
-    :show-refresh="true"
-    @refresh="refreshShoppingList"
-  >
-    <!-- Loading skeleton -->
-    <div v-if="loading && items.length === 0" class="space-y-3">
-      <SharedSkeletonBlock width="100%" height="40px" />
-      <SharedSkeletonBlock width="100%" height="40px" />
-      <SharedSkeletonBlock width="100%" height="40px" />
-    </div>
+  <div class="max-w-4xl mx-auto p-6">
+    <header class="flex items-center justify-between mb-6">
+      <h1 class="font-display text-[28px] font-bold">Shopping List</h1>
+    </header>
 
-    <!-- Error state -->
-    <SharedErrorBanner
-      v-else-if="error && items.length === 0"
-      :message="error"
-      @retry="refreshShoppingList"
-    />
-
-    <!-- Empty state -->
-    <div v-else-if="items.length === 0" class="text-center py-12">
-      <p class="text-text-secondary mb-4">Your shopping list is empty</p>
-      <SharedButton variant="primary">Add Items</SharedButton>
-    </div>
-
-    <!-- Shopping items -->
-    <div v-else class="space-y-3">
-      <div
-        v-for="item in items"
-        :key="item.id"
-        class="flex items-center justify-between p-4 bg-surface border border-border rounded-lg"
-      >
-        <div>
-          <h3 class="font-medium">{{ item.name }}</h3>
-          <p class="text-sm text-text-secondary">{{ item.quantity }} {{ item.unit }}</p>
-        </div>
-        <div class="flex gap-2">
-          <SharedButton variant="secondary" size="sm">Edit</SharedButton>
-          <SharedButton variant="secondary" size="sm">Remove</SharedButton>
-        </div>
+    <DashboardPanel
+      title=""
+      :loading="loading"
+      :error="error"
+      :is-stale="isStale"
+      :has-data="items.length > 0"
+      show-refresh
+      @refresh="refresh"
+    >
+      <div v-if="loading && items.length === 0" class="flex flex-col gap-2">
+        <SharedSkeletonBlock v-for="i in 4" :key="i" class="h-12" />
       </div>
-    </div>
-  </DashboardPanel>
+      <SharedErrorBanner
+        v-else-if="error && items.length === 0"
+        :message="error"
+        show-retry
+        @retry="refresh"
+      />
+      <p v-else-if="items.length === 0" class="text-text-muted text-sm text-center py-10">
+        Your shopping list is empty.
+      </p>
+      <ul v-else class="flex flex-col gap-2 list-none p-0 m-0">
+        <li
+          v-for="item in items"
+          :key="item.id"
+          :class="['flex items-center justify-between p-3 bg-surface border border-border rounded-[10px]', item.isBought ? 'line-through opacity-50' : '']"
+        >
+          <span>{{ item.name }}</span>
+          <span v-if="item.quantity" class="text-xs text-text-muted">
+            {{ item.quantity }} {{ item.unit }}
+          </span>
+        </li>
+      </ul>
+    </DashboardPanel>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { useShoppingList } from "@/composables/useShoppingList";
+const { items, loading, error, isStale, startPolling, stopPolling, refresh } = useShoppingList();
 
-const { items, loading, error, isStale, loadList, refresh } = useShoppingList();
-
-// Refresh the shopping list
-const refreshShoppingList = async () => {
-  try {
-    await refresh();
-  } catch {
-    // Error state is already handled by composable
-  }
-};
-
-// Load shopping list on component mount
-try {
-  await loadList();
-} catch {
-  // Error state is already handled by composable
-}
-
-// Start polling for updates
-onMounted(() => {
-  const { startPolling } = useShoppingList();
-  startPolling();
-});
-
-onUnmounted(() => {
-  const { stopPolling } = useShoppingList();
-  stopPolling();
-});
+onMounted(() => startPolling());
+onUnmounted(() => stopPolling());
 </script>

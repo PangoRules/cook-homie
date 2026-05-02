@@ -4,11 +4,11 @@
       <h2 class="font-display text-base font-semibold text-text-primary">{{ title }}</h2>
       <button
         v-if="showRefresh"
-        class="bg-transparent border border-border rounded-sm w-7 h-7 cursor-pointer text-text-secondary flex items-center justify-center transition-all hover:bg-surface-hover hover:text-text-primary disabled:opacity-40 disabled:cursor-not-allowed"
+        class="bg-transparent border border-border rounded-sm w-30 h-7 cursor-pointer text-text-secondary flex items-center justify-center transition-all hover:bg-surface-hover hover:text-text-primary disabled:opacity-40 disabled:cursor-not-allowed"
         :disabled="loading"
         @click="$emit('refresh')"
       >
-        ↻
+        ↻ Refresh
       </button>
     </header>
     <div v-if="loading && !hasData" class="p-5">

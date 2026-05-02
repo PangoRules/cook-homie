@@ -105,20 +105,54 @@ git commit -m "feat(web): add IngredientStockBadge component"
 
 **Files:**
 - Modify: `src/CookHomie.Web/pages/recipes/[id].vue`
+- Modify: `src/CookHomie.Web/server/utils/recipeStore.ts` (add sample ingredients)
 - Create: `src/CookHomie.Web/composables/useRecipeDetail.ts`
 
-- [ ] **Step 1: Write useRecipeDetail**
+- [ ] **Step 1: Update mock store with sample RecipeIngredient[] data**
+
+Add a `RecipeIngredient[]` to at least one recipe in `recipeStore.ts` so in-stock highlighting is demonstrable:
+
+```typescript
+// src/CookHomie.Web/server/utils/recipeStore.ts
+import type { Recipe, RecipeIngredient } from "~/types";
+// ...
+const recipes: Recipe[] = [
+  {
+    id: "r1",
+    name: "Classic Pancakes",
+    instructions: "Mix flour, eggs, milk. Cook on griddle.",
+    prepMinutes: 5,
+    cookMinutes: 10,
+    tags: ["breakfast", "quick"],
+    ingredients: [
+      { id: "i1", recipeId: "r1", ingredientName: "flour",     quantity: 200, unit: "g",   isOptional: false },
+      { id: "i2", recipeId: "r1", ingredientName: "eggs",      quantity: 2,   unit: "pcs", isOptional: false },
+      { id: "i3", recipeId: "r1", ingredientName: "milk",      quantity: 250, unit: "ml",  isOptional: false },
+      { id: "i4", recipeId: "r1", ingredientName: "butter",    quantity: 30,  unit: "g",   isOptional: true  },
+    ] as RecipeIngredient[],
+  },
+  // r2, r3 unchanged
+];
+```
+
+- [ ] **Step 2: Write useRecipeDetail**
 
 ```typescript
 // src/CookHomie.Web/composables/useRecipeDetail.ts
 import type { Recipe, RecipeIngredient } from "~/types";
 import { matchIngredientStock } from "~/utils/ingredientStock";
+import { useInventory } from "./useInventory";
 
 export const useRecipeDetail = (recipeId: string) => {
   const recipe = useState<Recipe | null>(`recipe-${recipeId}`, () => null);
   const loading = useState(`recipe-loading-${recipeId}`, () => false);
   const error = useState<string | null>(`recipe-error-${recipeId}`, () => null);
-  const inventoryNames = useState<string[]>("inventory-names", () => []);
+
+  // Derive inventory names from the shared inventory state
+  const { items: inventoryItems } = useInventory();
+  const inventoryNames = computed(() =>
+    inventoryItems.value.map(item => item.name)
+  );
 
   const fetchRecipe = async () => {
     loading.value = true;
@@ -132,12 +166,11 @@ export const useRecipeDetail = (recipeId: string) => {
     }
   };
 
-  // In milestone 2, recipe.ingredients is a flat name list; real API may return richer shapes
   const enrichedIngredients = computed<RecipeIngredient[]>(() => {
-    if (!recipe.value || !("ingredients" in recipe.value)) return [];
-    return (recipe.value as any).ingredients.map((ing: string) => ({
-      name: ing,
-      isInStock: matchIngredientStock(ing, inventoryNames.value)
+    if (!recipe.value) return [];
+    return recipe.value.ingredients.map(ing => ({
+      ...ing,
+      isInStock: matchIngredientStock(ing.ingredientName, inventoryNames.value)
     }));
   });
 
@@ -148,7 +181,7 @@ export const useRecipeDetail = (recipeId: string) => {
 };
 ```
 
-- [ ] **Step 2: Implement full Recipe detail page**
+- [ ] **Step 3: Implement full Recipe detail page**
 
 Replace `src/CookHomie.Web/pages/recipes/[id].vue`:
 
@@ -156,10 +189,10 @@ Replace `src/CookHomie.Web/pages/recipes/[id].vue`:
 <template>
   <div class="recipe-detail-page">
     <div v-if="loading && !recipe">
-      <SkeletonBlock height="40px" width="60%" style="margin-bottom: 16px" />
+      <SkeletonBlock height="40px" width="60%" class="mb-4" />
       <SkeletonBlock height="200px" />
     </div>
-    <ErrorBanner v-else-if="error" :message="error" show-retry @retry="fetchRecipe" />
+    <ErrorBanner v-else-if="error" :message="error" :show-retry="true" @retry="fetchRecipe" />
 
     <template v-else-if="recipe">
       <header class="recipe-detail__header">
@@ -183,8 +216,9 @@ Replace `src/CookHomie.Web/pages/recipes/[id].vue`:
         <section class="recipe-detail__section" v-if="enrichedIngredients.length > 0">
           <h2>Ingredients</h2>
           <ul class="ingredient-list">
-            <li v-for="ing in enrichedIngredients" :key="ing.name" class="ingredient-item">
-              <span>{{ ing.name }}</span>
+            <li v-for="ing in enrichedIngredients" :key="ing.id" class="ingredient-item">
+              <span class="ingredient-name">{{ ing.ingredientName }}</span>
+              <span v-if="ing.quantity" class="ingredient-qty">{{ ing.quantity }}{{ ing.unit }}</span>
               <IngredientStockBadge :is-in-stock="ing.isInStock ?? false" />
             </li>
           </ul>
@@ -263,7 +297,11 @@ onMounted(() => start());
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
+  gap: var(--space-3);
 }
+
+.ingredient-name { font-weight: 500; }
+.ingredient-qty { color: var(--color-text-muted); font-size: 13px; margin-right: auto; }
 
 @media (max-width: 480px) {
   .recipe-detail__title { font-size: 24px; }
@@ -271,20 +309,20 @@ onMounted(() => start());
 </style>
 ```
 
-- [ ] **Step 3: Verify page renders**
+- [ ] **Step 4: Verify page renders**
 
 Start dev server: `cd src/CookHomie.Web && npm run dev`
-Visit `http://localhost:3000/recipes/r1` (or a recipe id from the mock store)
+Visit `http://localhost:3000/recipes/r1`
 Expected: Recipe name, tags, instructions, ingredient list with In Stock / Missing badges
 
-- [ ] **Step 4: Run tests**
+- [ ] **Step 5: Run tests**
 
 Run: `cd src/CookHomie.Web && npx vitest run tests/recipe-detail.spec.ts`
 Expected: PASS
 
-- [ ] **Step 5: Commit**
+- [ ] **Step 6: Commit**
 
 ```bash
-git add src/CookHomie.Web/pages/recipes/[id].vue src/CookHomie.Web/composables/useRecipeDetail.ts
+git add src/CookHomie.Web/pages/recipes/[id].vue src/CookHomie.Web/composables/useRecipeDetail.ts src/CookHomie.Web/server/utils/recipeStore.ts
 git commit -m "feat(web): implement recipe detail page with IngredientStockBadge and in-stock highlighting"
 ```

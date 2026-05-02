@@ -1,6 +1,6 @@
 // TEMP_MOCK: No C# Recipes API exists yet.
 // This in-memory store must be deleted once backend RecipesController ships.
-import type { Recipe } from "~/types";
+import type { Recipe, RecipeIngredient } from "~/types";
 
 const recipes: Recipe[] = [
   {

@@ -27,14 +27,16 @@ export const useRecipeDetail = (recipeId: string) => {
 
   const enrichedIngredients = computed<RecipeIngredient[]>(() => {
     if (!recipe.value) return [];
-    return recipe.value.ingredients.map(ing => ({
-      ...ing,
-      isInStock: matchIngredientStock(ing.ingredientName, inventoryNames.value)
-    }));
+    return recipe.value.ingredients.map(ing => {
+      // Add isInStock property to the ingredient
+      const enrichedIng = { ...ing };
+      enrichedIng.isInStock = matchIngredientStock(ing.ingredientName, inventoryNames.value);
+      return enrichedIng;
+    });
   });
 
   const start = () => fetchRecipe();
   const stop = () => {};
 
-  return { recipe, loading, error, enrichedIngredients, start, stop };
+  return { recipe, loading, error, enrichedIngredients, fetchRecipe, start, stop };
 };

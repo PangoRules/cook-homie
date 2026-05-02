@@ -1,5 +1,5 @@
 <template>
-  <SharedModal title="Add Recipe" @close="$emit('close')">
+  <SharedModal ref="modalRef" title="Add Recipe" @close="$emit('close')">
     <form class="flex flex-col gap-4" @submit.prevent="handleSubmit">
       <SharedFormField label="Name" :error="errors.name" required>
         <input v-model="form.name" class="input" placeholder="e.g. Banana Bread" >
@@ -24,7 +24,7 @@
     </form>
 
     <template #footer>
-      <SharedButton variant="secondary" @click="$emit('close')">Cancel</SharedButton>
+      <SharedButton variant="secondary" @click="onCancel">Cancel</SharedButton>
       <SharedButton variant="primary" :disabled="submitting" @click="handleSubmit">
         {{ submitting ? "Adding…" : "Add Recipe" }}
       </SharedButton>
@@ -37,6 +37,7 @@ import { ref, reactive } from "vue";
 import { useToast } from "@/composables/useToast";
 
 const emit = defineEmits(["added", "close"]);
+const modalRef = ref();
 
 const form = reactive({
   name: "",
@@ -63,6 +64,11 @@ const resetForm = () => {
   form.tags = []; errors.name = ""; errors.instructions = "";
 };
 
+const onCancel = () => {
+  resetForm();
+  modalRef.value.startClose();
+};
+
 const handleSubmit = async () => {
   if (!validate()) return;
   submitting.value = true;
@@ -75,6 +81,7 @@ const handleSubmit = async () => {
     emit("added", response);
     resetForm();
     toast.pushSuccess("Recipe added successfully!");
+    modalRef.value.startClose();
   } catch {
     useToast().pushError("Failed to add recipe");
   } finally {

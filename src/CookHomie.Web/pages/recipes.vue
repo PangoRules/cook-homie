@@ -24,7 +24,7 @@
       </div>
     </div>
 
-    <RecipesAddRecipeModal v-if="showModal" @added="handleRecipeAdded" @close="showModal = false" />
+    <RecipesAddRecipeModal v-if="showModal" @added="handleRecipeAdded" @close="onModalClose" />
   </div>
 </template>
 
@@ -36,6 +36,15 @@ import { useToast } from "@/composables/useToast";
 const { recipes, loading, error, isStale, start, stop, refresh } = useRecipes();
 const { pushError } = useToast();
 const showModal = ref(false);
+const closing = ref(false);
+
+const onModalClose = () => {
+  closing.value = true;
+  setTimeout(() => {
+    showModal.value = false;
+    closing.value = false;
+  }, 200);
+};
 
 const handleRecipeAdded = () => {
   showModal.value = false;

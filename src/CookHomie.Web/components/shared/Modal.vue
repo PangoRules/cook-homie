@@ -1,12 +1,13 @@
 <template>
   <Teleport to="body">
     <div
-      class="fixed inset-0 bg-black/50 flex justify-center items-center z-[1000] animate-backdrop-in"
-      @click.self="$emit('close')"
+      class="fixed inset-0 bg-black/50 flex justify-center items-center z-[1000]"
+      :class="closing ? 'animate-backdrop-out' : 'animate-backdrop-in'"
+      @click.self="startClose"
     >
       <div
-        class="bg-surface rounded-lg shadow-lg w-[90%] overflow-y-auto animate-modal-in"
-        :class="maxWidth"
+        class="bg-surface rounded-lg shadow-lg w-[90%] overflow-y-auto"
+        :class="[maxWidth, closing ? 'animate-modal-out' : 'animate-modal-in']"
         :style="maxHeight ? { maxHeight } : { maxHeight: '90vh' }"
       >
         <header class="flex justify-between items-center px-6 py-4 border-b border-border">
@@ -16,7 +17,7 @@
           <button
             class="bg-transparent border-none text-2xl cursor-pointer text-text-secondary hover:text-text-primary leading-none"
             aria-label="Close"
-            @click="$emit('close')"
+            @click="startClose"
           >
             ×
           </button>
@@ -35,6 +36,8 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from "vue";
+
 withDefaults(defineProps<{
   title?: string;
   maxWidth?: string;
@@ -45,5 +48,13 @@ withDefaults(defineProps<{
   maxHeight: "",
 });
 
-defineEmits(['close']);
+const emit = defineEmits<{ (e: "close"): void }>();
+const closing = ref(false);
+
+const startClose = () => {
+  closing.value = true;
+  setTimeout(() => emit("close"), 180);
+};
+
+defineExpose({ startClose });
 </script>

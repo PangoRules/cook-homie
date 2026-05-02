@@ -33,16 +33,25 @@
       </div>
     </DashboardPanel>
 
-    <RecipesAddRecipeModal v-if="showModal" @added="handleAdded" @close="showModal = false" />
+    <RecipesAddRecipeModal v-if="showModal" @added="handleAdded" @close="onModalClose" />
   </div>
 </template>
 
 <script setup lang="ts">
 const { recipes, loading, error, isStale, start, stop, refresh } = useRecipes();
 const showModal = ref(false);
+const closing = ref(false);
 
 onMounted(() => start());
 onUnmounted(() => stop());
+
+const onModalClose = () => {
+  closing.value = true;
+  setTimeout(() => {
+    showModal.value = false;
+    closing.value = false;
+  }, 200);
+};
 
 const handleAdded = (recipe: { id: string }) => {
   showModal.value = false;

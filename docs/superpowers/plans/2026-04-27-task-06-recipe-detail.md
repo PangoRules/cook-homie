@@ -40,23 +40,21 @@ defineProps<{ isInStock: boolean }>();
 </script>
 ```
 
-- [ ] **Step 2: Write tests**
-
 ```typescript
 // src/CookHomie.Web/tests/recipe-detail.spec.ts
 import { describe, expect, it } from "vitest";
 import { mount } from "@vue/test-utils";
-import IngredientStockBadge from "../components/recipes/detail/IngredientStockBadge.vue";
+import RecipesDetailIngredientStockBadge from "../components/recipes/detail/IngredientStockBadge.vue";
 
-describe("IngredientStockBadge", () => {
+describe("RecipesDetailIngredientStockBadge", () => {
   it("shows 'In stock' when isInStock is true", () => {
-    const wrapper = mount(IngredientStockBadge, { props: { isInStock: true } });
+    const wrapper = mount(RecipesDetailIngredientStockBadge, { props: { isInStock: true } });
     expect(wrapper.text()).toContain("In stock");
     expect(wrapper.find(".bg-success-subtle").exists()).toBe(true);
   });
 
   it("shows 'Missing' when isInStock is false", () => {
-    const wrapper = mount(IngredientStockBadge, { props: { isInStock: false } });
+    const wrapper = mount(RecipesDetailIngredientStockBadge, { props: { isInStock: false } });
     expect(wrapper.text()).toContain("Missing");
     expect(wrapper.find(".bg-error-subtle").exists()).toBe(true);
   });
@@ -165,10 +163,10 @@ Replace `src/CookHomie.Web/pages/recipes/[id].vue`:
 <template>
   <div class="max-w-[720px] mx-auto">
     <div v-if="loading && !recipe">
-      <SkeletonBlock height="40px" width="60%" class="mb-4" />
-      <SkeletonBlock height="200px" />
+      <SharedSkeletonBlock height="40px" width="60%" class="mb-4" />
+      <SharedSkeletonBlock height="200px" />
     </div>
-    <ErrorBanner v-else-if="error" :message="error" :show-retry="true" @retry="fetchRecipe" />
+    <SharedErrorBanner v-else-if="error" :message="error" :show-retry="true" @retry="fetchRecipe" />
 
     <template v-else-if="recipe">
       <header class="mb-8">
@@ -207,7 +205,7 @@ Replace `src/CookHomie.Web/pages/recipes/[id].vue`:
                   {{ ing.quantity }}{{ ing.unit }}
                 </span>
               </div>
-              <IngredientStockBadge :is-in-stock="ing.isInStock ?? false" />
+              <RecipesDetailIngredientStockBadge :is-in-stock="ing.isInStock ?? false" />
             </li>
           </ul>
         </section>

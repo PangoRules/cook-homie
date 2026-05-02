@@ -11,13 +11,13 @@
 
 ---
 
-## Task 15 — IngredientStockBadge component
+## Task 15 — RecipesDetailIngredientStockBadge component
 
 **Files:**
 - Create: `src/CookHomie.Web/components/recipes/detail/IngredientStockBadge.vue`
 - Create: `src/CookHomie.Web/tests/recipe-detail.spec.ts`
 
-- [ ] **Step 1: Write IngredientStockBadge**
+- [ ] **Step 1: Write RecipesDetailIngredientStockBadge**
 
 ```vue
 <!-- src/CookHomie.Web/components/recipes/detail/IngredientStockBadge.vue -->
@@ -39,6 +39,8 @@
 defineProps<{ isInStock: boolean }>();
 </script>
 ```
+
+- [ ] **Step 2: Write tests**
 
 ```typescript
 // src/CookHomie.Web/tests/recipe-detail.spec.ts
@@ -63,14 +65,16 @@ describe("RecipesDetailIngredientStockBadge", () => {
 
 - [ ] **Step 3: Run tests**
 
-Run: `cd src/CookHomie.Web && npx vitest run tests/recipe-detail.spec.ts`
+```bash
+cd src/CookHomie.Web && npx vitest run tests/recipe-detail.spec.ts
+```
 Expected: PASS
 
 - [ ] **Step 4: Commit**
 
 ```bash
 git add src/CookHomie.Web/components/recipes/detail/IngredientStockBadge.vue src/CookHomie.Web/tests/recipe-detail.spec.ts
-git commit -m "feat(web): add IngredientStockBadge component"
+git commit -m "feat(web): add RecipesDetailIngredientStockBadge component"
 ```
 
 ---
@@ -222,14 +226,16 @@ onMounted(() => start());
 </script>
 ```
 
-- [ ] **Step 5: Run tests**
+- [ ] **Step 4: Run tests**
 
-Run: `cd src/CookHomie.Web && npx vitest run tests/recipe-detail.spec.ts`
+```bash
+cd src/CookHomie.Web && npx vitest run tests/recipe-detail.spec.ts
+```
 Expected: PASS
 
-- [ ] **Step 6: Commit**
+- [ ] **Step 5: Commit**
 
 ```bash
 git add src/CookHomie.Web/pages/recipes/[id].vue src/CookHomie.Web/composables/useRecipeDetail.ts src/CookHomie.Web/server/utils/recipeStore.ts
-git commit -m "feat(web): implement recipe detail page with IngredientStockBadge and in-stock highlighting"
+git commit -m "feat(web): implement recipe detail page with in-stock highlighting"
 ```

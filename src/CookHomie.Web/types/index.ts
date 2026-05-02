@@ -5,6 +5,7 @@ export interface RecipeIngredient {
   quantity: number;
   unit: string;
   isOptional: boolean;
+  isInStock?: boolean;
 }
 
 export interface DashboardSummary {

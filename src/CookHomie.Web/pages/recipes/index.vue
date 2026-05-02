@@ -1,49 +1,41 @@
 <template>
-  <div class="max-w-[960px] mx-auto p-6">
-    <header class="flex items-center justify-between mb-6 max-sm:flex-col max-sm:items-start max-sm:gap-3">
+  <div class="p-6">
+    <header class="flex items-center justify-between mb-6">
       <h1 class="font-display text-[28px] font-bold">Recipes</h1>
       <SharedButton @click="showModal = true">+ Add Recipe</SharedButton>
     </header>
 
-    <DashboardPanel
-      title=""
-      :loading="loading"
-      :error="error"
-      :is-stale="isStale"
-      :has-data="recipes.length > 0"
-      show-refresh
-      @refresh="refresh"
-    >
-      <div v-if="loading && recipes.length === 0" class="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-4">
-        <SharedSkeletonBlock v-for="i in 3" :key="i" class="h-[120px]" />
-      </div>
-      <div v-else-if="error && recipes.length === 0">
-        <SharedErrorBanner :message="error" show-retry @retry="refresh" />
-      </div>
-      <p v-else-if="recipes.length === 0" class="text-center py-10 text-text-muted">
-        No recipes yet.
-      </p>
-      <div v-else class="grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-4 max-sm:grid-cols-1">
-        <RecipesRecipeCard
-          v-for="recipe in recipes"
-          :key="recipe.id"
-          :recipe="recipe"
-          @click="navigateTo(`/recipes/${recipe.id}`)"
-        />
-      </div>
-    </DashboardPanel>
+    <div class="mt-4">
+      <SharedSkeletonBlock v-if="loading && recipes.length === 0" class="h-[120px]" />
 
-    <RecipesAddRecipeModal v-if="showModal" @added="handleAdded" @close="onModalClose" />
+      <SharedErrorBanner v-else-if="error" :message="error" @retry="refresh" />
+
+      <p v-else-if="recipes.length === 0" class="text-text-muted text-sm">
+        No recipes found. Add your first recipe!
+      </p>
+
+      <div v-else>
+        <SharedStaleIndicator v-if="isStale" @refresh="refresh" />
+        <div
+          class="grid grid-cols-[repeat(auto-fill,minmax(300px,1fr))] gap-5 mt-5 max-sm:grid-cols-1"
+        >
+          <RecipesRecipeCard v-for="recipe in recipes" :key="recipe.id" :recipe="recipe" />
+        </div>
+      </div>
+    </div>
+    <RecipesAddRecipeModal v-if="showModal" @added="handleRecipeAdded" @close="onModalClose" />
   </div>
 </template>
 
 <script setup lang="ts">
+import { onMounted, onUnmounted } from "vue";
+import { useRecipes } from "@/composables/useRecipes";
+import { useToast } from "@/composables/useToast";
+
 const { recipes, loading, error, isStale, start, stop, refresh } = useRecipes();
+const { pushError } = useToast();
 const showModal = ref(false);
 const closing = ref(false);
-
-onMounted(() => start());
-onUnmounted(() => stop());
 
 const onModalClose = () => {
   closing.value = true;
@@ -53,8 +45,17 @@ const onModalClose = () => {
   }, 200);
 };
 
-const handleAdded = (recipe: { id: string }) => {
+const handleRecipeAdded = () => {
   showModal.value = false;
-  navigateTo(`/recipes/${recipe.id}`);
+  refresh().catch((err: unknown) => {
+    pushError("Failed to refresh recipes after adding new one");
+    console.error(err);
+  });
 };
+
+onMounted(() => {
+  start();
+});
+
+onUnmounted(() => stop());
 </script>

@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-[960px] mx-auto p-6">
+  <div class="p-6">
     <header class="flex items-center justify-between mb-6">
       <h1 class="font-display text-[28px] font-bold text-text-primary">Kitchen Overview</h1>
       <button

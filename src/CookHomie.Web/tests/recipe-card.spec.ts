@@ -1,32 +1,72 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { mount } from "@vue/test-utils";
+import { defineComponent, h } from "vue";
 import RecipeCard from "../components/recipes/RecipeCard.vue";
 
-describe("RecipeCard", () => {
-  const recipe = {
-    id: "r1",
-    name: "Pancakes",
-    instructions: "Mix and cook.",
-    prepMinutes: 5,
-    cookMinutes: 10,
-    tags: ["breakfast"],
-    ingredients: []
-  };
+const createNuxtLinkStub = (onNavigate?: (to: string) => void) =>
+  defineComponent({
+    props: {
+      to: {
+        type: String,
+        required: true,
+      },
+    },
+    setup(props, { slots }) {
+      return () =>
+        h(
+          "a",
+          {
+            href: props.to,
+            onClick: (event: Event) => {
+              event.preventDefault();
+              onNavigate?.(props.to);
+            },
+          },
+          slots.default?.()
+        );
+    },
+  });
 
+const mountRecipeCard = (onNavigate?: (to: string) => void) =>
+  mount(RecipeCard, {
+    props: { recipe },
+    global: { stubs: { NuxtLink: createNuxtLinkStub(onNavigate) } },
+  });
+
+const recipe = {
+  id: "r1",
+  name: "Pancakes",
+  instructions: "Mix and cook.",
+  prepMinutes: 5,
+  cookMinutes: 10,
+  tags: ["breakfast"],
+  ingredients: [],
+};
+
+describe("RecipeCard", () => {
   it("renders recipe name", () => {
-    const wrapper = mount(RecipeCard, { props: { recipe } });
+    const wrapper = mountRecipeCard();
     expect(wrapper.find("h3").text()).toBe("Pancakes");
   });
 
   it("renders tags", () => {
-    const wrapper = mount(RecipeCard, { props: { recipe } });
+    const wrapper = mountRecipeCard();
     expect(wrapper.findAll("span").length).toBe(1);
     expect(wrapper.findAll("span")[0].text()).toBe("breakfast");
   });
 
-  it("emits click with recipe id", async () => {
-    const wrapper = mount(RecipeCard, { props: { recipe } });
-    await wrapper.trigger("click");
-    expect(wrapper.emitted("click")?.[0]).toEqual([recipe.id]);
+  it("navigates to recipe detail on click", async () => {
+    const push = vi.fn();
+    const wrapper = mountRecipeCard(push);
+
+    await wrapper.find("a").trigger("click");
+
+    expect(push).toHaveBeenCalledOnce();
+    expect(push).toHaveBeenCalledWith("recipes/r1");
+  });
+
+  it("NuxtLink has correct href", () => {
+    const wrapper = mountRecipeCard();
+    expect(wrapper.find("a").attributes("href")).toBe("recipes/r1");
   });
 });

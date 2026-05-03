@@ -122,4 +122,32 @@ describe("AddRecipeModal", () => {
       })
     );
   });
+
+  it("removing the only ingredient leaves no placeholder row", async () => {
+    const wrapper = mountAddRecipeModal();
+
+    const vm = wrapper.vm as AddRecipeModalVm;
+    fillValidRecipeForm(vm);
+    vm.form.ingredients = [{ ingredientName: "Flour", quantity: 200, unit: "g", isOptional: false }];
+
+    vm.removeIngredient(0);
+
+    expect(vm.form.ingredients).toEqual([]);
+  });
+
+  it("removing last ingredient of many splices correctly", async () => {
+    const wrapper = mountAddRecipeModal();
+
+    const vm = wrapper.vm as AddRecipeModalVm;
+    fillValidRecipeForm(vm);
+    vm.form.ingredients = [
+      { ingredientName: "Flour", quantity: 200, unit: "g", isOptional: false },
+      { ingredientName: "Milk", quantity: 100, unit: "ml", isOptional: false },
+    ];
+
+    vm.removeIngredient(1);
+
+    expect(vm.form.ingredients).toHaveLength(1);
+    expect(vm.form.ingredients[0].ingredientName).toBe("Flour");
+  });
 });

@@ -109,7 +109,7 @@ const addIngredient = async () => {
 
 const removeIngredient = (index: number) => {
   if (form.ingredients.length === 1) {
-    form.ingredients[0] = emptyIngredient();
+    form.ingredients = [];
     return;
   }
   form.ingredients.splice(index, 1);
@@ -122,6 +122,8 @@ const cancelIngredientAdd = (index: number) => {
   }
   form.ingredients.splice(index, 1);
 };
+
+defineExpose({ removeIngredient });
 
 const handleSubmit = async () => {
   if (!validate()) return;

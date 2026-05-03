@@ -20,13 +20,15 @@ tags: [project, cookhomie, roadmap]
 
 ### Milestone 2 — Frontend
 - [x] Nuxt 3 scaffold with default layout and route skeletons
-- [x] Dashboard page (expiring items, recipe matches, shopping count)
+- [ ] Dashboard page (summary cards implemented; expiring item rows and recipe suggestion rows still need real rendering)
 - [x] DashboardStatCard and DashboardPanel components
 - [x] useDashboard composable with 30s polling
 - [x] Inventory page + AddItemModal
 - [x] Recipes page + RecipeCard + AddRecipeModal
-- [x] Recipe detail page (ingredients with in-stock highlighting)
+- [ ] Recipe detail page (badge UI and exact matching utility implemented; direct page loads still need inventory loading for accurate highlights)
 - [x] Shopping list page skeleton
+
+Milestone 2 audit note (2026-05-02): most frontend shell and mock-contract work is implemented and tested, but the dashboard and recipe detail items remain partially complete against the design intent.
 
 ### Milestone 3 — MCP Server
 - [x] FastMCP scaffold + api_client.py

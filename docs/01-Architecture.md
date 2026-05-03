@@ -118,7 +118,7 @@ Every layer enforces DRY. When code is copied rather than shared, it becomes inc
 **Consequence of violation:** copied logic that diverges is a bug. PRs that introduce duplication without extracting first should be flagged in review.
 
 ### Client-side ingredient stock matching
-Recipe detail page (`recipes/[id].vue`) does not call a backend to determine which ingredients are in stock. Instead, `useRecipeDetail` composable reads inventory names from the shared `useInventory` state and uses `utils/ingredientStock.ts` for case-insensitive substring matching. This is a deliberate simplification — the MCP layer can add AI-powered fuzzy matching later.
+Recipe detail page (`recipes/[id].vue`) does not call a backend to determine which ingredients are in stock. Instead, `useRecipeDetail` composable reads inventory names from the shared `useInventory` state and uses `utils/ingredientStock.ts` for exact normalized matching: trim both names and compare case-insensitively. This is a deliberate MVP simplification — alias maps, pluralization, substring matching, and AI-powered fuzzy matching are later work.
 
 ### Nuxt component auto-import naming
 Nuxt auto-imports all components from `components/` using their folder path as a prefix:

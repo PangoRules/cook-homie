@@ -101,7 +101,7 @@ CookHomie/
 │   │   │   └── index.ts              # Shared TypeScript interfaces
 │   │   ├── utils/
 │   │   │   ├── date.ts
-│   │   │   └── ingredientStock.ts    # Client-side fuzzy ingredient matching
+│   │   │   └── ingredientStock.ts    # Client-side exact normalized ingredient matching
 │   │   └── nuxt.config.ts
 │   │
 │   └── CookHomie.MCP/                  # Python MCP server (AI gateway)
@@ -159,7 +159,6 @@ shared/StaleIndicator.vue     →  <SharedStaleIndicator /> ✅ ("Shared" prefix
 | `dashboard/DashboardPanel.vue` | `<DashboardPanel />` |
 | `dashboard/DashboardStatCard.vue` | `<DashboardStatCard />` |
 | `inventory/AddItemModal.vue` | `<InventoryAddItemModal />` |
-| `recipes/AddRecipeForm.vue` | `<RecipesAddRecipeForm />` |
 | `recipes/AddRecipeModal.vue` | `<RecipesAddRecipeModal />` |
 | `recipes/RecipeCard.vue` | `<RecipesRecipeCard />` |
 | `recipes/detail/IngredientStockBadge.vue` | `<RecipesDetailIngredientStockBadge />` |
@@ -200,7 +199,7 @@ Validation failures return `400` with `application/problem+json`.
 | GET | /api/recipes/{id}/missing | Missing ingredients (client-side matching, returns empty) |
 
 ### /api/shopping
-**Status:** Shopping list page is wired to `/api/shopping` via `useShoppingList` composable. No C# ShoppingController exists — the Nuxt server route is not yet created. The page currently shows an empty list or mock data.
+**Status:** Shopping list page is wired to `/api/shopping` via `useShoppingList` composable. No C# ShoppingController exists and no Nuxt server route is currently created, so the endpoint is not backed by an implementation.
 
 | Method | Route | Description |
 |--------|-------|-------------|

@@ -37,9 +37,9 @@ A fully functional v1 with:
 ## Current Implementation State
 
 - **Inventory** — fully wired end-to-end. C# Domain/Application/Infrastructure layers with EF Core migrations, `AddInventoryItemUseCase`, `InventoryController` with RFC7807 validation errors. Nuxt inventory page with `useInventory` composable, `AddItemModal`, skeleton loading, stale polling, error banner.
-- **Recipes** — recipe list page (`/recipes`) and detail page (`/recipes/[id]`) with client-side in-stock highlighting via `useRecipeDetail` + `ingredientStock.ts`. Nuxt server uses an in-memory mock store; no C# RecipesController yet.
-- **Shopping list** — `useShoppingList` composable wired to `/api/shopping`. No Nuxt server route or C# ShoppingController exists yet — page shows empty list.
-- **Dashboard** — `useDashboard` + `usePollingFetch` with hardcoded mock summary `{ expiringCount: 3, recipeMatchCount: 7, shoppingCount: 4 }`. No C# DashboardController yet.
+- **Recipes** — recipe list page (`/recipes`) and detail page (`/recipes/[id]`) exist with `RecipeCard`, `AddRecipeModal`, and client-side in-stock badges via `useRecipeDetail` + `ingredientStock.ts`. Nuxt server uses an in-memory mock store; no C# RecipesController yet. Added recipes currently store name, timing, instructions, and tags only; ingredients are not collected in the add form.
+- **Shopping list** — `useShoppingList` composable and page skeleton exist. No Nuxt server route or C# ShoppingController exists yet, so `/api/shopping` is not backed by an implementation.
+- **Dashboard** — `useDashboard` + `usePollingFetch` call a hardcoded Nuxt mock summary `{ expiringCount: 3, recipeMatchCount: 7, shoppingCount: 4 }`. `DashboardStatCard` and `DashboardPanel` components exist, but the dashboard panels do not yet render actual expiring item rows or recipe suggestion rows. No C# DashboardController yet.
 - **Development page** — polling playground with `PollingController` (C#) for simulated data. Dev-mode status endpoint.
 - **MCP server** — `get_inventory` fully functional (calls C# API). `get_recipes` and `get_shopping_list` are stubs returning empty data.
 - **Styling** — Tailwind v4 CSS-first. All styles via `assets/css/main.css` (`@layer components` classes: `.btn`, `.input`, `.card`, `.skeleton`, etc.) or inline Tailwind utilities. **No scoped `<style>` blocks** in any Vue file.
@@ -52,7 +52,7 @@ A fully functional v1 with:
 - [x] Build C# Domain + Application layers
 - [x] Build C# Infrastructure (EF Core + migrations)
 - [x] Build C# WebApi inventory controller and health/OpenAPI endpoints
-- [ ] Build Nuxt frontend beyond inventory skeletons
+- [x] Build Nuxt frontend beyond inventory skeletons
 - [ ] Build full Python MCP server toolset
 - [x] End-to-end add-item smoke test and CI workflow
 - [ ] End-to-end test: suggest recipe → build shopping list

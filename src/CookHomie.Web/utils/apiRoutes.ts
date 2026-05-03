@@ -1,21 +1,23 @@
 export const API_ROUTES = {
-  // Inventory routes
-  INVENTORY: '/api/inventory',
-  INVENTORY_ITEM: (id: string) => `/api/inventory/${id}`,
-  INVENTORY_BULK: '/api/inventory/bulk',
-
-  // Recipe routes
-  RECIPES: '/api/recipes',
-  RECIPE: (id: string) => `/api/recipes/${id}`,
-  RECIPE_MISSING: (id: string) => `/api/recipes/${id}/missing`,
-
-  // Shopping routes
-  SHOPPING: '/api/shopping',
-  SHOPPING_ITEM: (id: string) => `/api/shopping/${id}`,
-  SHOPPING_BULK: '/api/shopping/bulk',
-
   // Dashboard routes
   DASHBOARD: {
     SUMMARY: '/api/dashboard/summary',
+  },
+  // Inventory routes
+  INVENTORY: {
+    LIST: '/api/inventory',
+    DETAIL: (id: string) => `/api/inventory/${id}`,
+  },
+  // Recipe routes
+  RECIPES: {
+    LIST: '/api/recipes',
+    DETAIL: (id: string) => `/api/recipes/${id}`,
+    MISSING: (id: string) => `/api/recipes/${id}/missing`,
+  },
+  // Shopping routes
+  SHOPPING: {
+    LIST: '/api/shopping',
+    DETAIL: (id: string) => `/api/shopping/${id}`,
+    BULK: '/api/shopping/bulk',
   },
 } as const;

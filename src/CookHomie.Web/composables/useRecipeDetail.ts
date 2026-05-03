@@ -20,7 +20,7 @@ export const useRecipeDetail = (recipeId: string) => {
     try {
       // Ensure inventory is loaded first
       await loadInventory();
-      recipe.value = await $fetch<Recipe>(API_ROUTES.RECIPE(recipeId));
+      recipe.value = await $fetch<Recipe>(API_ROUTES.RECIPES.DETAIL(recipeId));
     } catch (err) {
       error.value = err instanceof Error ? err.message : "Failed to load recipe";
     } finally {

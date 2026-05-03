@@ -40,6 +40,20 @@ describe("usePollingFetch", () => {
     expect(spy).toHaveBeenCalledTimes(1);
   });
 
+  it("does not register duplicate polling when started twice", async () => {
+    const spy = vi.fn().mockResolvedValue({ data: "value" });
+    vi.stubGlobal("$fetch", spy);
+
+    const { start } = usePollingFetch("/api/test");
+    await start();
+    await start();
+
+    spy.mockClear();
+    await vi.advanceTimersByTimeAsync(30000);
+
+    expect(spy).toHaveBeenCalledTimes(1);
+  });
+
   it("stops polling on stop()", async () => {
     const spy = vi.fn().mockResolvedValue({ data: "value" });
     vi.stubGlobal("$fetch", spy);

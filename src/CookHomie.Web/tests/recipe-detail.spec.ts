@@ -42,4 +42,30 @@ describe("useRecipeDetail", () => {
     expect(loadInventoryMock).toHaveBeenCalled();
     expect(detail.enrichedIngredients.value[0].isInStock).toBe(true);
   });
+
+  it("awaits initial recipe fetch when starting", async () => {
+    let resolveRecipe!: (recipe: unknown) => void;
+    vi.stubGlobal("$fetch", vi.fn(() => new Promise((resolve) => {
+      resolveRecipe = resolve;
+    })));
+
+    const { useRecipeDetail } = await import("../composables/useRecipeDetail");
+    const detail = useRecipeDetail("r2");
+    const started = detail.start();
+
+    expect(detail.recipe.value).toBeNull();
+    await Promise.resolve();
+    resolveRecipe({
+      id: "r2",
+      name: "Toast",
+      instructions: "Toast.",
+      prepMinutes: 1,
+      cookMinutes: 2,
+      tags: [],
+      ingredients: [],
+    });
+    await started;
+
+    expect(detail.recipe.value?.name).toBe("Toast");
+  });
 });

@@ -16,6 +16,7 @@ export const usePollingFetch = <T>(
   const isStale = useState<boolean>(`poll-stale-${url}`, () => false);
 
   let intervalId: ReturnType<typeof setInterval> | null = null;
+  let started = false;
 
   const fetchData = async () => {
     if (loading.value && hasFetched.value) return;
@@ -38,6 +39,13 @@ export const usePollingFetch = <T>(
     }
   };
 
+  const clearPollingInterval = () => {
+    if (intervalId) {
+      clearInterval(intervalId);
+      intervalId = null;
+    }
+  };
+
   const handleVisibilityChange = () => {
     if (document.visibilityState === 'visible') {
       // Resume polling if not already running
@@ -46,14 +54,13 @@ export const usePollingFetch = <T>(
       }
     } else {
       // Pause polling when page is hidden
-      if (intervalId) {
-        clearInterval(intervalId);
-        intervalId = null;
-      }
+      clearPollingInterval();
     }
   };
 
   const start = async () => {
+    if (started) return;
+    started = true;
     await fetchData();
     
     // Add event listener for visibility change
@@ -64,10 +71,8 @@ export const usePollingFetch = <T>(
   };
 
   const stop = () => {
-    if (intervalId !== null) {
-      clearInterval(intervalId);
-      intervalId = null;
-    }
+    started = false;
+    clearPollingInterval();
     
     // Remove visibility change listener
     document.removeEventListener('visibilitychange', handleVisibilityChange);

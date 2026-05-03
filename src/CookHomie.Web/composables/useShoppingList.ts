@@ -4,7 +4,7 @@ import { API_ROUTES } from "~/utils/apiRoutes";
 
 export const useShoppingList = () => {
   const { data, loading, error, isStale, start, stop, refresh } = usePollingFetch<ShoppingItem[]>(
-    API_ROUTES.SHOPPING.LIST,
+    API_ROUTES.SHOPPING.BASE,
     { pollIntervalMs: 30000 }
   );
 
@@ -15,7 +15,7 @@ export const useShoppingList = () => {
     loading.value = true;
     error.value = null;
     try {
-      const created = await $fetch<ShoppingItem>(API_ROUTES.SHOPPING.LIST, {
+      const created = await $fetch<ShoppingItem>(API_ROUTES.SHOPPING.BASE, {
         method: "POST",
         body: payload,
       });
@@ -57,7 +57,7 @@ export const useShoppingList = () => {
         method: "PATCH",
         body: updates,
       });
-      data.value = (data.value ?? []).map((s) => s.id === id ? updated : s);
+      data.value = (data.value ?? []).map((s) => (s.id === id ? updated : s));
       return updated;
     } catch (err) {
       error.value = err instanceof Error ? err.message : "Failed to update item";

@@ -4,7 +4,7 @@ import { API_ROUTES } from "~/utils/apiRoutes";
 
 export const useRecipes = () => {
   const { data, loading, error, isStale, start, stop, refresh } = usePollingFetch<Recipe[]>(
-    API_ROUTES.RECIPES.LIST,
+    API_ROUTES.RECIPES.BASE,
     { pollIntervalMs: 30000 }
   );
 
@@ -12,11 +12,11 @@ export const useRecipes = () => {
 
   return {
     recipes,
-    loading, 
-    error, 
-    isStale, 
-    start, 
-    stop, 
-    refresh 
+    loading,
+    error,
+    isStale,
+    start,
+    stop,
+    refresh,
   };
 };

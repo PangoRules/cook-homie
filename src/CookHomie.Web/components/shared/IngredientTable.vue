@@ -13,14 +13,14 @@
       </thead>
       <tbody>
         <tr v-for="row in paginatedIngredients" :key="row.index" class="border-b border-border">
-          <template v-if="mode === 'editable' && editingIndex === row.index">
+          <template v-if="mode === 'editable' && editingIndex === row.index && draftIngredient">
             <td colspan="5" class="py-3">
               <div class="rounded-lg border border-border bg-background-muted p-3">
                 <div class="grid gap-3 md:grid-cols-[1fr_90px_100px_auto] md:items-end">
                   <SharedFormField label="Ingredient" :error="editError">
                     <input
                       ref="ingredientNameInputRef"
-                      v-model="row.ingredient.ingredientName"
+                      v-model="draftIngredient.ingredientName"
                       class="input"
                       placeholder="e.g. Flour"
                       @keydown.enter.prevent="finishEditing(row.index)"
@@ -29,7 +29,7 @@
 
                   <SharedFormField label="Qty">
                     <input
-                      v-model.number="row.ingredient.quantity"
+                      v-model.number="draftIngredient.quantity"
                       type="number"
                       min="0"
                       step="0.01"
@@ -40,7 +40,7 @@
 
                   <SharedFormField label="Unit">
                     <input
-                      v-model="row.ingredient.unit"
+                      v-model="draftIngredient.unit"
                       class="input"
                       placeholder="g"
                       @keydown.enter.prevent="finishEditing(row.index)"
@@ -48,13 +48,13 @@
                   </SharedFormField>
 
                   <label class="flex items-center gap-2 text-sm text-text">
-                    <input v-model="row.ingredient.isOptional" type="checkbox">
+                    <input v-model="draftIngredient.isOptional" type="checkbox">
                     Optional
                   </label>
                 </div>
 
                 <div class="mt-3 flex justify-end gap-2">
-                  <button type="button" class="btn btn-secondary text-xs" @click="removeIngredient(row.index)">Remove</button>
+                  <button type="button" class="btn btn-secondary text-xs" @click="cancelEditing">Cancel</button>
                   <button type="button" class="btn btn-primary text-xs" @click="finishEditing(row.index)">Done</button>
                 </div>
               </div>
@@ -81,7 +81,7 @@
     </table>
 
     <!-- Pagination controls -->
-    <div class="flex items-center justify-between">
+    <div v-if="canShowPagination" class="flex items-center justify-between">
       <span class="text-xs text-text-muted">Page {{ currentPage }} of {{ totalPages }}</span>
       <div class="flex gap-2">
         <SharedButton size="small" variant="secondary" :disabled="currentPage === 1" @click="currentPage--">
@@ -105,20 +105,37 @@ interface Props {
   ingredients: IngredientType[];
   mode?: "readonly" | "editable";
   pageSize?: number;
+  startEditingFirstRow?: boolean;
 }
 
 const props = withDefaults(defineProps<Props>(), {
   mode: "readonly",
   pageSize: 5,
+  startEditingFirstRow: false,
 });
 
 const emit = defineEmits<{
   (e: "remove", index: number): void;
 }>();
 
+interface DraftIngredient {
+  ingredientName: string;
+  quantity: number;
+  unit: string;
+  isOptional: boolean;
+}
+
+const cloneIngredient = (ingredient: IngredientType): DraftIngredient => ({
+  ingredientName: ingredient.ingredientName,
+  quantity: ingredient.quantity,
+  unit: ingredient.unit,
+  isOptional: ingredient.isOptional,
+});
+
 const removeIngredient = (index: number) => {
   if (editingIndex.value === index) {
     editingIndex.value = null;
+    draftIngredient.value = null;
     editError.value = "";
   } else if (editingIndex.value !== null && index < editingIndex.value) {
     editingIndex.value -= 1;
@@ -128,15 +145,19 @@ const removeIngredient = (index: number) => {
 };
 
 const currentPage = ref(1);
-const editingIndex = ref<number | null>(props.mode === "editable" && props.ingredients.length > 0 ? 0 : null);
+const initialEditingIndex = props.startEditingFirstRow && props.mode === "editable" && props.ingredients.length > 0 ? 0 : null;
+const editingIndex = ref<number | null>(initialEditingIndex);
+const draftIngredient = ref<DraftIngredient | null>(initialEditingIndex === null ? null : cloneIngredient(props.ingredients[initialEditingIndex]));
 const editError = ref("");
 const ingredientNameInputRef = ref<HTMLInputElement | readonly HTMLInputElement[]>();
 const totalPages = computed(() => Math.max(1, Math.ceil(props.ingredients.length / props.pageSize)));
+const canShowPagination = computed(() => props.ingredients.length > props.pageSize);
 
 const pageForIndex = (index: number) => Math.floor(index / props.pageSize) + 1;
 
 const editIngredient = async (index: number): Promise<void> => {
   editingIndex.value = index;
+  draftIngredient.value = cloneIngredient(props.ingredients[index]);
   editError.value = "";
   currentPage.value = pageForIndex(index);
 
@@ -153,14 +174,32 @@ const focusIngredientNameInput = () => {
 
 const finishEditing = (index: number) => {
   const ingredient = props.ingredients[index];
+  const draft = draftIngredient.value;
 
-  if (!ingredient?.ingredientName.trim()) {
+  if (!draft?.ingredientName.trim()) {
     editError.value = "Ingredient name is required";
     return;
   }
 
+  if (!ingredient) {
+    editError.value = "Ingredient row is missing";
+    return;
+  }
+
+  ingredient.ingredientName = draft.ingredientName;
+  ingredient.quantity = draft.quantity;
+  ingredient.unit = draft.unit;
+  ingredient.isOptional = draft.isOptional;
+
   editError.value = "";
   editingIndex.value = null;
+  draftIngredient.value = null;
+};
+
+const cancelEditing = () => {
+  editError.value = "";
+  editingIndex.value = null;
+  draftIngredient.value = null;
 };
 
 const paginatedIngredients = computed(() => {

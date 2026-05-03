@@ -3,6 +3,11 @@ import { describe, expect, it } from "vitest";
 import IngredientTable from "../components/shared/IngredientTable.vue";
 import type { AddRecipeIngredientPayload } from "../types";
 
+interface MountIngredientTableOptions {
+  readonly pageSize?: number;
+  readonly startEditingFirstRow?: boolean;
+}
+
 const makeIngredient = (ingredientName: string): AddRecipeIngredientPayload => ({
   ingredientName,
   quantity: 1,
@@ -10,12 +15,13 @@ const makeIngredient = (ingredientName: string): AddRecipeIngredientPayload => (
   isOptional: false,
 });
 
-const mountIngredientTable = (ingredients: AddRecipeIngredientPayload[], pageSize = 5) =>
+const mountIngredientTable = (ingredients: AddRecipeIngredientPayload[], options: MountIngredientTableOptions = {}) =>
   mount(IngredientTable, {
     props: {
       ingredients,
       mode: "editable",
-      pageSize,
+      pageSize: options.pageSize ?? 5,
+      startEditingFirstRow: options.startEditingFirstRow,
     },
     global: {
       stubs: {
@@ -34,7 +40,7 @@ const mountIngredientTable = (ingredients: AddRecipeIngredientPayload[], pageSiz
 describe("IngredientTable", () => {
   it("emits original ingredient index when removing an item on a later page", async () => {
     const ingredients = ["one", "two", "three"].map(makeIngredient);
-    const wrapper = mountIngredientTable(ingredients, 2);
+    const wrapper = mountIngredientTable(ingredients, { pageSize: 2 });
 
     await wrapper.findAll("button").find((button) => button.text() === "Next")?.trigger("click");
     await wrapper.findAll("button").find((button) => button.text() === "Remove")?.trigger("click");
@@ -44,7 +50,7 @@ describe("IngredientTable", () => {
 
   it("opens an expanded editor and requires an ingredient name before finishing", async () => {
     const ingredients = [makeIngredient("")];
-    const wrapper = mountIngredientTable(ingredients);
+    const wrapper = mountIngredientTable(ingredients, { startEditingFirstRow: true });
 
     await wrapper.findAll("button").find((button) => button.text() === "Done")?.trigger("click");
 
@@ -64,5 +70,50 @@ describe("IngredientTable", () => {
     await wrapper.vm.editIngredient(1);
 
     expect(wrapper.find<HTMLInputElement>('input[placeholder="e.g. Flour"]').element.value).toBe("Milk");
+  });
+
+  it("keeps editable tables compact by default", () => {
+    const ingredients = [makeIngredient("Flour")];
+    const wrapper = mountIngredientTable(ingredients);
+
+    expect(wrapper.find('input[placeholder="e.g. Flour"]').exists()).toBe(false);
+    expect(wrapper.text()).toContain("Edit");
+    expect(wrapper.text()).toContain("Remove");
+  });
+
+  it("opens the first row when startEditingFirstRow is enabled", () => {
+    const ingredients = [makeIngredient("Flour")];
+    const wrapper = mountIngredientTable(ingredients, { startEditingFirstRow: true });
+
+    expect(wrapper.find<HTMLInputElement>('input[placeholder="e.g. Flour"]').element.value).toBe("Flour");
+  });
+
+  it("cancels editing without saving or removing", async () => {
+    const ingredients = [makeIngredient("Flour")];
+    const wrapper = mountIngredientTable(ingredients, { startEditingFirstRow: true });
+
+    await wrapper.find('input[placeholder="e.g. Flour"]').setValue("Sugar");
+    await wrapper.findAll("button").find((button) => button.text() === "Cancel")?.trigger("click");
+
+    expect(ingredients[0]?.ingredientName).toBe("Flour");
+    expect(wrapper.emitted("remove")).toBeUndefined();
+    expect(wrapper.find('input[placeholder="e.g. Flour"]').exists()).toBe(false);
+    expect(wrapper.text()).toContain("Flour");
+  });
+
+  it("hides pagination controls until more than one page is needed", () => {
+    const ingredients = [makeIngredient("Flour"), makeIngredient("Milk")];
+    const wrapper = mountIngredientTable(ingredients, { pageSize: 5 });
+
+    expect(wrapper.text()).not.toContain("Prev");
+    expect(wrapper.text()).not.toContain("Next");
+  });
+
+  it("shows pagination controls when more than one page is needed", () => {
+    const ingredients = ["one", "two", "three"].map(makeIngredient);
+    const wrapper = mountIngredientTable(ingredients, { pageSize: 2 });
+
+    expect(wrapper.text()).toContain("Prev");
+    expect(wrapper.text()).toContain("Next");
   });
 });

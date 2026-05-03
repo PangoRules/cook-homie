@@ -28,6 +28,7 @@
           v-model:ingredients="form.ingredients"
           mode="editable"
           :page-size="5"
+          :start-editing-first-row="true"
           @remove="removeIngredient"
         />
         <button type="button" class="btn btn-secondary w-fit mt-2" @click="addIngredient">

@@ -53,7 +53,7 @@ export const getRecipeById = (id: string): Recipe | undefined =>
   recipes.find(r => r.id === id);
 
 export const addRecipe = (data: Omit<Recipe, "id">): Recipe => {
-  const recipe: Recipe = { ...data, id: `r${nextId++}`, ingredients: [] };
+  const recipe: Recipe = { ...data, id: `r${nextId++}` };
   recipes.push(recipe);
   return recipe;
 };

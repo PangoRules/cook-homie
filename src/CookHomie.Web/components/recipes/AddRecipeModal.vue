@@ -21,6 +21,47 @@
       <SharedFormField label="Tags">
         <SharedTagInput v-model="form.tags" placeholder="Type tag, press Enter" />
       </SharedFormField>
+      
+      <SharedFormField label="Ingredients">
+        <div class="flex flex-col gap-2">
+          <div 
+            v-for="(ingredient, index) in form.ingredients" 
+            :key="index" 
+            class="flex gap-2"
+          >
+            <input 
+              v-model="ingredient.ingredientName" 
+              class="input flex-1" 
+              placeholder="Ingredient name"
+            />
+            <input 
+              v-model.number="ingredient.quantity" 
+              type="number" 
+              class="input w-20" 
+              placeholder="Qty"
+            />
+            <input 
+              v-model="ingredient.unit" 
+              class="input w-20" 
+              placeholder="Unit"
+            />
+            <button 
+              type="button" 
+              @click="removeIngredient(index)"
+              class="btn btn-secondary"
+            >
+              Remove
+            </button>
+          </div>
+          <button 
+            type="button" 
+            @click="addIngredient"
+            class="btn btn-secondary w-fit"
+          >
+            Add Ingredient
+          </button>
+        </div>
+      </SharedFormField>
     </form>
 
     <template #footer>
@@ -45,6 +86,7 @@ const form = reactive({
   cookMinutes: 0,
   instructions: "",
   tags: [] as string[],
+  ingredients: [] as { ingredientName: string; quantity: number; unit: string }[],
 });
 
 const errors = reactive({ name: "", instructions: "" });
@@ -61,12 +103,21 @@ const validate = () => {
 
 const resetForm = () => {
   form.name = ""; form.prepMinutes = 0; form.cookMinutes = 0; form.instructions = "";
-  form.tags = []; errors.name = ""; errors.instructions = "";
+  form.tags = []; form.ingredients = [];
+  errors.name = ""; errors.instructions = "";
 };
 
 const onCancel = () => {
   resetForm();
   modalRef.value.startClose();
+};
+
+const addIngredient = () => {
+  form.ingredients.push({ ingredientName: "", quantity: 0, unit: "" });
+};
+
+const removeIngredient = (index: number) => {
+  form.ingredients.splice(index, 1);
 };
 
 const handleSubmit = async () => {

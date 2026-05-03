@@ -20,4 +20,28 @@ describe("recipeStore", () => {
     expect(newR.id).toBeTruthy();
     expect(getRecipes().length).toBe(before + 1);
   });
+
+  it("addRecipe persists ingredients when provided", () => {
+    const ingredients = [
+      { 
+        id: "test-ingredient-1", 
+        recipeId: "temp", 
+        ingredientName: "flour", 
+        quantity: 200, 
+        unit: "g", 
+        isOptional: false 
+      }
+    ];
+    
+    const newR = addRecipe({ 
+      name: "Test Recipe with Ingredients", 
+      instructions: "Test instructions", 
+      prepMinutes: 1, 
+      cookMinutes: 1, 
+      tags: [], 
+      ingredients 
+    });
+    
+    expect(newR.ingredients).toEqual(ingredients);
+  });
 });

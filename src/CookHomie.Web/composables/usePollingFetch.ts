@@ -38,25 +38,24 @@ export const usePollingFetch = <T>(
     }
   };
 
+  const handleVisibilityChange = () => {
+    if (document.visibilityState === 'visible') {
+      // Resume polling if not already running
+      if (!intervalId) {
+        intervalId = setInterval(fetchData, pollIntervalMs);
+      }
+    } else {
+      // Pause polling when page is hidden
+      if (intervalId) {
+        clearInterval(intervalId);
+        intervalId = null;
+      }
+    }
+  };
+
   const start = async () => {
     await fetchData();
     
-    // Set up visibility change listener
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible') {
-        // Resume polling if not already running
-        if (!intervalId) {
-          intervalId = setInterval(fetchData, pollIntervalMs);
-        }
-      } else {
-        // Pause polling when page is hidden
-        if (intervalId) {
-          clearInterval(intervalId);
-          intervalId = null;
-        }
-      }
-    };
-
     // Add event listener for visibility change
     document.addEventListener('visibilitychange', handleVisibilityChange);
     
@@ -71,7 +70,7 @@ export const usePollingFetch = <T>(
     }
     
     // Remove visibility change listener
-    document.removeEventListener('visibilitychange', () => {});
+    document.removeEventListener('visibilitychange', handleVisibilityChange);
   };
 
   const refresh = async () => {

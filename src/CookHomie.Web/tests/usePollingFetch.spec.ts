@@ -73,7 +73,7 @@ describe("usePollingFetch", () => {
         }
       },
       removeEventListener: () => {}
-    });
+    } as unknown as Document);
     
     const { start } = usePollingFetch("/api/test");
     await start();
@@ -86,7 +86,7 @@ describe("usePollingFetch", () => {
     expect(spy).toHaveBeenCalledTimes(1);
     
     // Simulate page becoming hidden by calling the visibility change listeners
-    (document as any).visibilityState = "hidden";
+    (document as unknown as { visibilityState: string }).visibilityState = "hidden";
     for (const listener of visibilityChangeListeners) {
       listener();
     }
@@ -99,7 +99,7 @@ describe("usePollingFetch", () => {
     expect(spy).toHaveBeenCalledTimes(0);
     
     // Simulate page becoming visible
-    (document as any).visibilityState = "visible";
+    (document as unknown as { visibilityState: string }).visibilityState = "visible";
     for (const listener of visibilityChangeListeners) {
       listener();
     }

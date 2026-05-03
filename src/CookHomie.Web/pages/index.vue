@@ -44,8 +44,8 @@
         :is-stale="isStale"
         :has-data="hasData"
         show-refresh
-        @refresh="refresh"
         data-testid="expiring-items-panel"
+        @refresh="refresh"
       >
         <template #default>
           <div v-if="!hasData && !loading" class="text-text-muted text-sm italic">
@@ -69,8 +69,8 @@
         :is-stale="isStale"
         :has-data="hasData"
         show-refresh
-        @refresh="refresh"
         data-testid="recipe-ideas-panel"
+        @refresh="refresh"
       >
         <template #default>
           <div v-if="!hasData && !loading" class="text-text-muted text-sm italic">

@@ -2,15 +2,15 @@
   <SharedModal ref="modalRef" title="Add Recipe" @close="$emit('close')">
     <form class="flex flex-col gap-4" @submit.prevent="handleSubmit">
       <SharedFormField label="Name" :error="errors.name" required>
-        <input v-model="form.name" class="input" placeholder="e.g. Banana Bread" >
+        <input v-model="form.name" class="input" placeholder="e.g. Banana Bread">
       </SharedFormField>
 
       <div class="grid grid-cols-2 gap-4">
         <SharedFormField label="Prep (min)">
-          <input v-model.number="form.prepMinutes" type="number" min="0" class="input" >
+          <input v-model.number="form.prepMinutes" type="number" min="0" class="input">
         </SharedFormField>
         <SharedFormField label="Cook (min)">
-          <input v-model.number="form.cookMinutes" type="number" min="0" class="input" >
+          <input v-model.number="form.cookMinutes" type="number" min="0" class="input">
         </SharedFormField>
       </div>
 
@@ -33,30 +33,30 @@
               v-model="ingredient.ingredientName" 
               class="input flex-1" 
               placeholder="Ingredient name"
-            />
+            >
             <input 
               v-model.number="ingredient.quantity" 
               type="number" 
               class="input w-20" 
               placeholder="Qty"
-            />
+            >
             <input 
               v-model="ingredient.unit" 
               class="input w-20" 
               placeholder="Unit"
-            />
+            >
             <button 
               type="button" 
-              @click="removeIngredient(index)"
               class="btn btn-secondary"
+              @click="removeIngredient(index)"
             >
               Remove
             </button>
           </div>
           <button 
             type="button" 
-            @click="addIngredient"
             class="btn btn-secondary w-fit"
+            @click="addIngredient"
           >
             Add Ingredient
           </button>

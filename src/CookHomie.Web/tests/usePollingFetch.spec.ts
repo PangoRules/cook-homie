@@ -10,6 +10,12 @@ describe("usePollingFetch", () => {
     vi.stubGlobal("useNuxtApp", () => ({}));
   });
 
+  it("starts idle before client polling begins", () => {
+    const { loading } = usePollingFetch("/api/test");
+
+    expect(loading.value).toBe(false);
+  });
+
   it("fetches immediately on mount", async () => {
     const spy = vi.fn().mockResolvedValue({ data: "test" });
     vi.stubGlobal("$fetch", spy);

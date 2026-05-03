@@ -10,7 +10,7 @@ export const usePollingFetch = <T>(
   const pollIntervalMs = options?.pollIntervalMs ?? 30000;
 
   const data = useState<T | null>(`poll-${url}`, () => null);
-  const loading = useState<boolean>(`poll-loading-${url}`, () => true);
+  const loading = useState<boolean>(`poll-loading-${url}`, () => false);
   const hasFetched = useState<boolean>(`poll-fetched-${url}`, () => false);
   const error = useState<string | null>(`poll-error-${url}`, () => null);
   const isStale = useState<boolean>(`poll-stale-${url}`, () => false);

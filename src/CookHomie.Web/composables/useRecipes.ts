@@ -1,9 +1,10 @@
 import type { Recipe } from "~/types";
 import { computed } from "vue";
+import { API_ROUTES } from "~/utils/apiRoutes";
 
 export const useRecipes = () => {
   const { data, loading, error, isStale, start, stop, refresh } = usePollingFetch<Recipe[]>(
-    "/api/recipes",
+    API_ROUTES.RECIPES,
     { pollIntervalMs: 30000 }
   );
 

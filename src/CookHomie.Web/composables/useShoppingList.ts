@@ -1,9 +1,10 @@
 import type { ShoppingItem } from "../types";
 import { computed } from "vue";
+import { API_ROUTES } from "~/utils/apiRoutes";
 
 export const useShoppingList = () => {
   const { data, loading, error, isStale, start, stop, refresh } = usePollingFetch<ShoppingItem[]>(
-    "/api/shopping",
+    API_ROUTES.SHOPPING,
     { pollIntervalMs: 30000 }
   );
 
@@ -14,7 +15,7 @@ export const useShoppingList = () => {
     loading.value = true;
     error.value = null;
     try {
-      const created = await $fetch<ShoppingItem>("/api/shopping", {
+      const created = await $fetch<ShoppingItem>(API_ROUTES.SHOPPING, {
         method: "POST",
         body: payload,
       });
@@ -33,7 +34,7 @@ export const useShoppingList = () => {
     loading.value = true;
     error.value = null;
     try {
-      const created = await $fetch<ShoppingItem[]>("/api/shopping/bulk", {
+      const created = await $fetch<ShoppingItem[]>(API_ROUTES.SHOPPING_BULK, {
         method: "POST",
         body: { ingredientNames },
       });
@@ -52,7 +53,7 @@ export const useShoppingList = () => {
     loading.value = true;
     error.value = null;
     try {
-      const updated = await $fetch<ShoppingItem>("/api/shopping/" + id, {
+      const updated = await $fetch<ShoppingItem>(API_ROUTES.SHOPPING_ITEM(id), {
         method: "PATCH",
         body: updates,
       });
@@ -71,7 +72,7 @@ export const useShoppingList = () => {
     loading.value = true;
     error.value = null;
     try {
-      await $fetch("/api/shopping/" + id, { method: "DELETE" });
+      await $fetch(API_ROUTES.SHOPPING_ITEM(id), { method: "DELETE" });
       data.value = (data.value ?? []).filter((s) => s.id !== id);
     } catch (err) {
       error.value = err instanceof Error ? err.message : "Failed to remove item";

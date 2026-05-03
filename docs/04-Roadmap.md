@@ -20,15 +20,19 @@ tags: [project, cookhomie, roadmap]
 
 ### Milestone 2 — Frontend
 - [x] Nuxt 3 scaffold with default layout and route skeletons
-- [x] Dashboard page (summary cards implemented; expiring item rows and recipe suggestion rows still need real rendering)
+- [x] Dashboard page with summary cards, expiring item rows, and recipe suggestions
 - [x] DashboardStatCard and DashboardPanel components
 - [x] useDashboard composable with 30s polling
-- [x] Inventory page + AddItemModal
-- [x] Recipes page + RecipeCard + AddRecipeModal
-- [x] Recipe detail page (badge UI and exact matching utility implemented; direct page loads still need inventory loading for accurate highlights)
-- [x] Shopping list page skeleton
-
-Milestone 2 audit follow-up (2026-05-02): frontend gaps from the audit were fixed and verified end-to-end. All dashboard and recipe details now implement correct structured data contracts per design intent.
+- [x] Inventory page + AddItemModal + useInventory composable with polling
+- [x] Recipes page + RecipeCard + AddRecipeModal + useRecipes composable with polling
+- [x] Recipe detail page with IngredientStockBadge and client-side exact matching
+- [x] Shopping list page + useShoppingList composable (UI wired, backend stub)
+- [x] Design system: tokens.css, base.css, components.css
+- [x] Shared UI primitives: SkeletonBlock, ErrorBanner, StaleIndicator, ToastContainer, Button, Modal, FormField
+- [x] usePollingFetch composable with visibility-aware polling lifecycle
+- [x] useToast composable with 5s auto-dismiss and user-action trigger policy
+- [x] In-memory recipe store with full CRUD (delete when C# RecipesController ships)
+- [x] 60 frontend tests, 13 C# API tests, all passing
 
 ### Milestone 3 — MCP Server
 - [x] FastMCP scaffold + api_client.py

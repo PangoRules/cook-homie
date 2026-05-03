@@ -3,7 +3,9 @@ import { computed } from "vue";
 import { API_ROUTES } from "~/utils/apiRoutes";
 
 export const useInventory = () => {
-  const polling = usePollingFetch<InventoryItem[]>(API_ROUTES.INVENTORY.LIST, { pollIntervalMs: 30000 });
+  const polling = usePollingFetch<InventoryItem[]>(API_ROUTES.INVENTORY.BASE, {
+    pollIntervalMs: 30000,
+  });
 
   const items = computed<InventoryItem[]>(() => polling.data.value ?? []);
 
@@ -15,7 +17,7 @@ export const useInventory = () => {
     polling.loading.value = true;
     polling.error.value = null;
     try {
-      const created = await $fetch<InventoryItem>(API_ROUTES.INVENTORY.LIST, {
+      const created = await $fetch<InventoryItem>(API_ROUTES.INVENTORY.BASE, {
         method: "POST",
         body: payload,
       });

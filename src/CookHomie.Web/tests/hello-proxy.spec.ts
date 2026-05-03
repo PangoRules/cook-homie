@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import { mockEvent } from "./helpers/events";
 
 describe("hello proxy route", () => {
   beforeEach(() => {
@@ -13,8 +14,7 @@ describe("hello proxy route", () => {
     vi.stubGlobal("$fetch", fetchSpy);
 
     const { default: handler } = await import("../server/api/hello.get");
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const result = await handler({} as any);
+    const result = await handler(mockEvent);
 
     expect(result).toEqual({ message: "hello" });
     expect(fetchSpy).toHaveBeenCalledWith("/api/hello", {

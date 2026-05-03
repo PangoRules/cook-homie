@@ -1,6 +1,38 @@
 import { mount } from "@vue/test-utils";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import AddItemModal from "~/components/inventory/AddItemModal.vue";
+import { makeInventoryItemPayload } from "./helpers/builders";
+import { sharedStubs } from "./helpers/stubs";
+
+type AddItemModalVm = InstanceType<typeof AddItemModal> & {
+  validate: () => boolean;
+  form: {
+    name: string;
+    category: string;
+    location: string;
+    quantity: number;
+  };
+  errors: {
+    name: string;
+    category: string;
+    location: string;
+  };
+};
+
+const mountAddItemModal = () =>
+  mount(AddItemModal, {
+    global: {
+      stubs: sharedStubs,
+    },
+  });
+
+const fillValidInventoryForm = (vm: AddItemModalVm) => {
+  const payload = makeInventoryItemPayload();
+  vm.form.name = payload.name;
+  vm.form.category = payload.category;
+  vm.form.location = payload.location;
+  vm.form.quantity = payload.quantity;
+};
 
 vi.mock("~/composables/useToast", () => ({
   useToast: () => ({
@@ -29,25 +61,9 @@ describe("AddItemModal", () => {
   });
 
   it("validates empty required fields", async () => {
-    const wrapper = mount(AddItemModal, {
-      global: {
-        stubs: {
-          SharedModal: { template: '<div class="stub-modal"><slot /><slot name="footer" /></div>' },
-          SharedFormField: {
-            template: '<div class="stub-field"><slot /></div>',
-            props: ["label", "error", "required"],
-          },
-          SharedButton: {
-            template: '<button class="stub-button"><slot /></button>',
-            props: ["variant", "disabled"],
-          },
-          Teleport: true,
-        },
-      },
-    });
+    const wrapper = mountAddItemModal();
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const vm = wrapper.vm as any;
+    const vm = wrapper.vm as AddItemModalVm;
     const result = vm.validate();
     expect(result).toBe(false);
     expect(vm.errors.name).toBe("Name is required");
@@ -59,29 +75,10 @@ describe("AddItemModal", () => {
     const $fetchMock = vi.fn().mockResolvedValue({ id: "new-item" });
     vi.stubGlobal("$fetch", $fetchMock);
 
-    const wrapper = mount(AddItemModal, {
-      global: {
-        stubs: {
-          SharedModal: { template: '<div class="stub-modal"><slot /><slot name="footer" /></div>' },
-          SharedFormField: {
-            template: '<div class="stub-field"><slot /></div>',
-            props: ["label", "error", "required"],
-          },
-          SharedButton: {
-            template: '<button class="stub-button"><slot /></button>',
-            props: ["variant", "disabled"],
-          },
-          Teleport: true,
-        },
-      },
-    });
+    const wrapper = mountAddItemModal();
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const vm = wrapper.vm as any;
-    vm.form.name = "Milk";
-    vm.form.category = "dairy";
-    vm.form.location = "Fridge";
-    vm.form.quantity = 1;
+    const vm = wrapper.vm as AddItemModalVm;
+    fillValidInventoryForm(vm);
     await wrapper.vm.$nextTick();
 
     expect(vm.validate()).toBe(true);

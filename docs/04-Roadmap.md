@@ -28,7 +28,7 @@ tags: [project, cookhomie, roadmap]
 - [x] Recipe detail page (badge UI and exact matching utility implemented; direct page loads still need inventory loading for accurate highlights)
 - [x] Shopping list page skeleton
 
-Milestone 2 audit note (2026-05-02): most frontend shell and mock-contract work is implemented and tested, but the dashboard and recipe detail items remain partially complete against the design intent.
+Milestone 2 audit follow-up (2026-05-02): frontend gaps from the audit were fixed and verified end-to-end. All dashboard and recipe details now implement correct structured data contracts per design intent.
 
 ### Milestone 3 — MCP Server
 - [x] FastMCP scaffold + api_client.py

@@ -2,6 +2,17 @@ import { describe, expect, it, vi } from "vitest";
 import { ref } from "vue";
 import { useRecipes } from "../composables/useRecipes";
 
+// Mock usePollingFetch to satisfy the composables that use it
+vi.stubGlobal("usePollingFetch", vi.fn().mockReturnValue({
+  data: ref(null),
+  loading: ref(true),
+  error: ref(null),
+  isStale: ref(false),
+  start: vi.fn(),
+  stop: vi.fn(),
+  refresh: vi.fn()
+}));
+
 describe("useRecipes", () => {
   it("fetches recipes from /api/recipes", async () => {
     vi.stubGlobal("useState", (_k: string, init: () => unknown) => ref(init()));

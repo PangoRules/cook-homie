@@ -3,6 +3,17 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ref } from "vue";
 import { useInventory } from "../composables/useInventory";
 
+// Mock usePollingFetch to satisfy the composables that use it
+vi.stubGlobal("usePollingFetch", vi.fn().mockReturnValue({
+  data: ref(null),
+  loading: ref(true),
+  error: ref(null),
+  isStale: ref(false),
+  start: vi.fn(),
+  stop: vi.fn(),
+  refresh: vi.fn()
+}));
+
 describe("useInventory", () => {
   beforeEach(() => {
     vi.stubGlobal("useState", (_key: string, init: () => unknown) => ref(init()));

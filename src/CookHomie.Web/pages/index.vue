@@ -51,9 +51,10 @@
           <div v-if="!hasData && !loading" class="text-text-muted text-sm italic">
             No expiring items — inventory looks fresh!
           </div>
-          <div v-else-if="data?.upcomingExpirations && data.upcomingExpirations.length > 0">
-            <div v-for="expiry in data.upcomingExpirations" :key="expiry" class="py-2 border-b border-border">
-              <span class="text-text-primary font-medium">{{ formatExpiry(expiry) }}</span>
+          <div v-else-if="data?.expiringItems && data.expiringItems.length > 0">
+            <div v-for="item in data.expiringItems" :key="item.id" class="py-2 border-b border-border">
+              <span class="text-text-primary font-medium">{{ item.name }}</span>
+              <span class="block text-text-muted text-sm">{{ item.location }}</span>
             </div>
           </div>
           <div v-else-if="loading" class="text-text-muted text-sm italic">
@@ -76,9 +77,10 @@
           <div v-if="!hasData && !loading" class="text-text-muted text-sm italic">
             Add inventory items to get recipe suggestions.
           </div>
-          <div v-else-if="data?.recommendedRecipes && data.recommendedRecipes.length > 0">
-            <div v-for="recipe in data.recommendedRecipes" :key="recipe" class="py-2 border-b border-border">
-              <span class="text-text-primary font-medium">{{ recipe }}</span>
+          <div v-else-if="data?.recipeIdeas && data.recipeIdeas.length > 0">
+            <div v-for="idea in data.recipeIdeas" :key="idea.id" class="py-2 border-b border-border">
+              <span class="text-text-primary font-medium">{{ idea.name }}</span>
+              <span class="block text-text-muted text-sm">{{ idea.matchedCount }} matched, {{ idea.missingCount }} missing</span>
             </div>
           </div>
           <div v-else-if="loading" class="text-text-muted text-sm italic">

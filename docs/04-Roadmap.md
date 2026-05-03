@@ -38,8 +38,8 @@ tags: [project, cookhomie, roadmap]
 - [x] Task 9: Shopping list API routes/contracts/services + composable operations (bulk add, dedup guards)
 - [x] Task 3: `utils/apiRoutes.ts` namespaced constants and composable migration
 - [x] Task 2: Canonical `formatExpiry` in `utils/date.ts` with calendar-day comparison
+- [x] Task 7: Shared paginated ingredient table + AddRecipeModal validation
 - [ ] Task 1: Shared RefreshButton component
-- [ ] Task 7: Shared paginated ingredient table + AddRecipeModal validation
 - [ ] Task 8: Recipe detail inline edit + shopping row actions
 - [ ] Task 4: Recipe name as accessible NuxtLink on dashboard
 - [ ] Task 6: Dashboard missing-ingredient expansion + bulk/per-item shopping actions

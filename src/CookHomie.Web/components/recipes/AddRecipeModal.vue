@@ -88,6 +88,7 @@ const resetForm = () => {
   form.name = ""; form.prepMinutes = 0; form.cookMinutes = 0; form.instructions = "";
   form.tags = []; form.ingredients = [emptyIngredient()];
   errors.name = ""; errors.instructions = ""; errors.ingredients = "";
+  errors.prepMinutes = ""; errors.cookMinutes = "";
 };
 
 const onCancel = () => {

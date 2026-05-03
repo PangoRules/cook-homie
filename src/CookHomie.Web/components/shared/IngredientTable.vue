@@ -46,18 +46,8 @@
 import { computed, ref } from "vue";
 import type { RecipeIngredient } from "@/types";
 
-// For editable mode, we expect a simplified interface to match the form structure
-interface AddRecipeIngredient {
-  ingredientName: string;
-  quantity: number;
-  unit: string;
-  isOptional: boolean;
-}
-
-type IngredientType = RecipeIngredient | AddRecipeIngredient;
-
 interface Props {
-  ingredients: IngredientType[];
+  ingredients: RecipeIngredient[];
   mode?: "readonly" | "editable";
   pageSize?: number;
 }
@@ -68,15 +58,12 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<{
-  (e: "update:ingredients", ingredients: IngredientType[]): void;
   (e: "remove", index: number): void;
 }>();
 
 // This function handles removal of ingredients from an editable ingredient table
 const removeIngredient = (index: number) => {
-  if (props.mode === "editable") {
-    emit("remove", index);
-  }
+  emit("remove", index);
 };
 
 const currentPage = ref(1);

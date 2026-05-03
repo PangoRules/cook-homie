@@ -24,6 +24,7 @@
       
       <SharedFormField label="Ingredients" :error="errors.ingredients" required>
         <IngredientTable
+          ref="ingredientTableRef"
           v-model:ingredients="form.ingredients"
           mode="editable"
           :page-size="5"
@@ -45,12 +46,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, reactive } from "vue";
+import { computed, nextTick, reactive, ref } from "vue";
 import { useToast } from "@/composables/useToast";
 import IngredientTable from "@/components/shared/IngredientTable.vue";
 
 const emit = defineEmits(["added", "close"]);
 const modalRef = ref();
+const ingredientTableRef = ref<{ editIngredient: (index: number) => Promise<void> }>();
 
 const form = reactive({
   name: "",
@@ -97,8 +99,10 @@ const onCancel = () => {
   modalRef.value.startClose();
 };
 
-const addIngredient = () => {
+const addIngredient = async () => {
   form.ingredients.push(emptyIngredient());
+  await nextTick();
+  await ingredientTableRef.value?.editIngredient(form.ingredients.length - 1);
 };
 
 const removeIngredient = (index: number) => {

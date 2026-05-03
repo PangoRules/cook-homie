@@ -52,8 +52,25 @@ export const getRecipes = (): Recipe[] => recipes;
 export const getRecipeById = (id: string): Recipe | undefined =>
   recipes.find(r => r.id === id);
 
-export const addRecipe = (data: Omit<Recipe, "id">): Recipe => {
-  const recipe: Recipe = { ...data, id: `r${nextId++}` };
+export const addRecipe = (data: {
+  name: string;
+  instructions: string;
+  prepMinutes: number;
+  cookMinutes: number;
+  tags: string[];
+  ingredients: Array<{ ingredientName: string; quantity: number; unit: string; isOptional: boolean }>;
+}): Recipe => {
+  const id = `r${nextId++}`;
+  const ingredients: RecipeIngredient[] = data.ingredients.map((ing, index) => ({
+    id: `${id}-i${index + 1}`,
+    recipeId: id,
+    ingredientName: ing.ingredientName,
+    quantity: ing.quantity,
+    unit: ing.unit,
+    isOptional: ing.isOptional,
+  }));
+
+  const recipe: Recipe = { ...data, id, ingredients };
   recipes.push(recipe);
   return recipe;
 };

@@ -1,43 +1,42 @@
 import type { AddInventoryItemPayload, InventoryItem } from "../types";
 
 export const useInventory = () => {
-  const { data, loading, error, isStale, start, stop, refresh } = usePollingFetch<InventoryItem[]>(
-    "/api/inventory",
-    { pollIntervalMs: 30000 }
-  );
+  const polling = usePollingFetch<InventoryItem[]>("/api/inventory", { pollIntervalMs: 30000 });
+
+  const items = polling.data;
 
   const loadInventory = async () => {
-    await refresh();
+    await polling.refresh();
   };
 
   const addInventoryItem = async (payload: AddInventoryItemPayload): Promise<InventoryItem> => {
-    loading.value = true;
-    error.value = null;
+    polling.loading.value = true;
+    polling.error.value = null;
     try {
       const created = await $fetch<InventoryItem>("/api/inventory", {
         method: "POST",
         body: payload,
       });
-      // Note: usePollingFetch handles the refresh automatically, but we should add to local state for immediate UX
-      // This is a design consideration that would require more sophisticated state management
+      // Append to local cache
+      polling.data.value = [created, ...(polling.data.value ?? [])];
       return created;
     } catch (err) {
-      error.value = err instanceof Error ? err.message : "Failed to add inventory item";
+      polling.error.value = err instanceof Error ? err.message : "Failed to add inventory item";
       throw err;
     } finally {
-      loading.value = false;
+      polling.loading.value = false;
     }
   };
 
   return {
-    items: data,
-    loading,
-    error,
-    isStale,
+    items,
+    loading: polling.loading,
+    error: polling.error,
+    isStale: polling.isStale,
     loadInventory,
-    startPolling: start,
-    stopPolling: stop,
-    refresh,
+    startPolling: polling.start,
+    stopPolling: polling.stop,
+    refresh: polling.refresh,
     addInventoryItem,
   };
 };

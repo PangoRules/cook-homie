@@ -55,7 +55,7 @@
             <div v-for="item in data.expiringItems" :key="item.id" class="py-2 border-b border-border">
               <span class="text-text-primary font-medium">{{ item.name }}</span>
               <span class="block text-text-muted text-sm">{{ item.location }}</span>
-              <span class="block text-warning text-xs font-semibold">{{ formatExpiry(item.expiresAt) }}</span>
+              <span class="block text-warning text-xs font-semibold">{{ formatExpiryLong(item.expiresAt) }}</span>
             </div>
           </div>
           <div v-else-if="loading" class="text-text-muted text-sm italic">
@@ -95,23 +95,11 @@
 
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted } from "vue";
+import { formatExpiryLong } from "~/utils/date";
 
 const { data, loading, error, isStale, start, stop, refresh } = useDashboard();
 
 const hasData = computed(() => data.value !== null);
-
-function formatExpiry(expiryDate: string): string {
-  const date = new Date(expiryDate);
-  const today = new Date();
-  const diffTime = date.getTime() - today.getTime();
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  
-  if (diffDays === 0) return "Expires today";
-  if (diffDays === 1) return "Expires tomorrow";
-  if (diffDays < 0) return `Expired ${Math.abs(diffDays)} days ago`;
-  
-  return `Expires in ${diffDays} days`;
-}
 
 onMounted(async () => await start());
 onUnmounted(() => stop());

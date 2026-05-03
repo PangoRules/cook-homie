@@ -46,8 +46,10 @@
 import { computed, ref } from "vue";
 import type { RecipeIngredient } from "@/types";
 
+type IngredientType = RecipeIngredient | Omit<RecipeIngredient, 'id' | 'recipeId' | 'isInStock'>;
+
 interface Props {
-  ingredients: RecipeIngredient[];
+  ingredients: IngredientType[];
   mode?: "readonly" | "editable";
   pageSize?: number;
 }

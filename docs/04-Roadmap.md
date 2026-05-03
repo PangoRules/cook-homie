@@ -26,7 +26,7 @@ tags: [project, cookhomie, roadmap]
 - [x] Inventory page + AddItemModal + useInventory composable with polling
 - [x] Recipes page + RecipeCard + AddRecipeModal + useRecipes composable with polling
 - [x] Recipe detail page with IngredientStockBadge and client-side exact matching
-- [x] Shopping list page + useShoppingList composable (UI wired, backend stub)
+- [x] Shopping list page + useShoppingList composable (full backend API: CRUD + bulk + deduplication)
 - [x] Design system: tokens.css, base.css, components.css
 - [x] Shared UI primitives: SkeletonBlock, ErrorBanner, StaleIndicator, ToastContainer, Button, Modal, FormField
 - [x] usePollingFetch composable with visibility-aware polling lifecycle

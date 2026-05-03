@@ -1,6 +1,7 @@
 import type { Recipe, RecipeIngredient } from "~/types";
 import { matchIngredientStock } from "~/utils/ingredientStock";
 import { useInventory } from "./useInventory";
+import { API_ROUTES } from "~/utils/apiRoutes";
 
 export const useRecipeDetail = (recipeId: string) => {
   const recipe = useState<Recipe | null>(`recipe-${recipeId}`, () => null);
@@ -19,7 +20,7 @@ export const useRecipeDetail = (recipeId: string) => {
     try {
       // Ensure inventory is loaded first
       await loadInventory();
-      recipe.value = await $fetch<Recipe>(`/api/recipes/${recipeId}`);
+      recipe.value = await $fetch<Recipe>(API_ROUTES.RECIPES.DETAIL(recipeId));
     } catch (err) {
       error.value = err instanceof Error ? err.message : "Failed to load recipe";
     } finally {

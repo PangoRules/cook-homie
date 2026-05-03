@@ -41,7 +41,7 @@
           <span
             :class="['text-xs', item.expiresAt ? 'text-warning font-semibold' : 'text-text-muted']"
           >
-            {{ item.expiresAt ? formatExpiry(item.expiresAt) : "No expiry" }}
+            {{ item.expiresAt ? formatExpiryShort(item.expiresAt) : "No expiry" }}
           </span>
         </li>
       </ul>
@@ -52,6 +52,9 @@
 </template>
 
 <script setup lang="ts">
+import { computed, onMounted, onUnmounted, ref } from "vue";
+import { formatExpiryShort } from "~/utils/date";
+
 const { items, loading, error, isStale, startPolling, stopPolling, refresh } = useInventory();
 const showModal = ref(false);
 
@@ -61,16 +64,6 @@ onUnmounted(() => stopPolling());
 const handleAdded = () => {
   showModal.value = false;
   refresh();
-};
-
-const formatExpiry = (date: string) => {
-  const d = new Date(date);
-  const now = new Date();
-  const diff = Math.ceil((d.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
-  if (diff < 0) return "Expired";
-  if (diff === 0) return "Expires today";
-  if (diff <= 3) return `Expires in ${diff}d`;
-  return d.toLocaleDateString();
 };
 
 const itemsLocalCopy = computed(() => (items.value !== null ? items.value : []));

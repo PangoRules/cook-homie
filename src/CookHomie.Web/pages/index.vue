@@ -44,11 +44,24 @@
         :is-stale="isStale"
         :has-data="hasData"
         show-refresh
+        data-testid="expiring-items-panel"
         @refresh="refresh"
       >
-        <p v-if="!hasData && !loading" class="text-text-muted text-sm italic">
-          No expiring items — inventory looks fresh!
-        </p>
+        <template #default>
+          <div v-if="!hasData && !loading" class="text-text-muted text-sm italic">
+            No expiring items — inventory looks fresh!
+          </div>
+          <div v-else-if="data?.expiringItems && data.expiringItems.length > 0">
+            <div v-for="item in data.expiringItems" :key="item.id" class="py-2 border-b border-border">
+              <span class="text-text-primary font-medium">{{ item.name }}</span>
+              <span class="block text-text-muted text-sm">{{ item.location }}</span>
+              <span class="block text-warning text-xs font-semibold">{{ formatExpiry(item.expiresAt) }}</span>
+            </div>
+          </div>
+          <div v-else-if="loading" class="text-text-muted text-sm italic">
+            Loading expiring items...
+          </div>
+        </template>
       </DashboardPanel>
 
       <DashboardPanel
@@ -58,11 +71,23 @@
         :is-stale="isStale"
         :has-data="hasData"
         show-refresh
+        data-testid="recipe-ideas-panel"
         @refresh="refresh"
       >
-        <p v-if="!hasData && !loading" class="text-text-muted text-sm italic">
-          Add inventory items to get recipe suggestions.
-        </p>
+        <template #default>
+          <div v-if="!hasData && !loading" class="text-text-muted text-sm italic">
+            Add inventory items to get recipe suggestions.
+          </div>
+          <div v-else-if="data?.recipeIdeas && data.recipeIdeas.length > 0">
+            <div v-for="idea in data.recipeIdeas" :key="idea.id" class="py-2 border-b border-border">
+              <span class="text-text-primary font-medium">{{ idea.name }}</span>
+              <span class="block text-text-muted text-sm">{{ idea.matchedCount }} matched, {{ idea.missingCount }} missing</span>
+            </div>
+          </div>
+          <div v-else-if="loading" class="text-text-muted text-sm italic">
+            Loading recipe suggestions...
+          </div>
+        </template>
       </DashboardPanel>
     </div>
   </div>
@@ -74,6 +99,19 @@ import { computed, onMounted, onUnmounted } from "vue";
 const { data, loading, error, isStale, start, stop, refresh } = useDashboard();
 
 const hasData = computed(() => data.value !== null);
+
+function formatExpiry(expiryDate: string): string {
+  const date = new Date(expiryDate);
+  const today = new Date();
+  const diffTime = date.getTime() - today.getTime();
+  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  
+  if (diffDays === 0) return "Expires today";
+  if (diffDays === 1) return "Expires tomorrow";
+  if (diffDays < 0) return `Expired ${Math.abs(diffDays)} days ago`;
+  
+  return `Expires in ${diffDays} days`;
+}
 
 onMounted(async () => await start());
 onUnmounted(() => stop());

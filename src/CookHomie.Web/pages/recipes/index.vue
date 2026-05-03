@@ -6,11 +6,11 @@
     </header>
 
     <div class="mt-4">
-      <SharedSkeletonBlock v-if="loading && recipes.length === 0" class="h-[120px]" />
+      <SharedSkeletonBlock v-if="loading && localRecipes.length === 0" class="h-[120px]" />
 
       <SharedErrorBanner v-else-if="error" :message="error" @retry="refresh" />
 
-      <p v-else-if="recipes.length === 0" class="text-text-muted text-sm">
+      <p v-else-if="localRecipes.length === 0" class="text-text-muted text-sm">
         No recipes found. Add your first recipe!
       </p>
 
@@ -58,4 +58,6 @@ onMounted(() => {
 });
 
 onUnmounted(() => stop());
+
+const localRecipes = computed(() => (recipes.value !== null ? recipes.value : []));
 </script>

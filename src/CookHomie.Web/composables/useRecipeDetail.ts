@@ -8,7 +8,7 @@ export const useRecipeDetail = (recipeId: string) => {
   const error = useState<string | null>(`recipe-error-${recipeId}`, () => null);
 
   // Derive inventory names from the shared inventory state
-  const { items: inventoryItems } = useInventory();
+  const { items: inventoryItems, loadInventory } = useInventory();
   const inventoryNames = computed(() =>
     inventoryItems.value.map(item => item.name)
   );
@@ -17,6 +17,8 @@ export const useRecipeDetail = (recipeId: string) => {
     loading.value = true;
     error.value = null;
     try {
+      // Ensure inventory is loaded first
+      await loadInventory();
       recipe.value = await $fetch<Recipe>(`/api/recipes/${recipeId}`);
     } catch (err) {
       error.value = err instanceof Error ? err.message : "Failed to load recipe";

@@ -10,20 +10,20 @@
       :loading="loading"
       :error="error"
       :is-stale="isStale"
-      :has-data="items.length > 0"
+      :has-data="itemsLocalCopy.length > 0"
       show-refresh
       @refresh="refresh"
     >
-      <div v-if="loading && items.length === 0" class="flex flex-col gap-2">
+      <div v-if="loading && itemsLocalCopy.length === 0" class="flex flex-col gap-2">
         <SharedSkeletonBlock v-for="i in 5" :key="i" class="h-12" />
       </div>
       <SharedErrorBanner
-        v-else-if="error && items.length === 0"
+        v-else-if="error && itemsLocalCopy.length === 0"
         :message="error"
         show-retry
         @retry="refresh"
       />
-      <p v-else-if="items.length === 0" class="text-text-muted text-sm text-center py-10">
+      <p v-else-if="itemsLocalCopy.length === 0" class="text-text-muted text-sm text-center py-10">
         No inventory items. Add your first item above.
       </p>
       <ul v-else class="flex flex-col gap-2 list-none p-0 m-0">
@@ -72,4 +72,6 @@ const formatExpiry = (date: string) => {
   if (diff <= 3) return `Expires in ${diff}d`;
   return d.toLocaleDateString();
 };
+
+const itemsLocalCopy = computed(() => (items.value !== null ? items.value : []));
 </script>

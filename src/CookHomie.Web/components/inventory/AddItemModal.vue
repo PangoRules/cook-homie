@@ -2,12 +2,12 @@
   <SharedModal ref="modalRef" title="Add Inventory Item" @close="$emit('close')">
     <form class="flex flex-col gap-4" @submit.prevent="handleSubmit">
       <SharedFormField label="Name" :error="errors.name" required>
-        <input v-model="form.name" class="input" placeholder="e.g. Milk" />
+        <input v-model="form.name" class="input" placeholder="e.g. Milk">
       </SharedFormField>
 
       <div class="grid grid-cols-2 gap-4">
         <SharedFormField label="Category" :error="errors.category" required>
-          <input v-model="form.category" class="input" placeholder="e.g. dairy" />
+          <input v-model="form.category" class="input" placeholder="e.g. dairy">
         </SharedFormField>
         <SharedFormField label="Location" :error="errors.location" required>
           <select v-model="form.location" class="input">
@@ -23,15 +23,15 @@
 
       <div class="grid grid-cols-2 gap-4">
         <SharedFormField label="Quantity" :error="errors.quantity" required>
-          <input v-model.number="form.quantity" type="number" min="0" step="1" class="input" />
+          <input v-model.number="form.quantity" type="number" min="0" step="1" class="input">
         </SharedFormField>
         <SharedFormField label="Unit">
-          <input v-model="form.unit" class="input" placeholder="e.g. liters" />
+          <input v-model="form.unit" class="input" placeholder="e.g. liters">
         </SharedFormField>
       </div>
 
       <SharedFormField label="Expires At">
-        <input v-model="form.expiresAt" type="date" class="input" />
+        <input v-model="form.expiresAt" type="date" class="input">
       </SharedFormField>
 
       <SharedFormField label="Notes">

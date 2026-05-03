@@ -8,13 +8,34 @@ export interface RecipeIngredient {
   isInStock?: boolean;
 }
 
+export interface DashboardExpiringItem {
+  id: string;
+  name: string;
+  expiresAt: string;
+  location: string;
+}
+
+export interface DashboardRecipeIdea {
+  id: string;
+  name: string;
+  matchedCount: number;
+  missingCount: number;
+}
+
 export interface DashboardSummary {
   expiringCount: number;
   recipeMatchCount: number;
   shoppingCount: number;
+  totalItems: number;
+  expiringItems: DashboardExpiringItem[];
+  recipeIdeas: DashboardRecipeIdea[];
 }
 
-export type AddRecipePayload = Omit<Recipe, "id" | "ingredients">;
+export type AddRecipeIngredientPayload = Omit<RecipeIngredient, "id" | "recipeId" | "isInStock">;
+
+export type AddRecipePayload = Omit<Recipe, "id" | "ingredients"> & {
+  ingredients: AddRecipeIngredientPayload[];
+};
 
 export interface InventoryItem {
   id: string;

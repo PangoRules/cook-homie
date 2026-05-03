@@ -2,13 +2,7 @@
   <div class="p-6">
     <header class="flex items-center justify-between mb-6">
       <h1 class="font-display text-[28px] font-bold text-text-primary">Kitchen Overview</h1>
-      <button
-        class="bg-transparent border border-border rounded-md px-4 py-2 cursor-pointer text-sm text-text-secondary transition-all hover:bg-surface-hover hover:text-text-primary disabled:opacity-50 disabled:cursor-not-allowed"
-        :disabled="loading"
-        @click="refresh"
-      >
-        ↻ Refresh
-      </button>
+      <RefreshButton :loading="loading" @refresh="refresh" />
     </header>
 
     <div class="grid grid-cols-3 gap-4 mb-6 max-md:grid-cols-1">
@@ -96,6 +90,7 @@
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted } from "vue";
 import { formatExpiryLong } from "~/utils/date";
+import RefreshButton from "~/components/shared/RefreshButton.vue";
 
 const { data, loading, error, isStale, start, stop, refresh } = useDashboard();
 

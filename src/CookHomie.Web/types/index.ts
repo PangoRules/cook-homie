@@ -33,7 +33,7 @@ export interface DashboardSummary {
 
 export type AddRecipeIngredientPayload = Omit<RecipeIngredient, "id" | "recipeId" | "isInStock">;
 
-export type AddRecipePayload = Omit<Recipe, "id"> & {
+export type AddRecipePayload = Omit<Recipe, "id" | "ingredients"> & {
   ingredients: AddRecipeIngredientPayload[];
 };
 

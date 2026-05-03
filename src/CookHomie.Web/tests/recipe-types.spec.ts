@@ -24,7 +24,7 @@ describe("Recipe types", () => {
       prepMinutes: 5,
       cookMinutes: 10,
       tags: [],
-      ingredients: [{ ingredientName: "Flour", quantity: 2, unit: "cups", isOptional: false, recipeId: "", id: "" }],
+      ingredients: [{ ingredientName: "Flour", quantity: 2, unit: "cups", isOptional: false }],
     };
     expect("id" in p).toBe(false);
     expect(p.ingredients).toHaveLength(1);

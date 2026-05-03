@@ -55,6 +55,7 @@
             <div v-for="item in data.expiringItems" :key="item.id" class="py-2 border-b border-border">
               <span class="text-text-primary font-medium">{{ item.name }}</span>
               <span class="block text-text-muted text-sm">{{ item.location }}</span>
+              <span class="block text-warning text-xs font-semibold">{{ formatExpiry(item.expiresAt) }}</span>
             </div>
           </div>
           <div v-else-if="loading" class="text-text-muted text-sm italic">

@@ -1,9 +1,10 @@
 import type { AddInventoryItemPayload, InventoryItem } from "../types";
+import { computed } from "vue";
 
 export const useInventory = () => {
   const polling = usePollingFetch<InventoryItem[]>("/api/inventory", { pollIntervalMs: 30000 });
 
-  const items = polling.data;
+  const items = computed<InventoryItem[]>(() => polling.data.value ?? []);
 
   const loadInventory = async () => {
     await polling.refresh();

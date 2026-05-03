@@ -1,6 +1,6 @@
 // TEMP_MOCK: No C# Recipes API exists yet.
 // This in-memory store must be deleted once backend RecipesController ships.
-import type { Recipe, RecipeIngredient } from "~/types";
+import type { AddRecipePayload, Recipe, RecipeIngredient } from "~/types";
 
 const recipes: Recipe[] = [
   {
@@ -52,14 +52,7 @@ export const getRecipes = (): Recipe[] => recipes;
 export const getRecipeById = (id: string): Recipe | undefined =>
   recipes.find(r => r.id === id);
 
-export const addRecipe = (data: {
-  name: string;
-  instructions: string;
-  prepMinutes: number;
-  cookMinutes: number;
-  tags: string[];
-  ingredients: Array<{ ingredientName: string; quantity: number; unit: string; isOptional: boolean }>;
-}): Recipe => {
+export const addRecipe = (data: AddRecipePayload): Recipe => {
   const id = `r${nextId++}`;
   const ingredients: RecipeIngredient[] = data.ingredients.map((ing, index) => ({
     id: `${id}-i${index + 1}`,

@@ -1,10 +1,13 @@
 import type { ShoppingItem } from "../types";
+import { computed } from "vue";
 
 export const useShoppingList = () => {
   const { data, loading, error, isStale, start, stop, refresh } = usePollingFetch<ShoppingItem[]>(
     "/api/shopping",
     { pollIntervalMs: 30000 }
   );
+
+  const items = computed<ShoppingItem[]>(() => data.value ?? []);
 
   const loadList = async () => {
     await refresh();
@@ -18,8 +21,7 @@ export const useShoppingList = () => {
         method: "POST",
         body: { ingredientNames },
       });
-      // Note: usePollingFetch handles the refresh automatically, but we should add to local state for immediate UX
-      // This is a design consideration that would require more sophisticated state management
+      data.value = [...(data.value ?? []), ...created];
       return created;
     } catch (err) {
       error.value = err instanceof Error ? err.message : "Failed to add items to shopping list";
@@ -30,7 +32,7 @@ export const useShoppingList = () => {
   };
 
   return {
-    items: data,
+    items,
     loading,
     error,
     isStale,

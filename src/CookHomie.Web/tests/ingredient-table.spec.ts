@@ -88,6 +88,26 @@ describe("IngredientTable", () => {
     expect(wrapper.find<HTMLInputElement>('input[placeholder="e.g. Flour"]').element.value).toBe("Flour");
   });
 
+  it("emits cancel-add when canceling a blank newly-added row", async () => {
+    const ingredients = [{ ingredientName: "", quantity: 1, unit: "g", isOptional: false }];
+    const wrapper = mountIngredientTable(ingredients, { startEditingFirstRow: true });
+
+    await wrapper.findAll("button").find((button) => button.text() === "Cancel")?.trigger("click");
+
+    expect(wrapper.emitted("cancel-add")?.[0]).toEqual([0]);
+    expect(wrapper.emitted("remove")).toBeUndefined();
+  });
+
+  it("does not emit cancel-add when canceling an existing named row", async () => {
+    const ingredients = [makeIngredient("Flour")];
+    const wrapper = mountIngredientTable(ingredients, { startEditingFirstRow: true });
+
+    await wrapper.findAll("button").find((button) => button.text() === "Cancel")?.trigger("click");
+
+    expect(wrapper.emitted("cancel-add")).toBeUndefined();
+    expect(wrapper.emitted("remove")).toBeUndefined();
+  });
+
   it("cancels editing without saving or removing", async () => {
     const ingredients = [makeIngredient("Flour")];
     const wrapper = mountIngredientTable(ingredients, { startEditingFirstRow: true });
@@ -115,5 +135,13 @@ describe("IngredientTable", () => {
 
     expect(wrapper.text()).toContain("Prev");
     expect(wrapper.text()).toContain("Next");
+  });
+
+  it("renders with a fixed minimum height regardless of row count", () => {
+    const ingredients = [makeIngredient("Flour")];
+    const wrapper = mountIngredientTable(ingredients, { pageSize: 5 });
+
+    const tableWrapper = wrapper.find(".min-h-\\[240px\\]");
+    expect(tableWrapper.exists()).toBe(true);
   });
 });

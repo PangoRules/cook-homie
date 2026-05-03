@@ -1,6 +1,7 @@
 <template>
   <div class="flex flex-col gap-2">
-    <table class="w-full text-sm">
+    <div class="min-h-[240px]">
+      <table class="w-full text-sm">
       <thead>
         <tr class="border-b border-border">
           <th class="text-left text-text-muted font-medium">Ingredient</th>
@@ -79,6 +80,7 @@
         </tr>
       </tbody>
     </table>
+    </div>
 
     <!-- Pagination controls -->
     <div v-if="canShowPagination" class="flex items-center justify-between">
@@ -115,7 +117,7 @@ const props = withDefaults(defineProps<Props>(), {
 });
 
 const emit = defineEmits<{
-  (e: "remove", index: number): void;
+  (e: "remove" | "cancel-add", index: number): void;
 }>();
 
 interface DraftIngredient {
@@ -197,9 +199,16 @@ const finishEditing = (index: number) => {
 };
 
 const cancelEditing = () => {
+  const index = editingIndex.value;
+  const ingredient = index !== null && index < props.ingredients.length ? props.ingredients[index] : undefined;
+
   editError.value = "";
   editingIndex.value = null;
   draftIngredient.value = null;
+
+  if (index !== null && !ingredient?.ingredientName.trim()) {
+    emit("cancel-add", index);
+  }
 };
 
 const paginatedIngredients = computed(() => {

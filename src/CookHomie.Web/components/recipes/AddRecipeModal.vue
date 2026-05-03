@@ -30,6 +30,7 @@
           :page-size="5"
           :start-editing-first-row="true"
           @remove="removeIngredient"
+          @cancel-add="cancelIngredientAdd"
         />
         <button type="button" class="btn btn-secondary w-fit mt-2" @click="addIngredient">
           + Add Ingredient
@@ -109,6 +110,14 @@ const addIngredient = async () => {
 const removeIngredient = (index: number) => {
   if (form.ingredients.length === 1) {
     form.ingredients[0] = emptyIngredient();
+    return;
+  }
+  form.ingredients.splice(index, 1);
+};
+
+const cancelIngredientAdd = (index: number) => {
+  if (form.ingredients.length === 1) {
+    form.ingredients = [];
     return;
   }
   form.ingredients.splice(index, 1);

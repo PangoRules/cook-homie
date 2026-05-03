@@ -40,6 +40,27 @@ export const usePollingFetch = <T>(
 
   const start = async () => {
     await fetchData();
+    
+    // Set up visibility change listener
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        // Resume polling if not already running
+        if (!intervalId) {
+          intervalId = setInterval(fetchData, pollIntervalMs);
+        }
+      } else {
+        // Pause polling when page is hidden
+        if (intervalId) {
+          clearInterval(intervalId);
+          intervalId = null;
+        }
+      }
+    };
+
+    // Add event listener for visibility change
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    // Start polling immediately 
     intervalId = setInterval(fetchData, pollIntervalMs);
   };
 
@@ -48,6 +69,9 @@ export const usePollingFetch = <T>(
       clearInterval(intervalId);
       intervalId = null;
     }
+    
+    // Remove visibility change listener
+    document.removeEventListener('visibilitychange', () => {});
   };
 
   const refresh = async () => {

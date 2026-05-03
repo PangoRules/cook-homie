@@ -12,6 +12,9 @@ export interface DashboardSummary {
   expiringCount: number;
   recipeMatchCount: number;
   shoppingCount: number;
+  totalItems: number;
+  upcomingExpirations: string[];
+  recommendedRecipes: string[];
 }
 
 export type AddRecipePayload = Omit<Recipe, "id" | "ingredients">;

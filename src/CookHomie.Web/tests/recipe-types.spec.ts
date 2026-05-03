@@ -1,6 +1,6 @@
 // src/CookHomie.Web/tests/recipe-types.spec.ts
 import { describe, expect, it } from "vitest";
-import type { Recipe, AddRecipePayload } from "../types";
+import type { Recipe, AddRecipePayload, DashboardSummary } from "../types";
 
 describe("Recipe types", () => {
   it("Recipe has required fields", () => {
@@ -26,5 +26,22 @@ describe("Recipe types", () => {
       tags: [],
     };
     expect("id" in p).toBe(false);
+  });
+
+  it("DashboardSummary has required fields", () => {
+    const d: DashboardSummary = {
+      expiringCount: 3,
+      recipeMatchCount: 7,
+      shoppingCount: 4,
+      totalItems: 15,
+      upcomingExpirations: ["2024-05-15", "2024-05-20", "2024-05-25"],
+      recommendedRecipes: ["Spaghetti", "Chicken Salad", "Vegetable Stir Fry"]
+    };
+    expect(d.expiringCount).toBe(3);
+    expect(d.recipeMatchCount).toBe(7);
+    expect(d.shoppingCount).toBe(4);
+    expect(d.totalItems).toBe(15);
+    expect(d.upcomingExpirations).toHaveLength(3);
+    expect(d.recommendedRecipes).toHaveLength(3);
   });
 });

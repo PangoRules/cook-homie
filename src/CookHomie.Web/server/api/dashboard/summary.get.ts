@@ -3,5 +3,8 @@
 export default defineEventHandler(() => ({
   expiringCount: 3,
   recipeMatchCount: 7,
-  shoppingCount: 4
+  shoppingCount: 4,
+  totalItems: 15,
+  upcomingExpirations: ["2024-05-15", "2024-05-20", "2024-05-25"],
+  recommendedRecipes: ["Spaghetti", "Chicken Salad", "Vegetable Stir Fry"]
 }));

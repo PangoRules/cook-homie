@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-4xl mx-auto p-6">
+  <div class="p-6">
     <header class="flex items-center justify-between mb-6">
       <h1 class="font-display text-[28px] font-bold">Inventory</h1>
       <SharedButton @click="showModal = true">+ Add Item</SharedButton>
@@ -34,7 +34,9 @@
         >
           <div class="flex flex-col gap-0.5">
             <span class="font-semibold text-[15px]">{{ item.name }}</span>
-            <span class="text-xs text-text-muted">{{ item.quantity }} {{ item.unit }} · {{ item.location }}</span>
+            <span class="text-xs text-text-muted"
+              >{{ item.quantity }} {{ item.unit }} · {{ item.location }}</span
+            >
           </div>
           <span
             :class="['text-xs', item.expiresAt ? 'text-warning font-semibold' : 'text-text-muted']"

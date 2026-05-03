@@ -25,12 +25,12 @@ tags: [project, cookhomie, roadmap]
 - [x] useDashboard composable with 30s polling
 - [x] Inventory page + AddItemModal
 - [x] Recipes page + RecipeCard + AddRecipeModal
-- [ ] Recipe detail page (ingredients with in-stock highlighting)
+- [x] Recipe detail page (ingredients with in-stock highlighting)
 - [x] Shopping list page skeleton
 
 ### Milestone 3 — MCP Server
 - [x] FastMCP scaffold + api_client.py
-- [x] get_inventory tool
+- [x] get_inventory tool (functional, calls C# API)
 - [ ] get_expiring_items tool
 - [ ] suggest_recipes tool
 - [ ] get_missing_ingredients tool
@@ -43,7 +43,7 @@ tags: [project, cookhomie, roadmap]
 - [x] Add focused add-item E2E smoke script
 - [x] Add CI workflow for API/Web/MCP checks
 - [ ] Wire MCP server into Claude Code / opencode
-- [ ] Replace `docker-compose.dev.yml` placeholder commands with useful hot reload workflows
+- [ ] `docker-compose.dev.yml` — replace placeholder with actual hot-reload dev workflow (Nuxt volume mounts, Python hot-reload via `watchgod` or similar)
 
 ---
 

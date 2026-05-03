@@ -23,9 +23,9 @@ CookHomie/
 │   │   │   ├── Repositories/           # InventoryRepository
 │   │   │   └── Migrations/
 │   │   ├── CookHomie.WebApi/
-│   │       ├── Controllers/            # InventoryController
-│   │       ├── Program.cs
-│   │       └── appsettings.json
+│   │   │   ├── Controllers/            # InventoryController
+│   │   │   ├── Program.cs
+│   │   │   └── appsettings.json
 │   │   └── tests/
 │   │       ├── CookHomie.Application.Tests/
 │   │       ├── CookHomie.Infrastructure.Tests/
@@ -35,13 +35,13 @@ CookHomie/
 │   │
 │   ├── CookHomie.Web/                  # Nuxt 3 frontend
 │   │   ├── pages/
-│   │   │   ├── index.vue               # Dashboard
+│   │   │   ├── index.vue               # Dashboard (Kitchen Overview)
 │   │   │   ├── inventory.vue           # Inventory list
-│   │   │   ├── recipes.vue             # Recipe browser
 │   │   │   ├── shopping.vue            # Shopping list
-│   │   │   ├── recipes/
-│   │   │   │   ├── [id].vue            # Recipe detail
-│   │   │   │   └── index.vue           # (placeholder, recipes.vue used)
+│   │   │   ├── development.vue         # Dev-mode polling playground
+│   │   │   └── recipes/
+│   │   │       ├── index.vue           # Recipe list (via /recipes route)
+│   │   │       └── [id].vue            # Recipe detail with in-stock highlighting
 │   │   ├── assets/css/
 │   │   │   └── main.css               # Tailwind v4 entry: @theme tokens, @layer base/components
 │   │   ├── components/
@@ -52,45 +52,77 @@ CookHomie/
 │   │   │   │   └── AddItemModal.vue      → <InventoryAddItemModal />
 │   │   │   ├── recipes/               # Auto-import: <RecipesXxx />
 │   │   │   │   ├── AddRecipeModal.vue    → <RecipesAddRecipeModal />
-│   │   │   │   └── RecipeCard.vue        → <RecipesRecipeCard />
+│   │   │   │   ├── RecipeCard.vue        → <RecipesRecipeCard />
+│   │   │   │   └── detail/
+│   │   │   │       └── IngredientStockBadge.vue  → <RecipesDetailIngredientStockBadge />
 │   │   │   └── shared/                # Auto-import: <SharedXxx />
 │   │   │       ├── Button.vue            → <SharedButton />
 │   │   │       ├── DevModeGuard.vue      → <SharedDevModeGuard />
 │   │   │       ├── ErrorBanner.vue       → <SharedErrorBanner />
 │   │   │       ├── FormField.vue         → <SharedFormField />
 │   │   │       ├── Modal.vue             → <SharedModal />
+│   │   │       ├── NavLink.vue           → <SharedNavLink />
 │   │   │       ├── SkeletonBlock.vue     → <SharedSkeletonBlock />
 │   │   │       ├── StaleIndicator.vue    → <SharedStaleIndicator />
+│   │   │       ├── TagInput.vue          → <SharedTagInput />
 │   │   │       └── ToastContainer.vue    → <SharedToastContainer />
 │   │   ├── composables/
-│   │   │   ├── useDashboard.ts        # Dashboard composable with 30s polling
-│   │   │   ├── usePollingFetch.ts     # Generic polling composable
-│   │   │   └── useInventory.ts
+│   │   │   ├── useDashboard.ts        # Dashboard composable (wraps usePollingFetch)
+│   │   │   ├── useDevMode.ts          # Dev mode state
+│   │   │   ├── useInventory.ts        # Inventory list + add-item
+│   │   │   ├── useLocale.ts           # i18n/locale
+│   │   │   ├── usePollingFetch.ts     # Generic 30s polling composable
+│   │   │   ├── useRecipeDetail.ts     # Recipe detail + in-stock enrichment
+│   │   │   ├── useRecipes.ts          # Recipe list
+│   │   │   ├── useShoppingList.ts     # Shopping list + add-item
+│   │   │   └── useToast.ts            # Toast notifications
 │   │   ├── layouts/
 │   │   │   └── default.vue            # App shell: header nav + <slot> + toast
-│   │   ├── server/api/                # Nuxt proxy to C# API
-│   │   │   ├── inventory/index.get.ts
-│   │   │   ├── inventory/index.post.ts
-│   │   ├── tests/
+│   │   ├── server/api/                # Nuxt proxy to C# API (and mock fallbacks)
+│   │   │   ├── dashboard/
+│   │   │   │   └── summary.get.ts     # Mock: returns hardcoded summary counts
+│   │   │   ├── dev/
+│   │   │   │   └── mode.get.ts        # Returns { env, ts }
+│   │   │   ├── hello.get.ts
+│   │   │   ├── inventory/
+│   │   │   │   ├── index.get.ts       # Proxies to C# /api/inventory
+│   │   │   │   └── index.post.ts      # Proxies to C# /api/inventory
+│   │   │   ├── recipes/
+│   │   │   │   ├── index.get.ts       # Mock: reads from recipeStore
+│   │   │   │   ├── index.post.ts      # Mock: writes to recipeStore
+│   │   │   │   ├── [id].get.ts        # Mock: reads from recipeStore
+│   │   │   │   └── [id]/
+│   │   │   │       └── missing.get.ts # Mock: returns empty (stock matching client-side)
+│   │   │   └── shopping/
+│   │   │       └── (not yet wired — shopping list not connected to C# API)
+│   │   ├── server/utils/
+│   │   │   └── recipeStore.ts         # In-memory mock store; delete when C# RecipesController ships
+│   │   ├── types/
+│   │   │   └── index.ts              # Shared TypeScript interfaces
+│   │   ├── utils/
+│   │   │   ├── date.ts
+│   │   │   └── ingredientStock.ts    # Client-side fuzzy ingredient matching
 │   │   └── nuxt.config.ts
 │   │
 │   └── CookHomie.MCP/                  # Python MCP server (AI gateway)
-│       ├── server.py                   # FastMCP app entry point
-│       ├── api_client.py               # HTTP client for C# API
+│       ├── server.py                   # FastMCP app entry point (Starlette + FastMCP on port 8000)
+│       ├── api_client.py               # HTTP client for C# API (reads API_BASE_URL / COOKHOMIE_API_BASE_URL)
 │       ├── tools/
-│       │   ├── inventory.py            # get_inventory
-│       │   ├── recipes.py              # get_recipes placeholder
-│       │   └── shopping.py             # get_shopping_list placeholder
+│       │   ├── inventory.py           # get_inventory — calls C# API ✅
+│       │   ├── recipes.py              # get_recipes — placeholder (returns empty)
+│       │   └── shopping.py            # get_shopping_list — placeholder (returns empty)
 │       ├── prompts/
-│       │   └── system.md               # CookHomie AI personality & context
+│       │   └── system.md              # CookHomie AI personality & context
+│       ├── tests/
+│       │   ├── test_inventory_tool.py
+│       │   └── test_server_bootstrap.py
 │       └── pyproject.toml
 │
 ├── docker/
 │   ├── Dockerfile.api
 │   ├── Dockerfile.web
 │   └── Dockerfile.mcp
-├── docker-compose.yml                  # Production-style local run
-├── docker-compose.dev.yml              # Hot reload for dev
+├── docker-compose.yml                  # Production-style local run (postgres + api + ui profile)
 ├── .env.example
 └── README.md
 ```
@@ -119,15 +151,18 @@ shared/StaleIndicator.vue     →  <SharedStaleIndicator /> ✅ ("Shared" prefix
 | `shared/ErrorBanner.vue` | `<SharedErrorBanner />` |
 | `shared/FormField.vue` | `<SharedFormField />` |
 | `shared/Modal.vue` | `<SharedModal />` |
+| `shared/NavLink.vue` | `<SharedNavLink />` |
 | `shared/SkeletonBlock.vue` | `<SharedSkeletonBlock />` |
 | `shared/StaleIndicator.vue` | `<SharedStaleIndicator />` |
+| `shared/TagInput.vue` | `<SharedTagInput />` |
 | `shared/ToastContainer.vue` | `<SharedToastContainer />` |
 | `dashboard/DashboardPanel.vue` | `<DashboardPanel />` |
 | `dashboard/DashboardStatCard.vue` | `<DashboardStatCard />` |
+| `inventory/AddItemModal.vue` | `<InventoryAddItemModal />` |
 | `recipes/AddRecipeForm.vue` | `<RecipesAddRecipeForm />` |
 | `recipes/AddRecipeModal.vue` | `<RecipesAddRecipeModal />` |
 | `recipes/RecipeCard.vue` | `<RecipesRecipeCard />` |
-| `inventory/AddItemModal.vue` | `<InventoryAddItemModal />` |
+| `recipes/detail/IngredientStockBadge.vue` | `<RecipesDetailIngredientStockBadge />` |
 
 ---
 
@@ -154,52 +189,52 @@ shared/StaleIndicator.vue     →  <SharedStaleIndicator /> ✅ ("Shared" prefix
 
 Validation failures return `400` with `application/problem+json`.
 
-Current behavior note: clients should not rely on a `Location` response header for `POST /api/inventory` yet.
+### /api/recipes
+**Status:** Nuxt server uses an in-memory mock store (`server/utils/recipeStore.ts`) — no C# RecipesController exists yet. The mock ships with 3 hardcoded recipes (Pancakes, Tomato Pasta, Avocado Toast).
 
-Planned but not implemented yet: item-by-id lookup, update/delete, expiring-item filters, low-stock filters.
-
-### /api/recipes (planned)
 | Method | Route | Description |
 |--------|-------|-------------|
-| GET | /api/recipes | List all · ?tag=quick&maxMinutes=30 |
-| GET | /api/recipes/{id} | Single recipe with ingredients |
-| POST | /api/recipes | Add recipe |
-| PUT | /api/recipes/{id} | Update recipe |
-| DELETE | /api/recipes/{id} | Remove recipe |
-| GET | /api/recipes/matches | Cookable from current inventory (with match %) |
-| GET | /api/recipes/{id}/missing | Missing ingredients for recipe |
+| GET | /api/recipes | List all recipes (mock store) |
+| POST | /api/recipes | Add recipe (mock store, no C# backend) |
+| GET | /api/recipes/{id} | Single recipe (mock store) |
+| GET | /api/recipes/{id}/missing | Missing ingredients (client-side matching, returns empty) |
 
-### /api/shopping (planned)
+### /api/shopping
+**Status:** Shopping list page is wired to `/api/shopping` via `useShoppingList` composable. No C# ShoppingController exists — the Nuxt server route is not yet created. The page currently shows an empty list or mock data.
+
 | Method | Route | Description |
 |--------|-------|-------------|
 | GET | /api/shopping | Current shopping list |
 | POST | /api/shopping | Add item |
-| PUT | /api/shopping/{id} | Update item (bought, qty) |
-| DELETE | /api/shopping/{id} | Remove item |
-| POST | /api/shopping/clear-bought | Remove all bought items |
-| POST | /api/shopping/from-recipe/{id} | Auto-add missing ingredients |
 
-## MCP Tools Reference
+### /api/polling-data
+**Status:** Dev-only endpoint exposed by `PollingController` in C# API. Returns simulated data `{ timestamp, itemsCount, lastPolled }`. Used exclusively by the `/development` page for polling demos.
 
-| Tool | Description |
-|------|-------------|
-| get_inventory(location?) | Implemented; calls the C# API and returns inventory items |
-| get_recipes(query?) | Placeholder; returns an empty recipe list |
-| get_shopping_list() | Placeholder; returns an empty shopping list |
-
-Planned but not implemented yet: `get_expiring_items`, `suggest_recipes`, `get_missing_ingredients`, `build_shopping_list`, and `add_to_shopping_list`.
-
-### /api/dashboard (web only)
-| Method | Route | Description |
-|--------|-------|-------------|
-| GET | /api/dashboard/summary | Dashboard summary (web proxy) |
+### /api/dashboard/summary (web proxy)
+**Status:** Mock — returns hardcoded `{ expiringCount: 3, recipeMatchCount: 7, shoppingCount: 4 }`. Replace with C# DashboardController when it ships.
 
 ### /api/dev (web only)
 | Method | Route | Description |
 |--------|-------|-------------|
-| GET | /api/dev/mode | Get dev mode status |
-| POST | /api/dev/inventory-seed | Seed inventory for development |
-| DELETE | /api/dev/inventory-seed | Clear seeded inventory |
+| GET | /api/dev/mode | Get dev mode status (`{ env, ts }`) |
+
+---
+
+## MCP Tools Reference
+
+All three tools are registered with FastMCP, but only `get_inventory` calls the real C# API:
+
+| Tool | Implementation | Status |
+|------|---------------|--------|
+| `get_inventory(location?)` | Calls `ApiClient.get_inventory()` → C# `/api/inventory` | **Functional** ✅ |
+| `get_recipes(query?)` | Returns `{"recipes": []}` (placeholder) | Stub — needs C# RecipesController |
+| `get_shopping_list()` | Returns `{"items": []}` (placeholder) | Stub — needs C# ShoppingController |
+
+Planned but not implemented: `get_expiring_items`, `suggest_recipes`, `get_missing_ingredients`, `build_shopping_list`, `add_to_shopping_list`.
+
+The MCP server also hosts HTTP endpoints on the same port (Starlette routes `/api/inventory`, `/api/recipes`, `/api/shopping-list`) alongside the FastMCP mount at `/mcp`.
+
+---
 
 ## 🔗 Related
 

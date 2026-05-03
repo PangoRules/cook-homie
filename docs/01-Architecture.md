@@ -74,6 +74,9 @@ The wiring happens in `nuxt.config.ts`: the `@tailwindcss/vite` plugin (line 26)
 ### DRY
 All items must follow the principle. If a UI component uses more than 3 classes and it's used in 2 or more places across the UI, it must be extracted into a single shared component in `components/shared/` and used consistently everywhere. The same applies to all code layers — duplicated logic in MCP tools, C# application/infrastructure classes, or composables must be pulled into shared, reusable units rather than copy-pasted.
 
+### Client-side ingredient stock matching
+Recipe detail page (`recipes/[id].vue`) does not call a backend to determine which ingredients are in stock. Instead, `useRecipeDetail` composable reads inventory names from the shared `useInventory` state and uses `utils/ingredientStock.ts` for case-insensitive substring matching. This is a deliberate simplification — the MCP layer can add AI-powered fuzzy matching later.
+
 ### Nuxt component auto-import naming
 Nuxt auto-imports all components from `components/` using their folder path as a prefix:
 

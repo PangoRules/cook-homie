@@ -59,20 +59,63 @@ Local-only, single user. API key or JWT added in v2 when exposing beyond localho
 ### Nuxt server/api proxy
 Nuxt routes frontend requests through its own `server/api/` layer to the C# API. Avoids CORS issues in local dev and keeps the API base URL in one place.
 
-### Frontend styling — Tailwind v4
-Styling uses Tailwind CSS v4 via `@tailwindcss/vite`. A single file (`assets/css/main.css`) owns the entire style layer:
+### Frontend styling — Tailwind v4, no scoped styles
+All styling lives in `assets/css/main.css`. There are **zero scoped `<style>` blocks** in any Vue file — every visual element uses either inline Tailwind utility classes or shared `@layer components` classes from main.css.
 
-- **`@import "tailwindcss"`** — Tailwind base, preflight, and utility generation.
-- **`@theme {}`** — custom design tokens: the "Calm Utility" color palette, `font-display`/`font-body`/`font-mono`, and border radii. These generate first-class utilities (`bg-accent`, `text-text-primary`, `font-display`, `rounded-md`, etc.). Spacing, shadows, and sizing use Tailwind defaults.
-- **`@layer base {}`** — global element resets and typography defaults.
-- **`@layer components {}`** — shared multi-element classes: `.btn`, `.btn-primary`, `.btn-secondary`, `.card`, `.input`, `.skeleton`. Used in templates via class attribute; no scoped `<style>` blocks exist in any component.
+**`assets/css/main.css` structure:**
 
-No `tailwind.config.js` is used — Tailwind v4 is fully CSS-first.
+```
+@import "tailwindcss"          ← generates all utility classes
+  @theme { }                  ← design tokens → bg-*, text-*, font-*, rounded-*
+  @keyframes shimmer { }      ← skeleton loader animation
+  @keyframes modalIn/Out { }  ← Modal open/close animations
+  @keyframes backdropIn/Out {}
+  @layer base { }              ← resets, body defaults, headings, links
+  @layer components { }        ← all shared multi-element patterns
+```
 
-The wiring happens in `nuxt.config.ts`: the `@tailwindcss/vite` plugin (line 26) processes `@import "tailwindcss"` directives at build time, and `css: ["~/assets/css/main.css"]` (line 34) includes the file globally in every page via Nuxt's built-in CSS pipeline.
+**Shared component classes (`@layer components`):**
 
-### DRY
-All items must follow the principle. If a UI component uses more than 3 classes and it's used in 2 or more places across the UI, it must be extracted into a single shared component in `components/shared/` and used consistently everywhere. The same applies to all code layers — duplicated logic in MCP tools, C# application/infrastructure classes, or composables must be pulled into shared, reusable units rather than copy-pasted.
+| Class | Purpose |
+|-------|---------|
+| `.btn` | Base button (inline-flex, padding, rounded, cursor) |
+| `.btn-primary` | Accent background, white text, hover state, disabled |
+| `.btn-secondary` | Transparent with border, hover surface |
+| `.input` | Full-width text input, border, focus ring on accent |
+| `.card` | Surface background, border, rounded, shadow-sm |
+| `.skeleton` | Shimmer loading block (skeleton loader) |
+| `.tag-chip` | Accent-subtle pill with uppercase label text |
+| `.toast-enter/leave` | Toast notification slide-in animation |
+
+**Rule: when to extract to `@layer components`**
+If a multi-element pattern (button + label + icon, card header + body + footer, etc.) is used in 2+ places and totals 4+ utility classes, it belongs in `@layer components`, not inline. Single-element utilities stay inline (e.g., `class="text-sm text-text-muted"`).
+
+**Rule: no scoped `<style>`**
+Scoped styles create unmaintainable CSS islands. If you need a one-off style that can't be inline or shared, extract it to a component. If it genuinely can't be extracted, it's a signal something needs refactoring.
+
+The wiring: `nuxt.config.ts` loads `@tailwindcss/vite` (line 26) and `css: ["~/assets/css/main.css"]` (line 34). Both are required for every page.
+
+### DRY — extract, don't duplicate
+
+Every layer enforces DRY. When code is copied rather than shared, it becomes inconsistent and unmaintainable as it diverges across copies.
+
+**Frontend (Vue/Nuxt):**
+- Shared multi-element UI patterns → `components/shared/`. Examples: `ErrorBanner`, `SkeletonBlock`, `Modal`, `ToastContainer`, `FormField`, `Button`, `StaleIndicator`.
+- Composable logic (data fetching, polling, state) → `composables/`. If two pages do the same data operation, share the composable, don't copy the fetch logic.
+- Repeated inline utility patterns (4+ classes used in 2+ places) → extract to `@layer components` in `main.css`.
+
+**Backend (C#):**
+- Shared business logic → `CookHomie.Application/` use cases, not copied into controllers.
+- Repository interfaces → `CookHomie.Domain/Interfaces/`. Implementations in `CookHomie.Infrastructure/Repositories/`.
+- Duplicated query logic or validation → belongs in a use case or a shared service, not in a controller.
+
+**MCP server (Python):**
+- HTTP logic → `ApiClient` class. Not copied across tools.
+- Tool functions should delegate to `ApiClient` methods; don't re-implement HTTP calls in each tool.
+
+**Threshold:** if a pattern appears in 2+ places, it must be extracted. The only exception is trivial one-liners (single utility class, simple prop pass-through) where extraction adds more noise than it removes.
+
+**Consequence of violation:** copied logic that diverges is a bug. PRs that introduce duplication without extracting first should be flagged in review.
 
 ### Client-side ingredient stock matching
 Recipe detail page (`recipes/[id].vue`) does not call a backend to determine which ingredients are in stock. Instead, `useRecipeDetail` composable reads inventory names from the shared `useInventory` state and uses `utils/ingredientStock.ts` for case-insensitive substring matching. This is a deliberate simplification — the MCP layer can add AI-powered fuzzy matching later.

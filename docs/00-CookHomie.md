@@ -36,11 +36,14 @@ A fully functional v1 with:
 
 ## Current Implementation State
 
-- API, Web, and MCP projects are scaffolded under `src/`.
-- Inventory domain, EF Core persistence, WebApi inventory endpoints, Nuxt inventory page/proxy routes, and MCP inventory tooling exist.
-- Inventory `POST /api/inventory` creates items via the application-layer use case with validation for required fields (`Name`, `Category`, `Location`, `Quantity`, `Unit`).
-- End-to-end add-item smoke script and GitHub Actions CI workflow are in place.
-- Recipes, shopping, and richer AI-assisted tools are still mostly skeletons.
+- **Inventory** — fully wired end-to-end. C# Domain/Application/Infrastructure layers with EF Core migrations, `AddInventoryItemUseCase`, `InventoryController` with RFC7807 validation errors. Nuxt inventory page with `useInventory` composable, `AddItemModal`, skeleton loading, stale polling, error banner.
+- **Recipes** — recipe list page (`/recipes`) and detail page (`/recipes/[id]`) with client-side in-stock highlighting via `useRecipeDetail` + `ingredientStock.ts`. Nuxt server uses an in-memory mock store; no C# RecipesController yet.
+- **Shopping list** — `useShoppingList` composable wired to `/api/shopping`. No Nuxt server route or C# ShoppingController exists yet — page shows empty list.
+- **Dashboard** — `useDashboard` + `usePollingFetch` with hardcoded mock summary `{ expiringCount: 3, recipeMatchCount: 7, shoppingCount: 4 }`. No C# DashboardController yet.
+- **Development page** — polling playground with `PollingController` (C#) for simulated data. Dev-mode status endpoint.
+- **MCP server** — `get_inventory` fully functional (calls C# API). `get_recipes` and `get_shopping_list` are stubs returning empty data.
+- **Styling** — Tailwind v4 CSS-first. All styles via `assets/css/main.css` (`@layer components` classes: `.btn`, `.input`, `.card`, `.skeleton`, etc.) or inline Tailwind utilities. **No scoped `<style>` blocks** in any Vue file.
+- **DRY enforcement** — reusable multi-element patterns extracted into `components/shared/`. Shared composables under `composables/`.
 
 ## 🧩 Tasks
 

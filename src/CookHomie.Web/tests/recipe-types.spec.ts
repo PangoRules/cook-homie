@@ -17,31 +17,40 @@ describe("Recipe types", () => {
     expect(r.prepMinutes).toBe(10);
   });
 
-  it("AddRecipePayload omits id", () => {
+  it("AddRecipePayload includes ingredients", () => {
     const p: AddRecipePayload = {
       name: "New",
       instructions: "Do",
       prepMinutes: 5,
       cookMinutes: 10,
       tags: [],
+      ingredients: [{ ingredientName: "Flour", quantity: 2, unit: "cups", isOptional: false, recipeId: "", id: "" }],
     };
     expect("id" in p).toBe(false);
+    expect(p.ingredients).toHaveLength(1);
   });
 
   it("DashboardSummary has required fields", () => {
     const d: DashboardSummary = {
       expiringCount: 3,
-      recipeMatchCount: 7,
+      recipeMatchCount: 2,
       shoppingCount: 4,
       totalItems: 15,
-      upcomingExpirations: ["2024-05-15", "2024-05-20", "2024-05-25"],
-      recommendedRecipes: ["Spaghetti", "Chicken Salad", "Vegetable Stir Fry"]
+      expiringItems: [
+        { id: "inv-1", name: "Milk", expiresAt: "2026-05-03", location: "Fridge" },
+      ],
+      recipeIdeas: [
+        { id: "r1", name: "Classic Pancakes", matchedCount: 2, missingCount: 1 },
+      ],
     };
     expect(d.expiringCount).toBe(3);
-    expect(d.recipeMatchCount).toBe(7);
+    expect(d.recipeMatchCount).toBe(2);
     expect(d.shoppingCount).toBe(4);
     expect(d.totalItems).toBe(15);
-    expect(d.upcomingExpirations).toHaveLength(3);
-    expect(d.recommendedRecipes).toHaveLength(3);
+    expect(d.expiringItems).toHaveLength(1);
+    expect(d.expiringItems[0].name).toBe("Milk");
+    expect(d.recipeIdeas).toHaveLength(1);
+    expect(d.recipeIdeas[0].matchedCount).toBe(2);
+    expect(d.recipeIdeas[0].missingCount).toBe(1);
   });
 });

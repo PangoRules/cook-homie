@@ -4,9 +4,16 @@ import type { DashboardSummary } from "~/types";
 // Replace this route with a proxy when backend DashboardController exists.
 export default defineEventHandler((): DashboardSummary => ({
   expiringCount: 3,
-  recipeMatchCount: 7,
+  recipeMatchCount: 2,
   shoppingCount: 4,
   totalItems: 15,
-  upcomingExpirations: ["2024-05-15", "2024-05-20", "2024-05-25"],
-  recommendedRecipes: ["Spaghetti", "Chicken Salad", "Vegetable Stir Fry"]
+  expiringItems: [
+    { id: "inv-1", name: "Milk",     expiresAt: "2026-05-03", location: "Fridge"   },
+    { id: "inv-2", name: "Spinach",  expiresAt: "2026-05-04", location: "Fridge"   },
+    { id: "inv-3", name: "Yogurt",   expiresAt: "2026-05-05", location: "Fridge"   },
+  ],
+  recipeIdeas: [
+    { id: "r1", name: "Classic Pancakes", matchedCount: 2, missingCount: 1 },
+    { id: "r3", name: "Avocado Toast",    matchedCount: 2, missingCount: 0 },
+  ],
 }));

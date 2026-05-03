@@ -319,3 +319,9 @@ Rationale: unblock dependencies first (#9), then shared primitives (#3/#2/#1/#7)
 - [ ] Task 7: Introduce shared paginated ingredient table and integrate into `AddRecipeModal`.
 - [ ] Task 8: Upgrade recipe detail with shared ingredient table, per-row shopping add, section inline editing, and PATCH integration.
 - [ ] Task 9: Implement shopping list API routes/contracts/services + composable operations, including bulk add and dedup guards.
+
+# FOR THE USER
+Execution order (per spec dependencies): #9 → #3 → #2 → #1 → #7 → #8 → #4 → #6 → #5
+Two execution options available when ready:
+1. Subagent-Driven — fresh subagent per task, review between tasks
+2. Inline Execution — batch with checkpoints in this session

@@ -200,6 +200,65 @@ This milestone includes the foundation shell completed on `task/foundation-shell
 - Recipe types: `RecipeIngredient`, `DashboardSummary`, `AddRecipePayload`
 - All tests passing (19 tests across 7 files)
 
+## Task 02: Mock Contract Layer ✅ COMPLETED
+
+Mock contract layer completed with commit c3e6467 and merged to main.
+
+**Server/API Endpoints Created:**
+- `GET /api/recipes` - List all recipes
+- `POST /api/recipes` - Create new recipe
+- `GET /api/recipes/:id` - Get single recipe
+- `GET /api/dashboard/summary` - Dashboard summary data
+
+**Recipe Store Utility:**
+- In-memory recipe store managing recipe CRUD operations
+- Located at `src/CookHomie.Web/server/utils/recipeStore.ts`
+
+**Client-Side Components:**
+- Ingredient stock matching utility for ingredient inventory comparison
+- Located at `src/CookHomie.Web/utils/ingredientStock.ts`
+
+All mock contract layer tasks completed, tested, and merged to main branch.
+
+## Task 03: Design System Baseline ✅ COMPLETED
+
+Foundation shell completed on main branch:
+
+**CSS Infrastructure:**
+- `src/CookHomie.Web/assets/css/tokens.css` - Design tokens
+- `src/CookHomie.Web/assets/css/base.css` - Reset and typography
+- `src/CookHomie.Web/assets/css/components.css` - Shared component styles
+- Integrated into `nuxt.config.ts`
+
+**Shared UI Primitives:**
+- `SkeletonBlock.vue` - Loading placeholder
+- `ErrorBanner.vue` - Error display
+- `StaleIndicator.vue` - Stale data indicator
+- `ToastContainer.vue` - Toast notification system
+
+**Composables:**
+- `usePollingFetch` - Polling lifecycle management (start/stop/refresh)
+- `useToast` - Toast notification API
+- `useInventory` - Inventory data with polling integration
+- `useDevMode` - Development mode utilities
+
+**Types:**
+- Recipe, RecipeIngredient, DashboardSummary, AddRecipePayload
+
+**Test Coverage:**
+- 19 tests across composables and utilities (all passing)
+
+## Tasks 04-07: Frontend Pages — IN PROGRESS
+
+Remaining work for Milestone 2 completion:
+
+- **Task 04 (Dashboard):** Page structure in place, needs DashboardStatCard/DashboardPanel components
+- **Task 05 (Recipes Browser):** RecipeCard and AddRecipeForm components exist, recipes page needs integration
+- **Task 06 (Recipe Detail):** Page exists, needs in-stock highlighting integration
+- **Task 07 (Polish & Tests):** Responsive validation, end-to-end test coverage, final refinements
+
+Status: Ready for implementation on feat/milestone-2-frontend branch.
+
 ## 13) Milestone 2 Completion Criteria
 
 Milestone 2 is complete when all are true:

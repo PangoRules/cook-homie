@@ -1,76 +1,43 @@
 import type { AddInventoryItemPayload, InventoryItem } from "../types";
+import { computed } from "vue";
 
 export const useInventory = () => {
-  const items = useState<InventoryItem[]>("inventory-items", () => []);
-  const loading = useState<boolean>("inventory-loading", () => false);
-  const error = useState<string | null>("inventory-error", () => null);
-  const isStale = useState<boolean>("inventory-stale", () => false);
+  const polling = usePollingFetch<InventoryItem[]>("/api/inventory", { pollIntervalMs: 30000 });
 
-  const fetchItems = async () => {
-    loading.value = true;
-    error.value = null;
-    try {
-      const result = await $fetch<InventoryItem[]>("/api/inventory");
-      items.value = result;
-      isStale.value = false;
-    } catch (err) {
-      error.value = err instanceof Error ? err.message : "Failed to load inventory";
-      isStale.value = items.value.length > 0;
-      throw err;
-    } finally {
-      loading.value = false;
-    }
-  };
-
-  let intervalId: ReturnType<typeof setInterval> | null = null;
-
-  const startPolling = () => {
-    fetchItems();
-    intervalId = setInterval(fetchItems, 30000);
-  };
-
-  const stopPolling = () => {
-    if (intervalId !== null) {
-      clearInterval(intervalId);
-      intervalId = null;
-    }
-  };
-
-  const refresh = async () => {
-    await fetchItems();
-  };
+  const items = computed<InventoryItem[]>(() => polling.data.value ?? []);
 
   const loadInventory = async () => {
-    await fetchItems();
+    await polling.refresh();
   };
 
   const addInventoryItem = async (payload: AddInventoryItemPayload): Promise<InventoryItem> => {
-    loading.value = true;
-    error.value = null;
+    polling.loading.value = true;
+    polling.error.value = null;
     try {
       const created = await $fetch<InventoryItem>("/api/inventory", {
         method: "POST",
         body: payload,
       });
-      items.value.unshift(created);
+      // Append to local cache
+      polling.data.value = [created, ...(polling.data.value ?? [])];
       return created;
     } catch (err) {
-      error.value = err instanceof Error ? err.message : "Failed to add inventory item";
+      polling.error.value = err instanceof Error ? err.message : "Failed to add inventory item";
       throw err;
     } finally {
-      loading.value = false;
+      polling.loading.value = false;
     }
   };
 
   return {
     items,
-    loading,
-    error,
-    isStale,
+    loading: polling.loading,
+    error: polling.error,
+    isStale: polling.isStale,
     loadInventory,
-    startPolling,
-    stopPolling,
-    refresh,
+    startPolling: polling.start,
+    stopPolling: polling.stop,
+    refresh: polling.refresh,
     addInventoryItem,
   };
 };

@@ -1,0 +1,222 @@
+@import "tailwindcss";
+
+/* ─── Design tokens ──────────────────────────────────────── */
+@theme {
+  /* Colors — "Calm Utility" palette */
+  --color-bg: #fafaf8;
+  --color-surface: #ffffff;
+  --color-surface-hover: #f5f4f0;
+  --color-border: #e8e6e1;
+  --color-border-strong: #ccc9c3;
+  --color-text-primary: #1a1918;
+  --color-text-secondary: #6b6860;
+  --color-text-muted: #9c9991;
+  --color-accent: #c8602a;
+  --color-accent-hover: #b5541f;
+  --color-accent-subtle: #fdf0e9;
+  --color-success: #3d7a4f;
+  --color-success-subtle: #edf5f0;
+  --color-warning: #a06723;
+  --color-warning-subtle: #fff3e0;
+  --color-error: #b83232;
+  --color-error-subtle: #fef2f2;
+  --color-info: #2563a8;
+  --color-info-subtle: #eff6ff;
+
+  /* Fonts */
+  --font-display: "Literata", Georgia, serif;
+  --font-body: "DM Sans", system-ui, sans-serif;
+  --font-mono: "DM Mono", monospace;
+
+  /* Border radius (preserved — softer than Tailwind defaults) */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 16px;
+  --radius-full: 9999px;
+
+  /* Shimmer animation for skeleton loader */
+  --animate-shimmer: shimmer 1.4s ease infinite;
+
+  /* Modal entrance animations */
+  --animate-backdrop-in: backdropIn 0.15s ease-out forwards;
+  --animate-modal-in: modalIn 0.22s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  /* Modal exit animations */
+  --animate-backdrop-out: backdropOut 0.15s ease-in forwards;
+  --animate-modal-out: modalOut 0.18s ease-in forwards;
+}
+
+@keyframes backdropIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes backdropOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes modalOut {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95) translateY(6px);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes backdropIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* ─── Base layer ─────────────────────────────────────────── */
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    @apply scroll-smooth antialiased text-base;
+  }
+  body {
+    @apply font-body bg-bg text-text-primary leading-normal m-0;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-display leading-tight m-0;
+  }
+
+  a {
+    @apply text-accent;
+  }
+  img {
+    @apply max-w-full;
+  }
+  button,
+  input,
+  textarea,
+  select {
+    @apply font-body;
+  }
+}
+
+/* ─── Shared component classes ───────────────────────────── */
+@layer components {
+  .card {
+    @apply bg-surface border border-border rounded-lg shadow-sm;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2
+           rounded-md px-5 py-2 text-sm font-semibold
+           cursor-pointer transition-all border-0;
+  }
+  .btn-primary {
+    @apply bg-accent text-white
+           hover:bg-accent-hover
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-secondary {
+    @apply bg-transparent border border-border text-text-secondary
+           hover:bg-surface-hover;
+  }
+
+  .input {
+    @apply w-full border border-border rounded-md px-3 py-2
+           text-sm bg-bg text-text-primary
+           transition-colors outline-none focus:border-accent;
+  }
+
+  /* Skeleton shimmer block */
+  .skeleton {
+    background: linear-gradient(
+      90deg,
+      var(--color-border) 25%,
+      var(--color-surface-hover) 50%,
+      var(--color-border) 75%
+    );
+    background-size: 200% 100%;
+    @apply animate-shimmer rounded-md;
+  }
+
+  /* Toast transition (Vue TransitionGroup name="toast") */
+  .toast-enter-active,
+  .toast-leave-active {
+    @apply transition-all duration-200;
+  }
+  .toast-enter-from,
+  .toast-leave-to {
+    @apply opacity-0 translate-x-5;
+  }
+
+  /* Tag chip */
+  .tag-chip {
+    @apply bg-accent-subtle text-accent rounded-full px-3 py-1
+           text-[11px] font-semibold uppercase tracking-[0.05em]
+           inline-flex items-center gap-1;
+  }
+
+  /* Page animations */
+  .page-enter-active,
+  .page-leave-active {
+    transition: all 0.1s;
+  }
+
+  .page-enter-from,
+  .page-leave-to {
+    opacity: 0;
+    filter: blur(1rem);
+  }
+}

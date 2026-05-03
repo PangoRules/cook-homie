@@ -1,139 +1,99 @@
 <template>
-  <div class="development-page">
+  <div class="p-6">
     <h1>Development</h1>
 
-    <div class="tabs">
-      <button :class="{ active: activeTab === 'inventory' }" @click="activeTab = 'inventory'">
-        Inventory
-      </button>
-      <button :class="{ active: activeTab === 'polling' }" @click="activeTab = 'polling'">
-        Polling
-      </button>
-      <button :class="{ active: activeTab === 'recipes' }" @click="activeTab = 'recipes'">
-        Recipes
+    <div class="flex border-b border-border mb-5">
+      <button
+        v-for="tab in ['inventory', 'polling', 'recipes']"
+        :key="tab"
+        :class="[
+          'px-5 py-2 cursor-pointer border-none bg-transparent capitalize text-sm font-medium transition-colors border-b-2 -mb-px',
+          activeTab === tab
+            ? 'border-b-accent text-accent font-semibold'
+            : 'border-b-transparent text-text-secondary hover:text-text-primary'
+        ]"
+        @click="activeTab = tab"
+      >
+        {{ tab }}
       </button>
     </div>
 
-    <div class="tab-content">
-      <div v-if="activeTab === 'inventory'" class="inventory-tab">...</div>
+    <!-- Inventory tab -->
+    <div v-if="activeTab === 'inventory'">
+      <div class="flex gap-2 mb-5 flex-wrap">
+        <SharedButton variant="secondary" @click="refreshInventory">Refresh</SharedButton>
+        <SharedButton variant="secondary" :disabled="inventoryPolling" @click="startInventoryPolling">Start Polling</SharedButton>
+        <SharedButton variant="secondary" :disabled="!inventoryPolling" @click="stopInventoryPolling">Stop Polling</SharedButton>
+      </div>
 
-      <div v-if="activeTab === 'polling'" class="polling-tab">...</div>
+      <form class="flex flex-col gap-3 mb-5 max-w-sm" @submit.prevent="addItem">
+        <input v-model="newItem.name" class="input" placeholder="Item name" required >
+        <input v-model="newItem.quantity" type="number" class="input" placeholder="Quantity" required >
+        <select v-model="newItem.unit" class="input" required>
+          <option value="">Select unit</option>
+          <option v-for="u in ['pieces','grams','kilograms','milliliters','liters','packages','boxes','cans']" :key="u" :value="u">{{ u }}</option>
+        </select>
+        <input v-model="newItem.category" class="input" placeholder="Category" >
+        <input v-model="newItem.expiresAt" type="date" class="input" placeholder="Expiry date" >
+        <SharedButton type="submit">Add Item</SharedButton>
+      </form>
 
-      <div v-if="activeTab === 'recipes'" class="recipes-tab">...</div>
+      <div v-if="loading" class="flex flex-col gap-2">
+        <SharedSkeletonBlock v-for="i in 5" :key="i" class="h-10" />
+      </div>
+      <SharedErrorBanner v-else-if="error" :message="error" />
+      <p v-else-if="items.length === 0" class="text-text-muted text-sm">No items in inventory</p>
+      <div v-else>
+        <SharedStaleIndicator v-if="isStale" />
+        <ul class="list-none p-0 flex flex-col gap-1 mt-3">
+          <li v-for="item in items" :key="item.id" class="px-3 py-2 border border-border rounded-md text-sm">
+            {{ item.name }} - {{ item.quantity }} {{ item.unit }}
+            <span v-if="item.category" class="text-text-muted">({{ item.category }})</span>
+            <span v-if="item.expiresAt" class="text-text-muted"> - Expires: {{ formatDate(item.expiresAt) }}</span>
+          </li>
+        </ul>
+      </div>
     </div>
 
-    <div class="tab-content">
-      <div v-if="activeTab === 'inventory'" class="inventory-tab">
-        <div class="inventory-header">
-          <button :disabled="seeding" @click="seedInventory">Seed Inventory</button>
-          <button @click="refreshInventory">Refresh</button>
-          <button :disabled="inventoryPolling" @click="startInventoryPolling">Start Polling</button>
-          <button :disabled="!inventoryPolling" @click="stopInventoryPolling">Stop Polling</button>
+    <!-- Polling tab -->
+    <div v-if="activeTab === 'polling'" class="max-w-2xl">
+      <div class="mb-6">
+        <h2 class="text-lg font-semibold mb-3">Polling Status</h2>
+        <div class="flex items-center gap-4 mb-4">
+          <span
+            :class="[
+              'px-3 py-1 rounded text-sm font-semibold',
+              pollingActive ? 'bg-success-subtle text-success' : 'bg-error-subtle text-error'
+            ]"
+          >
+            {{ pollingActive ? "Active" : "Inactive" }}
+          </span>
+          <p class="text-sm text-text-secondary m-0">Polling interval: {{ pollingInterval }}ms</p>
         </div>
-
-        <form class="add-item-form" @submit.prevent="addItem">
-          <input v-model="newItem.name" placeholder="Item name" required />
-          <input v-model="newItem.quantity" type="number" placeholder="Quantity" required />
-          <select v-model="newItem.unit" required>
-            <option value="">Select unit</option>
-            <option value="pieces">pieces</option>
-            <option value="grams">grams</option>
-            <option value="kilograms">kilograms</option>
-            <option value="milliliters">milliliters</option>
-            <option value="liters">liters</option>
-            <option value="packages">packages</option>
-            <option value="boxes">boxes</option>
-            <option value="cans">cans</option>
-          </select>
-          <input v-model="newItem.category" placeholder="Category" />
-          <input v-model="newItem.expiresAt" type="date" placeholder="Expiry date" />
-          <button type="submit">Add Item</button>
-        </form>
-
-        <div v-if="loading">
-          <SkeletonBlock v-for="i in 5" :key="i" />
-        </div>
-
-        <ErrorBanner v-else-if="error" :message="error" />
-
-        <div v-else-if="items.length === 0">No items in inventory</div>
-
-        <div v-else>
-          <StaleIndicator v-if="isStale" />
-          <ul class="inventory-list">
-            <li v-for="item in items" :key="item.id" class="inventory-item">
-              {{ item.name }} - {{ item.quantity }} {{ item.unit }}
-              <span v-if="item.category">({{ item.category }})</span>
-              <span v-if="item.expiresAt"> - Expires: {{ formatDate(item.expiresAt) }}</span>
-            </li>
-          </ul>
+        <div class="flex gap-2">
+          <SharedButton :disabled="pollingActive" @click="startPollingData">Start Polling</SharedButton>
+          <SharedButton variant="secondary" :disabled="!pollingActive" @click="stopPollingData">Stop Polling</SharedButton>
         </div>
       </div>
 
-      <div v-if="activeTab === 'polling'" class="polling-tab">
-        <div class="polling-header">
-          <h2>Polling Status</h2>
-          <div class="polling-status">
-            <div
-              class="status-indicator"
-              :class="{ 'status-active': pollingActive, 'status-inactive': !pollingActive }"
-            >
-              {{ pollingActive ? "Active" : "Inactive" }}
-            </div>
-            <p>Polling interval: {{ pollingInterval }}ms</p>
-          </div>
-
-          <div class="polling-controls">
-            <button :disabled="pollingActive" class="btn-primary" @click="startPollingData">
-              Start Polling
-            </button>
-            <button :disabled="!pollingActive" class="btn-secondary" @click="stopPollingData">
-              Stop Polling
-            </button>
+      <div>
+        <h3 class="text-base font-semibold mb-3">Simulated Polling Data</h3>
+        <div v-if="pollingLoading" class="flex flex-col gap-2">
+          <SharedSkeletonBlock v-for="i in 3" :key="i" class="h-10" />
+        </div>
+        <SharedErrorBanner v-else-if="pollingError" :message="pollingError" :show-retry="true" @retry="refreshPollingData" />
+        <div v-else-if="pollingData" class="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-4 mb-5">
+          <div v-for="[label, value] in [['Timestamp', formatTimestamp(pollingData.timestamp)], ['Items Count', pollingData.itemsCount], ['Last polled', formatTimestamp(pollingData.lastPolled)]]" :key="label" class="flex flex-col p-3 bg-surface-hover rounded-md">
+            <span class="text-xs font-semibold text-text-secondary mb-1">{{ label }}</span>
+            <span class="text-lg text-accent">{{ value }}</span>
           </div>
         </div>
 
-        <div class="polling-data">
-          <h3>Simulated Polling Data</h3>
-
-          <div v-if="pollingLoading">
-            <SkeletonBlock v-for="i in 3" :key="i" />
-          </div>
-
-          <ErrorBanner
-            v-else-if="pollingError"
-            :message="pollingError"
-            :show-retry="true"
-            @retry="refreshPollingData"
-          />
-
-          <div v-else-if="pollingData">
-            <div class="polling-data-grid">
-              <div class="data-item">
-                <span class="data-label">Timestamp:</span>
-                <span class="data-value">{{ formatTimestamp(pollingData.timestamp) }}</span>
-              </div>
-              <div class="data-item">
-                <span class="data-label">Items Count:</span>
-                <span class="data-value">{{ pollingData.itemsCount }}</span>
-              </div>
-              <div class="data-item">
-                <span class="data-label">Last polled:</span>
-                <span class="data-value">{{ formatTimestamp(pollingData.lastPolled) }}</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="polling-log">
-            <h4>Recent Polling Events</h4>
-            <div
-              v-for="(log, index) in pollingLogs.slice().reverse()"
-              :key="index"
-              class="log-item"
-            >
-              <span class="log-timestamp">{{ formatTimestamp(log.timestamp) }}</span>
-              <span class="log-message">{{ log.message }}</span>
-            </div>
+        <div class="mt-5 p-4 bg-surface-hover rounded-md max-h-52 overflow-y-auto">
+          <h4 class="text-sm font-semibold mb-3">Recent Polling Events</h4>
+          <div v-for="(log, index) in pollingLogs.slice().reverse()" :key="index" class="flex justify-between py-1 border-b border-border text-sm last:border-0">
+            <span class="text-text-muted text-xs">{{ formatTimestamp(log.timestamp) }}</span>
+            <span class="text-text-primary">{{ log.message }}</span>
           </div>
         </div>
       </div>
@@ -149,33 +109,14 @@ import { usePollingFetch } from "@/composables/usePollingFetch";
 
 const activeTab = ref("inventory");
 
-const {
-  items,
-  loading,
-  error,
-  isStale,
-  loadInventory,
-  startPolling,
-  stopPolling,
-  refresh,
-  addInventoryItem,
-} = useInventory();
+const { items, loading, error, isStale, loadInventory, startPolling, stopPolling, refresh, addInventoryItem } = useInventory();
 const { pushSuccess, pushError } = useToast();
 
-const seeding = ref(false);
 const inventoryPolling = ref(false);
-const newItem = ref({
-  name: "",
-  quantity: 1,
-  unit: "",
-  category: "",
-  location: "",
-  expiresAt: "",
-});
+const newItem = ref({ name: "", quantity: 1, unit: "", category: "", location: "", expiresAt: "" });
 
-// Polling tab specific logic
 const pollingActive = ref(false);
-const pollingInterval = ref(3000); // 3 seconds for demo purposes
+const pollingInterval = ref(3000);
 const pollingData = ref<{ timestamp: number; itemsCount: number; lastPolled: number } | null>(null);
 const pollingLoading = ref(false);
 const pollingError = ref<string | null>(null);
@@ -185,313 +126,43 @@ const pollingFetch = usePollingFetch<{ timestamp: number; itemsCount: number; la
   "/api/polling-data",
   {
     pollIntervalMs: pollingInterval.value,
-    onSuccess: (data) => {
-      pollingData.value = data;
-      addPollingLog(`Fetched data: ${data.itemsCount} items`);
-    },
-    onError: (err) => {
-      pollingError.value = err.message;
-      addPollingLog(`Error: ${err.message}`);
-    },
+    onSuccess: (data) => { pollingData.value = data; addPollingLog(`Fetched data: ${data.itemsCount} items`); },
+    onError: (err) => { pollingError.value = err.message; addPollingLog(`Error: ${err.message}`); },
   }
 );
 
 function addPollingLog(message: string) {
-  pollingLogs.value.push({
-    timestamp: Date.now(),
-    message,
-  });
-
-  // Keep only last 10 logs
-  if (pollingLogs.value.length > 10) {
-    pollingLogs.value.shift();
-  }
+  pollingLogs.value.push({ timestamp: Date.now(), message });
+  if (pollingLogs.value.length > 10) pollingLogs.value.shift();
 }
 
-function formatTimestamp(timestamp: number) {
-  return new Date(timestamp).toLocaleTimeString();
-}
+function formatTimestamp(timestamp: number) { return new Date(timestamp).toLocaleTimeString(); }
+function formatDate(dateString: string | null) { return dateString ? new Date(dateString).toLocaleDateString() : ""; }
 
-try {
-  await loadInventory();
-} catch {
-  // Error state is handled by the composable
-}
-
-async function seedInventory() {
-  seeding.value = true;
-  try {
-    await $fetch("/api/dev/inventory-seed", { method: "POST" });
-    await loadInventory();
-    pushSuccess("Inventory seeded successfully");
-  } catch (err) {
-    pushError("Failed to seed inventory");
-    console.error(err);
-  } finally {
-    seeding.value = false;
-  }
-}
+try { await loadInventory(); } catch { /* handled by composable */ }
 
 async function refreshInventory() {
-  try {
-    await refresh();
-    pushSuccess("Inventory refreshed");
-  } catch (err) {
-    pushError("Failed to refresh inventory");
-    console.error(err);
-  }
+  try { await refresh(); pushSuccess("Inventory refreshed"); }
+  catch (err) { pushError("Failed to refresh inventory"); console.error(err); }
 }
 
 async function addItem() {
   try {
-    await addInventoryItem({
-      name: newItem.value.name,
-      quantity: newItem.value.quantity,
-      unit: newItem.value.unit,
-      category: newItem.value.category,
-      location: newItem.value.location,
-      expiresAt: newItem.value.expiresAt,
-      isOpened: false,
-    });
+    await addInventoryItem({ name: newItem.value.name, quantity: newItem.value.quantity, unit: newItem.value.unit, category: newItem.value.category, location: newItem.value.location, expiresAt: newItem.value.expiresAt, isOpened: false });
     newItem.value = { name: "", quantity: 1, unit: "", category: "", location: "", expiresAt: "" };
     pushSuccess("Item added successfully");
-  } catch (err) {
-    pushError("Failed to add item");
-    console.error(err);
-  }
+  } catch (err) { pushError("Failed to add item"); console.error(err); }
 }
 
-function formatDate(dateString: string | null) {
-  if (!dateString) return "";
-  return new Date(dateString).toLocaleDateString();
-}
+function startInventoryPolling() { inventoryPolling.value = true; startPolling(); }
+function stopInventoryPolling() { inventoryPolling.value = false; stopPolling(); }
 
-function startInventoryPolling() {
-  inventoryPolling.value = true;
-  startPolling();
-}
-
-function stopInventoryPolling() {
-  inventoryPolling.value = false;
-  stopPolling();
-}
-
-// Polling tab functions
 async function startPollingData() {
-  pollingActive.value = true;
-  pollingError.value = null;
-
-  try {
-    await pollingFetch.start();
-    addPollingLog("Polling started");
-  } catch (err) {
-    pollingError.value = err instanceof Error ? err.message : "Failed to start polling";
-    addPollingLog(`Error starting polling: ${err}`);
-  }
+  pollingActive.value = true; pollingError.value = null;
+  try { await pollingFetch.start(); addPollingLog("Polling started"); }
+  catch (err) { pollingError.value = err instanceof Error ? err.message : "Failed to start polling"; addPollingLog(`Error starting polling: ${err}`); }
 }
 
-function stopPollingData() {
-  pollingActive.value = false;
-  pollingFetch.stop();
-  addPollingLog("Polling stopped");
-}
-
-function refreshPollingData() {
-  pollingFetch.refresh().then(() => {
-    addPollingLog("Manual refresh performed");
-  });
-}
+function stopPollingData() { pollingActive.value = false; pollingFetch.stop(); addPollingLog("Polling stopped"); }
+function refreshPollingData() { pollingFetch.refresh().then(() => addPollingLog("Manual refresh performed")); }
 </script>
-
-<style scoped>
-.development-page {
-  padding: 20px;
-}
-
-.tabs {
-  display: flex;
-  border-bottom: 1px solid #ccc;
-  margin-bottom: 20px;
-}
-
-.tabs button {
-  padding: 10px 20px;
-  cursor: pointer;
-  border: none;
-  background: transparent;
-  border-bottom: 3px solid transparent;
-}
-
-.tabs button.active {
-  border-bottom: 3px solid #007bff;
-  font-weight: bold;
-}
-
-.tab-content {
-  margin-top: 20px;
-}
-
-.inventory-header {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-}
-
-.add-item-form {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-bottom: 20px;
-  max-width: 400px;
-}
-
-.add-item-form input,
-.add-item-form select {
-  padding: 8px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.add-item-form button {
-  padding: 8px 16px;
-  background: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.add-item-form button:disabled {
-  background: #ccc;
-  cursor: not-allowed;
-}
-
-.inventory-list {
-  list-style: none;
-  padding: 0;
-}
-
-.inventory-item {
-  padding: 10px;
-  border: 1px solid #eee;
-  margin-bottom: 5px;
-  border-radius: 4px;
-}
-
-.polling-tab {
-  padding: 20px;
-}
-
-.polling-header {
-  margin-bottom: 30px;
-}
-
-.polling-status {
-  margin: 15px 0;
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-
-.status-indicator {
-  padding: 8px 12px;
-  border-radius: 4px;
-  font-weight: bold;
-}
-
-.status-active {
-  background: #d4edda;
-  color: #155724;
-}
-
-.status-inactive {
-  background: #f8d7da;
-  color: #721c24;
-}
-
-.polling-controls {
-  margin: 15px 0;
-}
-
-.btn-primary {
-  padding: 8px 16px;
-  background: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.btn-primary:disabled {
-  background: #ccc;
-  cursor: not-allowed;
-}
-
-.btn-secondary {
-  padding: 8px 16px;
-  background: #6c757d;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  margin-left: 10px;
-}
-
-.btn-secondary:disabled {
-  background: #ccc;
-  cursor: not-allowed;
-}
-
-.polling-data-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 15px;
-  margin: 20px 0;
-}
-
-.data-item {
-  display: flex;
-  flex-direction: column;
-  padding: 10px;
-  background: #f8f9fa;
-  border-radius: 4px;
-}
-
-.data-label {
-  font-weight: bold;
-  margin-bottom: 5px;
-  color: #495057;
-}
-
-.data-value {
-  font-size: 18px;
-  color: #007bff;
-}
-
-.polling-log {
-  margin-top: 20px;
-  padding: 15px;
-  background: #f8f9fa;
-  border-radius: 4px;
-  max-height: 200px;
-  overflow-y: auto;
-}
-
-.log-item {
-  display: flex;
-  justify-content: space-between;
-  padding: 5px 0;
-  border-bottom: 1px solid #dee2e6;
-}
-
-.log-timestamp {
-  color: #6c757d;
-  font-size: 12px;
-}
-
-.log-message {
-  color: #343a40;
-  font-size: 14px;
-}
-</style>

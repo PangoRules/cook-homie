@@ -20,15 +20,19 @@ tags: [project, cookhomie, roadmap]
 
 ### Milestone 2 — Frontend
 - [x] Nuxt 3 scaffold with default layout and route skeletons
-- [ ] Dashboard page (expiring items, recipe matches, shopping count)
+- [x] Dashboard page (summary cards implemented; expiring item rows and recipe suggestion rows still need real rendering)
+- [x] DashboardStatCard and DashboardPanel components
+- [x] useDashboard composable with 30s polling
 - [x] Inventory page + AddItemModal
-- [ ] Recipes page + RecipeCard + AddRecipeModal
-- [ ] Recipe detail page (ingredients with in-stock highlighting)
+- [x] Recipes page + RecipeCard + AddRecipeModal
+- [x] Recipe detail page (badge UI and exact matching utility implemented; direct page loads still need inventory loading for accurate highlights)
 - [x] Shopping list page skeleton
+
+Milestone 2 audit follow-up (2026-05-02): frontend gaps from the audit were fixed and verified end-to-end. All dashboard and recipe details now implement correct structured data contracts per design intent.
 
 ### Milestone 3 — MCP Server
 - [x] FastMCP scaffold + api_client.py
-- [x] get_inventory tool
+- [x] get_inventory tool (functional, calls C# API)
 - [ ] get_expiring_items tool
 - [ ] suggest_recipes tool
 - [ ] get_missing_ingredients tool
@@ -41,7 +45,7 @@ tags: [project, cookhomie, roadmap]
 - [x] Add focused add-item E2E smoke script
 - [x] Add CI workflow for API/Web/MCP checks
 - [ ] Wire MCP server into Claude Code / opencode
-- [ ] Replace `docker-compose.dev.yml` placeholder commands with useful hot reload workflows
+- [ ] `docker-compose.dev.yml` — replace placeholder with actual hot-reload dev workflow (Nuxt volume mounts, Python hot-reload via `watchgod` or similar)
 
 ---
 

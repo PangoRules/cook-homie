@@ -1,0 +1,18 @@
+services:
+  api:
+    build:
+      target: dev
+    volumes:
+      - ./src/CookHomie.Api:/src
+    working_dir: /src/CookHomie.WebApi
+    command: ["dotnet", "run", "--project", "CookHomie.WebApi.csproj", "--no-launch-profile"]
+
+  web:
+    environment:
+      NODE_ENV: development
+      NUXT_PUBLIC_APP_ENV: development
+    command: ["npm", "run", "dev"]
+
+  mcp:
+    environment:
+      MCP_ENV: development

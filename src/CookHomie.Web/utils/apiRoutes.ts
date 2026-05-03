@@ -16,9 +16,8 @@ export const API_ROUTES = {
   },
   // Shopping routes
   SHOPPING: {
-    LIST: "/api/shopping",
+    BASE: "/api/shopping",
     DETAIL: (id: string) => `/api/shopping/${id}`,
     BULK: "/api/shopping/bulk",
   },
 } as const;
-

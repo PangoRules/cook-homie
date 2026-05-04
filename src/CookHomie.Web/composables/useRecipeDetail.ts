@@ -38,8 +38,26 @@ export const useRecipeDetail = (recipeId: string) => {
     });
   });
 
-  const start = () => fetchRecipe();
-  const stop = () => {};
+const updateRecipe = async (updates: Partial<Omit<Recipe, "id">>) => {
+  loading.value = true;
+  error.value = null;
+  try {
+    const updated = await $fetch<Recipe>(API_ROUTES.RECIPES.DETAIL(recipeId), {
+      method: "PATCH",
+      body: updates,
+    });
+    recipe.value = updated;
+    return updated;
+  } catch (err) {
+    error.value = err instanceof Error ? err.message : "Failed to update recipe";
+    throw err;
+  } finally {
+    loading.value = false;
+  }
+};
 
-  return { recipe, loading, error, enrichedIngredients, fetchRecipe, start, stop };
+const start = () => fetchRecipe();
+const stop = () => {};
+
+return { recipe, loading, error, enrichedIngredients, fetchRecipe, updateRecipe, start, stop };
 };

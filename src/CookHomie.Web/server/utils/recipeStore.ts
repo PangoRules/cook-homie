@@ -72,3 +72,22 @@ export const getMissingIngredients = (_recipeId: string, _inventoryNames: string
   // Milestone 2: stock matching done client-side; return empty
   return [];
 };
+
+export const updateRecipe = (id: string, updates: Partial<Omit<Recipe, "id">>): Recipe | undefined => {
+  const index = recipes.findIndex(r => r.id === id);
+  if (index === -1) return undefined;
+
+  const existing = recipes[index];
+  const updated: Recipe = {
+    ...existing,
+    name: updates.name ?? existing.name,
+    instructions: updates.instructions ?? existing.instructions,
+    prepMinutes: updates.prepMinutes ?? existing.prepMinutes,
+    cookMinutes: updates.cookMinutes ?? existing.cookMinutes,
+    tags: updates.tags ?? existing.tags,
+    ingredients: updates.ingredients ?? existing.ingredients,
+  };
+
+  recipes[index] = updated;
+  return updated;
+};

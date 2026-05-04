@@ -22,6 +22,6 @@
 </template>
 
 <script setup lang="ts">
-import type { Recipe } from "~/types";
-defineProps<{ recipe: Recipe }>();
+  import type { Recipe } from "~/types";
+  defineProps<{ recipe: Recipe }>();
 </script>

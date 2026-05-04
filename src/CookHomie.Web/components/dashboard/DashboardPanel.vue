@@ -21,15 +21,15 @@
 </template>
 
 <script setup lang="ts">
-import RefreshButton from "~/components/shared/RefreshButton.vue";
+  import RefreshButton from "~/components/shared/RefreshButton.vue";
 
-defineProps<{
-  title: string;
-  loading?: boolean;
-  error?: string | null;
-  isStale?: boolean;
-  hasData?: boolean;
-  showRefresh?: boolean;
-}>();
-defineEmits(["refresh"]);
+  defineProps<{
+    title: string;
+    loading?: boolean;
+    error?: string | null;
+    isStale?: boolean;
+    hasData?: boolean;
+    showRefresh?: boolean;
+  }>();
+  defineEmits(["refresh"]);
 </script>

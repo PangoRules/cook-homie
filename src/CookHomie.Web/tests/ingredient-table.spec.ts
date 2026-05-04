@@ -15,7 +15,10 @@ const makeIngredient = (ingredientName: string): AddRecipeIngredientPayload => (
   isOptional: false,
 });
 
-const mountIngredientTable = (ingredients: AddRecipeIngredientPayload[], options: MountIngredientTableOptions = {}) =>
+const mountIngredientTable = (
+  ingredients: AddRecipeIngredientPayload[],
+  options: MountIngredientTableOptions = {}
+) =>
   mount(IngredientTable, {
     props: {
       ingredients,
@@ -30,7 +33,7 @@ const mountIngredientTable = (ingredients: AddRecipeIngredientPayload[], options
           props: ["variant", "disabled", "size"],
         },
         SharedFormField: {
-          template: '<label><span>{{ label }}</span><slot /><small>{{ error }}</small></label>',
+          template: "<label><span>{{ label }}</span><slot /><small>{{ error }}</small></label>",
           props: ["label", "error", "required"],
         },
       },
@@ -42,8 +45,14 @@ describe("IngredientTable", () => {
     const ingredients = ["one", "two", "three"].map(makeIngredient);
     const wrapper = mountIngredientTable(ingredients, { pageSize: 2 });
 
-    await wrapper.findAll("button").find((button) => button.text() === "Next")?.trigger("click");
-    await wrapper.findAll("button").find((button) => button.text() === "Remove")?.trigger("click");
+    await wrapper
+      .findAll("button")
+      .find((button) => button.text() === "Next")
+      ?.trigger("click");
+    await wrapper
+      .findAll("button")
+      .find((button) => button.text() === "Remove")
+      ?.trigger("click");
 
     expect(wrapper.emitted("remove")?.[0]).toEqual([2]);
   });
@@ -52,12 +61,18 @@ describe("IngredientTable", () => {
     const ingredients = [makeIngredient("")];
     const wrapper = mountIngredientTable(ingredients, { startEditingFirstRow: true });
 
-    await wrapper.findAll("button").find((button) => button.text() === "Done")?.trigger("click");
+    await wrapper
+      .findAll("button")
+      .find((button) => button.text() === "Done")
+      ?.trigger("click");
 
     expect(wrapper.text()).toContain("Ingredient name is required");
 
     await wrapper.find('input[placeholder="e.g. Flour"]').setValue("Flour");
-    await wrapper.findAll("button").find((button) => button.text() === "Done")?.trigger("click");
+    await wrapper
+      .findAll("button")
+      .find((button) => button.text() === "Done")
+      ?.trigger("click");
 
     expect(wrapper.text()).not.toContain("Ingredient name is required");
     expect(wrapper.text()).toContain("Flour");
@@ -69,7 +84,9 @@ describe("IngredientTable", () => {
 
     await wrapper.vm.editIngredient(1);
 
-    expect(wrapper.find<HTMLInputElement>('input[placeholder="e.g. Flour"]').element.value).toBe("Milk");
+    expect(wrapper.find<HTMLInputElement>('input[placeholder="e.g. Flour"]').element.value).toBe(
+      "Milk"
+    );
   });
 
   it("keeps editable tables compact by default", () => {
@@ -85,14 +102,19 @@ describe("IngredientTable", () => {
     const ingredients = [makeIngredient("Flour")];
     const wrapper = mountIngredientTable(ingredients, { startEditingFirstRow: true });
 
-    expect(wrapper.find<HTMLInputElement>('input[placeholder="e.g. Flour"]').element.value).toBe("Flour");
+    expect(wrapper.find<HTMLInputElement>('input[placeholder="e.g. Flour"]').element.value).toBe(
+      "Flour"
+    );
   });
 
   it("emits cancel-add when canceling a blank newly-added row", async () => {
     const ingredients = [{ ingredientName: "", quantity: 1, unit: "g", isOptional: false }];
     const wrapper = mountIngredientTable(ingredients, { startEditingFirstRow: true });
 
-    await wrapper.findAll("button").find((button) => button.text() === "Cancel")?.trigger("click");
+    await wrapper
+      .findAll("button")
+      .find((button) => button.text() === "Cancel")
+      ?.trigger("click");
 
     expect(wrapper.emitted("cancel-add")?.[0]).toEqual([0]);
     expect(wrapper.emitted("remove")).toBeUndefined();
@@ -102,7 +124,10 @@ describe("IngredientTable", () => {
     const ingredients = [makeIngredient("Flour")];
     const wrapper = mountIngredientTable(ingredients, { startEditingFirstRow: true });
 
-    await wrapper.findAll("button").find((button) => button.text() === "Cancel")?.trigger("click");
+    await wrapper
+      .findAll("button")
+      .find((button) => button.text() === "Cancel")
+      ?.trigger("click");
 
     expect(wrapper.emitted("cancel-add")).toBeUndefined();
     expect(wrapper.emitted("remove")).toBeUndefined();
@@ -113,7 +138,10 @@ describe("IngredientTable", () => {
     const wrapper = mountIngredientTable(ingredients, { startEditingFirstRow: true });
 
     await wrapper.find('input[placeholder="e.g. Flour"]').setValue("Sugar");
-    await wrapper.findAll("button").find((button) => button.text() === "Cancel")?.trigger("click");
+    await wrapper
+      .findAll("button")
+      .find((button) => button.text() === "Cancel")
+      ?.trigger("click");
 
     expect(ingredients[0]?.ingredientName).toBe("Flour");
     expect(wrapper.emitted("remove")).toBeUndefined();

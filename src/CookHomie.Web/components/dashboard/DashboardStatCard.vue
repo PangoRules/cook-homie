@@ -25,22 +25,22 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-import { useLocale } from "~/composables/useLocale";
+  import { computed } from "vue";
+  import { useLocale } from "~/composables/useLocale";
 
-const props = defineProps<{
-  label: string;
-  value: number | string;
-  sub?: string;
-  variant?: "default" | "warning" | "success";
-  loading: boolean;
-}>();
+  const props = defineProps<{
+    label: string;
+    value: number | string;
+    sub?: string;
+    variant?: "default" | "warning" | "success";
+    loading: boolean;
+  }>();
 
-defineEmits(["click"]);
+  defineEmits(["click"]);
 
-const { formatNumber } = useLocale();
+  const { formatNumber } = useLocale();
 
-const displayValue = computed(() =>
-  typeof props.value === "number" ? formatNumber(props.value) : props.value
-);
+  const displayValue = computed(() =>
+    typeof props.value === "number" ? formatNumber(props.value) : props.value
+  );
 </script>

@@ -28,36 +28,36 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted } from "vue";
-import { useRecipes } from "@/composables/useRecipes";
-import { useToast } from "@/composables/useToast";
+  import { onMounted, onUnmounted } from "vue";
+  import { useRecipes } from "@/composables/useRecipes";
+  import { useToast } from "@/composables/useToast";
 
-const { recipes, loading, error, isStale, start, stop, refresh } = useRecipes();
-const { pushError } = useToast();
-const showModal = ref(false);
-const closing = ref(false);
+  const { recipes, loading, error, isStale, start, stop, refresh } = useRecipes();
+  const { pushError } = useToast();
+  const showModal = ref(false);
+  const closing = ref(false);
 
-const onModalClose = () => {
-  closing.value = true;
-  setTimeout(() => {
+  const onModalClose = () => {
+    closing.value = true;
+    setTimeout(() => {
+      showModal.value = false;
+      closing.value = false;
+    }, 200);
+  };
+
+  const handleRecipeAdded = () => {
     showModal.value = false;
-    closing.value = false;
-  }, 200);
-};
+    refresh().catch((err: unknown) => {
+      pushError("Failed to refresh recipes after adding new one");
+      console.error(err);
+    });
+  };
 
-const handleRecipeAdded = () => {
-  showModal.value = false;
-  refresh().catch((err: unknown) => {
-    pushError("Failed to refresh recipes after adding new one");
-    console.error(err);
+  onMounted(() => {
+    start();
   });
-};
 
-onMounted(() => {
-  start();
-});
+  onUnmounted(() => stop());
 
-onUnmounted(() => stop());
-
-const localRecipes = computed(() => (recipes.value !== null ? recipes.value : []));
+  const localRecipes = computed(() => (recipes.value !== null ? recipes.value : []));
 </script>

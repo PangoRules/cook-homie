@@ -16,7 +16,14 @@ describe("recipeStore", () => {
 
   it("addRecipe returns recipe with new id", () => {
     const before = getRecipes().length;
-    const newR = addRecipe({ name: "Test", instructions: "Test", prepMinutes: 1, cookMinutes: 1, tags: [], ingredients: [] });
+    const newR = addRecipe({
+      name: "Test",
+      instructions: "Test",
+      prepMinutes: 1,
+      cookMinutes: 1,
+      tags: [],
+      ingredients: [],
+    });
     expect(newR.id).toBeTruthy();
     expect(getRecipes().length).toBe(before + 1);
   });
@@ -32,7 +39,7 @@ describe("recipeStore", () => {
       prepMinutes: 1,
       cookMinutes: 1,
       tags: [],
-      ingredients: ingredientInput
+      ingredients: ingredientInput,
     });
 
     expect(newR.ingredients).toHaveLength(1);

@@ -13,7 +13,7 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "validate": "npm run typecheck && npm run lint && npm run build"
+    "validate": "npm run typecheck && npm run lint && npm run format:check && npm run build"
   },
   "dependencies": {
     "nuxt": "^3.17.5",
@@ -25,6 +25,7 @@
     "@vitejs/plugin-vue": "^6.0.6",
     "@vue/test-utils": "^2.4.6",
     "eslint": "^9.39.4",
+    "eslint-config-prettier": "^10.1.8",
     "happy-dom": "^20.9.0",
     "prettier": "^3.8.3",
     "tailwindcss": "^4.2.4",

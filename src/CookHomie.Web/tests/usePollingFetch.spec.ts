@@ -82,52 +82,52 @@ describe("usePollingFetch", () => {
   it("pauses polling when page is hidden and resumes when visible", async () => {
     const spy = vi.fn().mockResolvedValue({ data: "value" });
     vi.stubGlobal("$fetch", spy);
-    
+
     // Mock document.visibilityState
     const visibilityChangeListeners: Array<() => void> = [];
     vi.stubGlobal("document", {
       visibilityState: "visible",
       addEventListener: (event: string, listener: () => void) => {
-        if (event === 'visibilitychange') {
+        if (event === "visibilitychange") {
           visibilityChangeListeners.push(listener);
         }
       },
-      removeEventListener: () => {}
+      removeEventListener: () => {},
     } as unknown as Document);
-    
+
     const { start } = usePollingFetch("/api/test");
     await start();
-    
+
     // Advance time to make sure polling occurs
     spy.mockClear();
     await vi.advanceTimersByTimeAsync(30000);
-    
+
     // Should have been called once
     expect(spy).toHaveBeenCalledTimes(1);
-    
+
     // Simulate page becoming hidden by calling the visibility change listeners
     (document as unknown as { visibilityState: string }).visibilityState = "hidden";
     for (const listener of visibilityChangeListeners) {
       listener();
     }
-    
+
     // Advance time again, polling should not occur while hidden
     spy.mockClear();
     await vi.advanceTimersByTimeAsync(30000);
-    
+
     // Should not have been called since page was hidden
     expect(spy).toHaveBeenCalledTimes(0);
-    
+
     // Simulate page becoming visible
     (document as unknown as { visibilityState: string }).visibilityState = "visible";
     for (const listener of visibilityChangeListeners) {
       listener();
     }
-    
+
     // Advance time again, polling should resume
     spy.mockClear();
     await vi.advanceTimersByTimeAsync(30000);
-    
+
     // Should have been called again since page became visible
     expect(spy).toHaveBeenCalledTimes(1);
   });

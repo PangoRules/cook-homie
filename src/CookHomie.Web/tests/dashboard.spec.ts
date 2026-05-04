@@ -3,11 +3,14 @@ import { ref } from "vue";
 
 describe("Dashboard", () => {
   it("uses useDashboard composable", async () => {
-    vi.stubGlobal("$fetch", vi.fn().mockResolvedValue({
-      expiringCount: 3,
-      recipeMatchCount: 7,
-      shoppingCount: 4
-    }));
+    vi.stubGlobal(
+      "$fetch",
+      vi.fn().mockResolvedValue({
+        expiringCount: 3,
+        recipeMatchCount: 7,
+        shoppingCount: 4,
+      })
+    );
     vi.stubGlobal("useState", (_k: string, init: () => unknown) => ref(init()));
     vi.stubGlobal("usePollingFetch", () => ({
       data: ref({ expiringCount: 3, recipeMatchCount: 7, shoppingCount: 4 }),
@@ -16,7 +19,7 @@ describe("Dashboard", () => {
       isStale: ref(false),
       start: vi.fn(),
       stop: vi.fn(),
-      refresh: vi.fn()
+      refresh: vi.fn(),
     }));
 
     const { useDashboard } = await import("../composables/useDashboard");

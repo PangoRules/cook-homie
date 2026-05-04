@@ -310,18 +310,17 @@ Rationale: unblock dependencies first (#9), then shared primitives (#3/#2/#1/#7)
   - `feat/milestone2-1-frontend-improvements`
 
 ## Tasks
-- [ ] Task 1: Extract `components/shared/RefreshButton.vue` and migrate dashboard/index usages.
-- [ ] Task 2: Centralize expiry day-diff logic in `utils/date.ts` and map short/long copy per view.
-- [ ] Task 3: Add `utils/apiRoutes.ts` namespaced constants/functions and migrate composables.
-- [ ] Task 4: Convert dashboard quick recipe name from span to accessible `NuxtLink`.
+- [x] Task 1: Extract `components/shared/RefreshButton.vue` and migrate dashboard/index usages.
+- [x] Task 2: Centralize expiry day-diff logic in `utils/date.ts` and map short/long copy per view.
+- [x] Task 3: Add `utils/apiRoutes.ts` namespaced constants/functions and migrate composables.
+- [x] Task 4: Convert dashboard quick recipe name from span to accessible `NuxtLink`.
 - [x] Task 5: Build reusable inventory item detail/edit modal with expiring-context actions.
 - [x] Task 6: Add dashboard missing-ingredient expansion and bulk/per-item shopping actions.
-- [ ] Task 7: Introduce shared paginated ingredient table and integrate into `AddRecipeModal`.
-- [ ] Task 8: Upgrade recipe detail with shared ingredient table, per-row shopping add, section inline editing, and PATCH integration.
-- [ ] Task 9: Implement shopping list API routes/contracts/services + composable operations, including bulk add and dedup guards.
+- [x] Task 7: Introduce shared paginated ingredient table and integrate into `AddRecipeModal`.
+- [x] Task 8: Upgrade recipe detail with shared ingredient table, per-row shopping add, section inline editing, and PATCH integration.
+- [x] Task 9: Implement shopping list API routes/contracts/services + composable operations, including bulk add and dedup guards.
 
-# FOR THE USER
-Execution order (per spec dependencies): #9 → #3 → #2 → #1 → #7 → #8 → #4 → #6 → #5
-Two execution options available when ready:
-1. Subagent-Driven — fresh subagent per task, review between tasks
-2. Inline Execution — batch with checkpoints in this session
+# STATUS — ✅ ALL TASKS COMPLETE
+
+## Branch: `feat/milestone2-1-frontend-improvements`
+All 9 implementation tasks shipped. Branch is clean and up to date with origin.

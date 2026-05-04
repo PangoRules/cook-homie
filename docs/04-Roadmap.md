@@ -39,11 +39,11 @@ tags: [project, cookhomie, roadmap]
 - [x] Task 3: `utils/apiRoutes.ts` namespaced constants and composable migration
 - [x] Task 2: Canonical `formatExpiry` in `utils/date.ts` with calendar-day comparison
 - [x] Task 7: Shared paginated ingredient table + AddRecipeModal validation
-- [ ] Task 1: Shared RefreshButton component
+- [x] Task 1: Shared RefreshButton component
 - [x] Task 8: Recipe detail inline edit + shopping row actions
 - [x] Task 4: Recipe name as accessible NuxtLink on dashboard
 - [x] Task 6: Dashboard missing-ingredient expansion + bulk/per-item shopping actions
-- [ ] Task 5: Inventory + expiring item modal actions
+- [x] Task 5: Inventory + expiring item modal actions
 
 ### Milestone 3 — MCP Server
 - [x] FastMCP scaffold + api_client.py

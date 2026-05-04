@@ -64,7 +64,7 @@
           </div>
           <div v-else class="flex flex-col gap-3">
             <SharedFormField label="Name">
-              <input v-model="editBuffer.name" class="input" />
+              <input v-model="editBuffer.name" class="input"></input>
             </SharedFormField>
             <SharedFormField label="Tags (comma separated)">
             <input

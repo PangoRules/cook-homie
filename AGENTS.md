@@ -3,9 +3,9 @@
 This repository is the food and kitchen module of HomieOS, a local-first web app for kitchen inventory management, recipe suggestions, and shopping lists, exposing all functionality via MCP tools for AI integration.
 
 ## Project Status
-- **MVP Phase**: Early implementation. Foundation scaffolding exists for API, Web, and MCP, with inventory as the first vertical slice in progress.
-- **Monorepo Structure**: Scaffolded with 3 services: API, Web, and MCP server.
-- **Development Focus**: Completing the `add inventory item` vertical slice, tightening WebApi/application-layer boundaries, and adding end-to-end verification.
+- **MVP Phase**: Core verticals (inventory, recipes, shopping list) implemented. Frontend milestone 2 complete.
+- **Monorepo Structure**: 3 services: API (C# Clean Architecture), Web (Nuxt 3), MCP (Python FastMCP).
+- **Development Focus**: Iterating on UX, completing remaining milestone tasks, expanding MCP tool coverage.
 
 ## Monorepo Structure
 ```
@@ -82,6 +82,7 @@ dotnet test CookHomie.sln           # run all test projects
 ```bash
 cd src/CookHomie.MCP
 python -m py_compile server.py api_client.py   # syntax check
+pytest tests/                                  # unit tests
 ```
 
 ### Rules
@@ -89,7 +90,6 @@ python -m py_compile server.py api_client.py   # syntax check
 - Run only the layers you touched — no need to run all three for a frontend-only change.
 - If `npm run validate` fails, fix it before committing. Do not commit with known lint or type errors.
 - Test failures are blockers. Do not hand off to the git agent with failing tests.
-- `graphify-out/` is read-only — query it with `graphify query`, never modify or delete it.
 
 ## Documentation
 Full architecture, data model, and roadmap documentation in the `docs/` directory:

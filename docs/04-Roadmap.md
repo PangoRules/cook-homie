@@ -41,7 +41,7 @@ tags: [project, cookhomie, roadmap]
 - [x] Task 7: Shared paginated ingredient table + AddRecipeModal validation
 - [ ] Task 1: Shared RefreshButton component
 - [x] Task 8: Recipe detail inline edit + shopping row actions
-- [ ] Task 4: Recipe name as accessible NuxtLink on dashboard
+- [x] Task 4: Recipe name as accessible NuxtLink on dashboard
 - [ ] Task 6: Dashboard missing-ingredient expansion + bulk/per-item shopping actions
 - [ ] Task 5: Inventory + expiring item modal actions
 

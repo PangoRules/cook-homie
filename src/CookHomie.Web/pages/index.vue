@@ -74,7 +74,12 @@
           </div>
           <div v-else-if="data?.recipeIdeas && data.recipeIdeas.length > 0">
             <div v-for="idea in data.recipeIdeas" :key="idea.id" class="py-2 border-b border-border">
-              <span class="text-text-primary font-medium">{{ idea.name }}</span>
+              <NuxtLink
+                :to="`/recipes/${idea.id}`"
+                class="text-text-primary font-medium text-inherit hover:underline focus:outline-none focus:ring-2 focus:ring-accent rounded"
+              >
+                {{ idea.name }}
+              </NuxtLink>
               <span class="block text-text-muted text-sm">{{ idea.matchedCount }} matched, {{ idea.missingCount }} missing</span>
             </div>
           </div>

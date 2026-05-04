@@ -66,7 +66,7 @@
       </DashboardPanel>
 
       <InventoryItemDetailModal
-        v-if="expiringItemDetails"
+        v-if="showExpiringModal"
         :item="expiringItemDetails"
         mode="expiring"
         @close="showExpiringModal = false"
@@ -174,7 +174,8 @@
   const openExpiring = async (item: DashboardExpiringItem) => {
     selectedExpiringItem.value = item;
     showExpiringModal.value = true;
-    const { items } = useInventory();
+    const { items, refresh } = useInventory();
+    await refresh();
     expiringItemDetails.value = items.value?.find((i) => i.id === item.id) ?? null;
   };
 

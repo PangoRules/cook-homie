@@ -7,7 +7,7 @@ namespace CookHomie.Infrastructure.Tests;
 public class InventoryRepositoryTests
 {
     [Fact]
-    public async Task EnsureCreated_SeedsTwoItemsPerCategory()
+    public async Task EnsureCreated_SeedsInventoryItems()
     {
         var options = new DbContextOptionsBuilder<AppDbContext>()
             .UseInMemoryDatabase(databaseName: Guid.NewGuid().ToString())
@@ -16,13 +16,8 @@ public class InventoryRepositoryTests
 
         await db.Database.EnsureCreatedAsync();
 
-        var groupedCounts = await db.InventoryItems
-            .GroupBy(i => i.Category)
-            .Select(group => new { Category = group.Key, Count = group.Count() })
-            .ToListAsync();
-
-        Assert.NotEmpty(groupedCounts);
-        Assert.All(groupedCounts, group => Assert.Equal(2, group.Count));
+        var count = await db.InventoryItems.CountAsync();
+        Assert.Equal(12, count); // 8 baseline + 4 added for recipe seed coverage
     }
 
     [Fact]

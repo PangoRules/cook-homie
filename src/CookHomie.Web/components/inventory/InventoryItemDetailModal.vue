@@ -1,5 +1,12 @@
 <template>
-  <SharedModal ref="modalRef" :title="item.name" max-width="max-w-lg" @close="$emit('close')">
+  <SharedModal
+    ref="modalRef"
+    :title="localInventoryItem.name"
+    max-width="max-w-lg"
+    @close="$emit('close')"
+  >
+    <pre>{{ localInventoryItem }}</pre>
+    <pre>{{ item }}</pre>
     <form class="flex flex-col gap-4" @submit.prevent="handleSave">
       <SharedFormField label="Name" :error="errors.name" required>
         <input v-model="form.name" class="input" />
@@ -88,13 +95,24 @@
   import { useToast } from "~/composables/useToast";
 
   interface Props {
-    item: InventoryItem;
+    item: InventoryItem | null;
     mode?: "inventory" | "expiring";
   }
 
   const props = withDefaults(defineProps<Props>(), {
     mode: "inventory",
   });
+
+  const defaultItem: InventoryItem = {
+    id: "",
+    name: "",
+    category: "",
+    location: "",
+    isOpened: false,
+    quantity: 0,
+    unit: "",
+  };
+  const localInventoryItem = computed(() => props.item ?? defaultItem);
 
   const emit = defineEmits<{
     (e: "close" | "dismiss" | "restocked" | "addToShoppingList"): void;
@@ -106,14 +124,14 @@
   const { pushSuccess, pushError } = useToast();
 
   const form = reactive({
-    name: props.item.name,
-    category: props.item.category,
-    location: props.item.location,
-    quantity: props.item.quantity,
-    unit: props.item.unit,
-    isOpened: props.item.isOpened,
-    expiresAt: props.item.expiresAt ?? "",
-    notes: props.item.notes ?? "",
+    name: localInventoryItem.value.name,
+    category: localInventoryItem.value.category,
+    location: localInventoryItem.value.location,
+    quantity: localInventoryItem.value.quantity,
+    unit: localInventoryItem.value.unit,
+    isOpened: localInventoryItem.value.isOpened,
+    expiresAt: localInventoryItem.value.expiresAt ?? "",
+    notes: localInventoryItem.value.notes ?? "",
   });
 
   const errors = reactive({ name: "", category: "", location: "", quantity: "" });
@@ -122,16 +140,16 @@
   const discardAmount = ref(0);
 
   watch(
-    () => props.item,
+    () => localInventoryItem,
     (newItem) => {
-      form.name = newItem.name;
-      form.category = newItem.category;
-      form.location = newItem.location;
-      form.quantity = newItem.quantity;
-      form.unit = newItem.unit;
-      form.isOpened = newItem.isOpened;
-      form.expiresAt = newItem.expiresAt ?? "";
-      form.notes = newItem.notes ?? "";
+      form.name = newItem.value.name;
+      form.category = newItem.value.category;
+      form.location = newItem.value.location;
+      form.quantity = newItem.value.quantity;
+      form.unit = newItem.value.unit;
+      form.isOpened = newItem.value.isOpened;
+      form.expiresAt = newItem.value.expiresAt ?? "";
+      form.notes = newItem.value.notes ?? "";
     }
   );
 

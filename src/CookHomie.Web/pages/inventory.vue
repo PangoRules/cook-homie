@@ -30,7 +30,8 @@
         <li
           v-for="item in items"
           :key="item.id"
-          class="flex items-center justify-between p-3 bg-surface border border-border rounded-[10px] hover:shadow-sm transition-shadow"
+          class="flex items-center justify-between p-3 bg-surface border border-border rounded-[10px] hover:shadow-sm transition-shadow cursor-pointer"
+          @click="openItem(item)"
         >
           <div class="flex flex-col gap-0.5">
             <span class="font-semibold text-[15px]">{{ item.name }}</span>
@@ -48,21 +49,42 @@
     </DashboardPanel>
 
     <InventoryAddItemModal v-if="showModal" @added="handleAdded" @close="showModal = false" />
+    <InventoryItemDetailModal
+      v-if="selectedItem"
+      :item="selectedItem"
+      mode="inventory"
+      @close="showDetailModal = false"
+      @edited="handleEdited"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import { formatExpiryShort } from "~/utils/date";
+import InventoryItemDetailModal from "~/components/inventory/InventoryItemDetailModal.vue";
+import type { InventoryItem } from "~/types";
 
 const { items, loading, error, isStale, startPolling, stopPolling, refresh } = useInventory();
 const showModal = ref(false);
+const selectedItem = ref<InventoryItem | null>(null);
+const showDetailModal = ref(false);
 
 onMounted(() => startPolling());
 onUnmounted(() => stopPolling());
 
 const handleAdded = () => {
   showModal.value = false;
+  refresh();
+};
+
+const openItem = (item: InventoryItem) => {
+  selectedItem.value = item;
+  showDetailModal.value = true;
+};
+
+const handleEdited = () => {
+  showDetailModal.value = false;
   refresh();
 };
 

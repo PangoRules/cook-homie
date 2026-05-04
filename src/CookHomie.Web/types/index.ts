@@ -72,5 +72,6 @@ export interface Recipe {
 
 export type AddInventoryItemPayload = Omit<InventoryItem, "id">;
 export type AddShoppingItemPayload = Omit<ShoppingItem, "id">;
+export type EditInventoryItemPayload = Partial<Omit<InventoryItem, "id">>;
 
 export type AppEnv = "development" | "staging" | "production";

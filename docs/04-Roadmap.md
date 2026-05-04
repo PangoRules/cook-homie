@@ -42,7 +42,7 @@ tags: [project, cookhomie, roadmap]
 - [ ] Task 1: Shared RefreshButton component
 - [x] Task 8: Recipe detail inline edit + shopping row actions
 - [x] Task 4: Recipe name as accessible NuxtLink on dashboard
-- [ ] Task 6: Dashboard missing-ingredient expansion + bulk/per-item shopping actions
+- [x] Task 6: Dashboard missing-ingredient expansion + bulk/per-item shopping actions
 - [ ] Task 5: Inventory + expiring item modal actions
 
 ### Milestone 3 — MCP Server

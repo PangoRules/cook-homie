@@ -73,14 +73,38 @@
             Add inventory items to get recipe suggestions.
           </div>
           <div v-else-if="data?.recipeIdeas && data.recipeIdeas.length > 0">
-            <div v-for="idea in data.recipeIdeas" :key="idea.id" class="py-2 border-b border-border">
-              <NuxtLink
-                :to="`/recipes/${idea.id}`"
-                class="text-text-primary font-medium text-inherit hover:underline focus:outline-none focus:ring-2 focus:ring-accent rounded"
-              >
-                {{ idea.name }}
-              </NuxtLink>
-              <span class="block text-text-muted text-sm">{{ idea.matchedCount }} matched, {{ idea.missingCount }} missing</span>
+            <div v-for="idea in data.recipeIdeas" :key="idea.id" class="border-b border-border">
+              <div class="flex items-center justify-between py-2 cursor-pointer" @click="toggleExpand(idea)">
+                <div>
+                  <NuxtLink
+                    :to="`/recipes/${idea.id}`"
+                    class="text-text-primary font-medium hover:underline focus:outline-none focus:ring-2 focus:ring-accent rounded"
+                  >
+                    {{ idea.name }}
+                  </NuxtLink>
+                  <span class="block text-text-muted text-sm">{{ idea.matchedCount }} matched, {{ idea.missingCount }} missing</span>
+                </div>
+                <span v-if="idea.missingCount > 0">{{ expandedIdeaId === idea.id ? "▲" : "▼" }}</span>
+              </div>
+
+              <!-- Expand UI stubs awaiting Task 9 backend (GET /api/recipes/{id}/missing not implemented) -->
+              <div v-if="expandedIdeaId === idea.id" class="pl-4 pb-3">
+                <div v-if="loadingMissing" class="text-text-muted text-sm">Loading…</div>
+                <div v-else-if="missingCache[idea.id]?.length > 0">
+                  <ul class="list-none p-0 m-0 flex flex-col gap-1">
+                    <li v-for="ing in missingCache[idea.id]" :key="ing" class="flex items-center justify-between text-sm">
+                      <span>{{ ing }}</span>
+                      <SharedButton size="small" variant="secondary" @click.stop="addMissing(idea.id, ing)">
+                        + Add
+                      </SharedButton>
+                    </li>
+                  </ul>
+                  <SharedButton class="mt-2" variant="primary" size="small" @click.stop="addAllMissing(idea.id)">
+                    Add all missing
+                  </SharedButton>
+                </div>
+                <div v-else class="text-text-muted text-sm">Missing ingredients unavailable (API stub)</div>
+              </div>
             </div>
           </div>
           <div v-else-if="loading" class="text-text-muted text-sm italic">
@@ -93,13 +117,56 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted } from "vue";
+import { computed, onMounted, onUnmounted, ref } from "vue";
 import { formatExpiryLong } from "~/utils/date";
 import RefreshButton from "~/components/shared/RefreshButton.vue";
 
 const { data, loading, error, isStale, start, stop, refresh } = useDashboard();
 
 const hasData = computed(() => data.value !== null);
+
+const expandedIdeaId = ref<string | null>(null);
+const loadingMissing = ref(false);
+const missingCache = ref<Record<string, string[]>>({});
+
+const toggleExpand = async (idea: { id: string }) => {
+  if (expandedIdeaId.value === idea.id) {
+    expandedIdeaId.value = null;
+    return;
+  }
+  expandedIdeaId.value = idea.id;
+  if (!missingCache.value[idea.id]) {
+    loadingMissing.value = true;
+    try {
+      const missing = await $fetch<string[]>(`/api/recipes/${idea.id}/missing`);
+      missingCache.value[idea.id] = missing;
+    } finally {
+      loadingMissing.value = false;
+    }
+  }
+};
+
+const addMissing = async (recipeId: string, ingredientName: string) => {
+  const { addBulk } = useShoppingList();
+  try {
+    await addBulk([ingredientName]);
+    useToast().pushSuccess(`"${ingredientName}" added to shopping list`);
+  } catch {
+    useToast().pushError("Already on shopping list");
+  }
+};
+
+const addAllMissing = async (recipeId: string) => {
+  const { addBulk } = useShoppingList();
+  const missing = missingCache.value[recipeId] ?? [];
+  try {
+    await addBulk(missing);
+    useToast().pushSuccess(`${missing.length} items added to shopping list`);
+  } catch (err) {
+    const isPartial = err && typeof err === "object" && (err as { isPartialFailure?: boolean }).isPartialFailure === true;
+    useToast().pushError(isPartial ? "Some items already on list" : "Failed to add items");
+  }
+};
 
 onMounted(async () => await start());
 onUnmounted(() => stop());

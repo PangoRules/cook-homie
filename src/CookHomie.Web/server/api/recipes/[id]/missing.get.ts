@@ -1,6 +1,7 @@
-// TEMP_MOCK: No C# API endpoint exists yet for GET /api/recipes/{id}/missing.
-import { getMissingIngredients } from "~/server/utils/recipeStore";
-export default defineEventHandler((event) => {
-  const id = getRouterParam(event, "id");
-  return getMissingIngredients(id!, []);
+export default defineEventHandler(async (event): Promise<string[]> => {
+  const config = useRuntimeConfig();
+  const id = getRouterParam(event, "id")!;
+  return await $fetch<string[]>(`/api/recipes/${id}/missing`, {
+    baseURL: config.apiBaseUrl,
+  });
 });

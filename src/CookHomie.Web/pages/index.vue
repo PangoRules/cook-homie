@@ -87,6 +87,7 @@
                 <span v-if="idea.missingCount > 0">{{ expandedIdeaId === idea.id ? "▲" : "▼" }}</span>
               </div>
 
+              <!-- Expand UI stubs awaiting Task 9 backend (GET /api/recipes/{id}/missing not implemented) -->
               <div v-if="expandedIdeaId === idea.id" class="pl-4 pb-3">
                 <div v-if="loadingMissing" class="text-text-muted text-sm">Loading…</div>
                 <div v-else-if="missingCache[idea.id]?.length > 0">
@@ -102,7 +103,7 @@
                     Add all missing
                   </SharedButton>
                 </div>
-                <div v-else class="text-text-muted text-sm">No missing ingredients!</div>
+                <div v-else class="text-text-muted text-sm">Missing ingredients unavailable (API stub)</div>
               </div>
             </div>
           </div>
@@ -161,8 +162,9 @@ const addAllMissing = async (recipeId: string) => {
   try {
     await addBulk(missing);
     useToast().pushSuccess(`${missing.length} items added to shopping list`);
-  } catch {
-    useToast().pushError("Some items already on list");
+  } catch (err) {
+    const isPartial = err && typeof err === "object" && (err as { isPartialFailure?: boolean }).isPartialFailure === true;
+    useToast().pushError(isPartial ? "Some items already on list" : "Failed to add items");
   }
 };
 

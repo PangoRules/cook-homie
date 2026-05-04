@@ -58,14 +58,15 @@ Run these against whichever layer you touched. All must pass before signalling d
 ```bash
 cd src/CookHomie.Web
 
-npm run validate        # typecheck + lint + build in one shot (use this)
+npm run validate        # typecheck + lint + format:check + build in one shot (use this)
 
 # individually if you need to isolate a failure:
 npm run typecheck       # vue-tsc — catches type errors across .vue and .ts
 npm run lint            # eslint — catches style and correctness issues
+npm run format:check    # prettier — check formatting without fixing
+npm run format          # prettier — fix formatting in place
 npm run build           # nuxt build — proves the app bundles without errors
 npm run test            # vitest — runs unit tests
-npm run format:check    # prettier — check formatting without fixing
 ```
 
 ### Backend — `src/CookHomie.Api/`
@@ -89,7 +90,10 @@ pytest tests/                                  # unit tests
 
 - Run only the layers you touched — no need to run all three for a frontend-only change.
 - If `npm run validate` fails, fix it before committing. Do not commit with known lint or type errors.
+- Formatting failures: run `npm run format` to auto-fix, then re-run `npm run format:check` to confirm clean.
 - Test failures are blockers. Do not hand off to the git agent with failing tests.
+- **Before any PR**: `npm run validate` must pass — this now includes prettier format check.
+- A pre-push git hook enforces `format:check` automatically when frontend files changed.
 
 ## Documentation
 Full architecture, data model, and roadmap documentation in the `docs/` directory:

@@ -4,7 +4,17 @@ import { useRecipes } from "../composables/useRecipes";
 
 describe("useRecipes", () => {
   it("returns recipes from usePollingFetch", () => {
-    const mockRecipes = [{ id: "r1", name: "Pancakes", instructions: "Mix.", prepMinutes: 5, cookMinutes: 10, tags: [], ingredients: [] }];
+    const mockRecipes = [
+      {
+        id: "r1",
+        name: "Pancakes",
+        instructions: "Mix.",
+        prepMinutes: 5,
+        cookMinutes: 10,
+        tags: [],
+        ingredients: [],
+      },
+    ];
     vi.stubGlobal("usePollingFetch", () => ({
       data: ref(mockRecipes),
       loading: ref(false),
@@ -12,7 +22,7 @@ describe("useRecipes", () => {
       isStale: ref(false),
       start: vi.fn(),
       stop: vi.fn(),
-      refresh: vi.fn()
+      refresh: vi.fn(),
     }));
 
     const { recipes, start, stop, refresh } = useRecipes();
@@ -33,7 +43,7 @@ describe("useRecipes", () => {
       isStale: ref(false),
       start: startFn,
       stop: stopFn,
-      refresh: refreshFn
+      refresh: refreshFn,
     }));
 
     const { start, stop, refresh } = useRecipes();

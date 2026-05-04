@@ -8,7 +8,7 @@
         class="input flex-1 min-w-[160px]"
         :placeholder="placeholder"
         @keydown.enter.prevent="addTag"
-      >
+      />
       <SharedButton type="button" variant="secondary" @click="addTag"> + Add </SharedButton>
     </div>
 
@@ -29,34 +29,34 @@
 </template>
 
 <script setup lang="ts">
-const props = defineProps<{
-  modelValue: string[];
-  placeholder?: string;
-}>();
+  const props = defineProps<{
+    modelValue: string[];
+    placeholder?: string;
+  }>();
 
-const emit = defineEmits<{
-  (e: "update:modelValue", tags: string[]): void;
-}>();
+  const emit = defineEmits<{
+    (e: "update:modelValue", tags: string[]): void;
+  }>();
 
-const inputValue = ref("");
+  const inputValue = ref("");
 
-const addTag = () => {
-  const raw = inputValue.value.trim();
-  if (!raw) return;
+  const addTag = () => {
+    const raw = inputValue.value.trim();
+    if (!raw) return;
 
-  // Split on comma only — one tag per Enter press
-  const newTags = raw
-    .split(",")
-    .map((t) => t.trim())
-    .filter(Boolean);
+    // Split on comma only — one tag per Enter press
+    const newTags = raw
+      .split(",")
+      .map((t) => t.trim())
+      .filter(Boolean);
 
-  const merged = [...new Set([...props.modelValue, ...newTags])];
-  emit("update:modelValue", merged);
-  inputValue.value = "";
-};
+    const merged = [...new Set([...props.modelValue, ...newTags])];
+    emit("update:modelValue", merged);
+    inputValue.value = "";
+  };
 
-const removeTag = (index: number) => {
-  const updated = props.modelValue.filter((_, i) => i !== index);
-  emit("update:modelValue", updated);
-};
+  const removeTag = (index: number) => {
+    const updated = props.modelValue.filter((_, i) => i !== index);
+    emit("update:modelValue", updated);
+  };
 </script>

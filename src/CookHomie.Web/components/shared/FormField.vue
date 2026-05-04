@@ -9,9 +9,9 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{
-  label: string;
-  error?: string;
-  required?: boolean;
-}>();
+  defineProps<{
+    label: string;
+    error?: string;
+    required?: boolean;
+  }>();
 </script>

@@ -27,7 +27,10 @@
           <slot />
         </div>
 
-        <footer v-if="$slots.footer" class="flex justify-end gap-2 px-6 py-4 border-t border-border">
+        <footer
+          v-if="$slots.footer"
+          class="flex justify-end gap-2 px-6 py-4 border-t border-border"
+        >
           <slot name="footer" />
         </footer>
       </div>
@@ -36,25 +39,28 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
+  import { ref } from "vue";
 
-withDefaults(defineProps<{
-  title?: string;
-  maxWidth?: string;
-  maxHeight?: string;
-}>(), {
-  title: "",
-  maxWidth: "max-w-lg",
-  maxHeight: "",
-});
+  withDefaults(
+    defineProps<{
+      title?: string;
+      maxWidth?: string;
+      maxHeight?: string;
+    }>(),
+    {
+      title: "",
+      maxWidth: "max-w-lg",
+      maxHeight: "",
+    }
+  );
 
-const emit = defineEmits<{ (e: "close"): void }>();
-const closing = ref(false);
+  const emit = defineEmits<{ (e: "close"): void }>();
+  const closing = ref(false);
 
-const startClose = () => {
-  closing.value = true;
-  setTimeout(() => emit("close"), 180);
-};
+  const startClose = () => {
+    closing.value = true;
+    setTimeout(() => emit("close"), 180);
+  };
 
-defineExpose({ startClose });
+  defineExpose({ startClose });
 </script>

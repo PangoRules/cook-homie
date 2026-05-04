@@ -128,7 +128,9 @@ describe("AddRecipeModal", () => {
 
     const vm = wrapper.vm as AddRecipeModalVm;
     fillValidRecipeForm(vm);
-    vm.form.ingredients = [{ ingredientName: "Flour", quantity: 200, unit: "g", isOptional: false }];
+    vm.form.ingredients = [
+      { ingredientName: "Flour", quantity: 200, unit: "g", isOptional: false },
+    ];
 
     vm.removeIngredient(0);
 

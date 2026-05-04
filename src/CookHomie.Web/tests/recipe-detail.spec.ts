@@ -23,17 +23,27 @@ describe("useRecipeDetail", () => {
   });
 
   it("loads inventory before recipe enrichment", async () => {
-    vi.stubGlobal("$fetch", vi.fn().mockResolvedValue({
-      id: "r1",
-      name: "Pancakes",
-      instructions: "Mix.",
-      prepMinutes: 5,
-      cookMinutes: 10,
-      tags: [],
-      ingredients: [
-        { id: "i1", recipeId: "r1", ingredientName: "milk", quantity: 250, unit: "ml", isOptional: false },
-      ],
-    }));
+    vi.stubGlobal(
+      "$fetch",
+      vi.fn().mockResolvedValue({
+        id: "r1",
+        name: "Pancakes",
+        instructions: "Mix.",
+        prepMinutes: 5,
+        cookMinutes: 10,
+        tags: [],
+        ingredients: [
+          {
+            id: "i1",
+            recipeId: "r1",
+            ingredientName: "milk",
+            quantity: 250,
+            unit: "ml",
+            isOptional: false,
+          },
+        ],
+      })
+    );
 
     const { useRecipeDetail } = await import("../composables/useRecipeDetail");
     const detail = useRecipeDetail("r1");
@@ -45,9 +55,15 @@ describe("useRecipeDetail", () => {
 
   it("awaits initial recipe fetch when starting", async () => {
     let resolveRecipe!: (recipe: unknown) => void;
-    vi.stubGlobal("$fetch", vi.fn(() => new Promise((resolve) => {
-      resolveRecipe = resolve;
-    })));
+    vi.stubGlobal(
+      "$fetch",
+      vi.fn(
+        () =>
+          new Promise((resolve) => {
+            resolveRecipe = resolve;
+          })
+      )
+    );
 
     const { useRecipeDetail } = await import("../composables/useRecipeDetail");
     const detail = useRecipeDetail("r2");

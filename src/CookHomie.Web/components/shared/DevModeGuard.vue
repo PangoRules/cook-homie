@@ -4,7 +4,7 @@
 </template>
 
 <script setup lang="ts">
-import { useDevMode } from "@/composables/useDevMode";
+  import { useDevMode } from "@/composables/useDevMode";
 
-const { isDev } = useDevMode();
+  const { isDev } = useDevMode();
 </script>

@@ -45,10 +45,10 @@
 </template>
 
 <script setup lang="ts">
-const { items, loading, error, isStale, startPolling, stopPolling, refresh } = useShoppingList();
+  const { items, loading, error, isStale, startPolling, stopPolling, refresh } = useShoppingList();
 
-onMounted(() => startPolling());
-onUnmounted(() => stopPolling());
+  onMounted(() => startPolling());
+  onUnmounted(() => stopPolling());
 
-const localItems = computed(() => (items.value !== null ? items.value : []));
+  const localItems = computed(() => (items.value !== null ? items.value : []));
 </script>

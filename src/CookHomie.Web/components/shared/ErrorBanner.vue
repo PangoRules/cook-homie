@@ -1,5 +1,8 @@
 <template>
-  <div class="flex items-center gap-3 px-4 py-3 bg-error-subtle border border-error rounded-md text-error text-sm" role="alert">
+  <div
+    class="flex items-center gap-3 px-4 py-3 bg-error-subtle border border-error rounded-md text-error text-sm"
+    role="alert"
+  >
     <span>⚠</span>
     <span>{{ message }}</span>
     <button
@@ -13,6 +16,6 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{ message: string; showRetry?: boolean }>();
-defineEmits(["retry"]);
+  defineProps<{ message: string; showRetry?: boolean }>();
+  defineEmits(["retry"]);
 </script>

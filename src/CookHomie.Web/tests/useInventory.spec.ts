@@ -15,7 +15,17 @@ describe("useInventory", () => {
   });
 
   it("returns inventory items from usePollingFetch", () => {
-    const mockItems = [{ id: "1", name: "Milk", category: "dairy", location: "Fridge", quantity: 1, unit: "liter", isOpened: false }];
+    const mockItems = [
+      {
+        id: "1",
+        name: "Milk",
+        category: "dairy",
+        location: "Fridge",
+        quantity: 1,
+        unit: "liter",
+        isOpened: false,
+      },
+    ];
     vi.stubGlobal("usePollingFetch", () => ({
       data: ref(mockItems),
       loading: ref(false),
@@ -23,7 +33,7 @@ describe("useInventory", () => {
       isStale: ref(false),
       start: vi.fn(),
       stop: vi.fn(),
-      refresh: vi.fn()
+      refresh: vi.fn(),
     }));
 
     const { items, startPolling, stopPolling, refresh, addInventoryItem } = useInventory();
@@ -44,7 +54,7 @@ describe("useInventory", () => {
       isStale: ref(false),
       start: startFn,
       stop: stopFn,
-      refresh: vi.fn()
+      refresh: vi.fn(),
     }));
 
     const { startPolling, stopPolling } = useInventory();
@@ -63,7 +73,7 @@ describe("useInventory", () => {
       isStale: ref(false),
       start: vi.fn(),
       stop: vi.fn(),
-      refresh: refreshFn
+      refresh: refreshFn,
     }));
 
     const { refresh } = useInventory();

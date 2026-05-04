@@ -6,9 +6,7 @@ const startOfLocalDay = (date: Date): Date => {
   return d;
 };
 
-export const getExpiryState = (
-  expiryDateString: string | null | undefined
-): ExpiryState | null => {
+export const getExpiryState = (expiryDateString: string | null | undefined): ExpiryState | null => {
   if (!expiryDateString) return null;
   const expiry = new Date(expiryDateString);
   if (isNaN(expiry.getTime())) return null;
@@ -31,7 +29,9 @@ export const getExpiryDaysRemaining = (
   const expiry = new Date(expiryDateString);
   if (isNaN(expiry.getTime())) return null;
   const now = new Date();
-  return Math.round((startOfLocalDay(expiry).getTime() - startOfLocalDay(now).getTime()) / (1000 * 60 * 60 * 24));
+  return Math.round(
+    (startOfLocalDay(expiry).getTime() - startOfLocalDay(now).getTime()) / (1000 * 60 * 60 * 24)
+  );
 };
 
 export const formatExpiryShort = (expiryDateString: string | null | undefined): string => {

@@ -4,15 +4,16 @@ import { join } from "node:path";
 
 const serverRoot = join(process.cwd(), "server");
 
-const walk = (dir: string): string[] => readdirSync(dir).flatMap((entry) => {
-  const path = join(dir, entry);
-  return statSync(path).isDirectory() ? walk(path) : [path];
-});
+const walk = (dir: string): string[] =>
+  readdirSync(dir).flatMap((entry) => {
+    const path = join(dir, entry);
+    return statSync(path).isDirectory() ? walk(path) : [path];
+  });
 
 describe("server API mock audit", () => {
   it("requires obvious mock data in server routes to be marked TEMP_MOCK", () => {
     const offenders = walk(serverRoot)
-      .filter(path => path.endsWith(".ts"))
+      .filter((path) => path.endsWith(".ts"))
       .filter((path) => {
         const source = readFileSync(path, "utf8");
         const looksMocked = [
@@ -22,7 +23,7 @@ describe("server API mock audit", () => {
           "expiringCount: 3",
           "recipeMatchCount: 7",
           "shoppingCount: 4",
-        ].some(marker => source.includes(marker));
+        ].some((marker) => source.includes(marker));
         return looksMocked && !source.includes("TEMP_MOCK");
       });
 

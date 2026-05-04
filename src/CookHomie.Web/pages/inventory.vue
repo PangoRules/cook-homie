@@ -60,33 +60,33 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from "vue";
-import { formatExpiryShort } from "~/utils/date";
-import InventoryItemDetailModal from "~/components/inventory/InventoryItemDetailModal.vue";
-import type { InventoryItem } from "~/types";
+  import { computed, onMounted, onUnmounted, ref } from "vue";
+  import { formatExpiryShort } from "~/utils/date";
+  import InventoryItemDetailModal from "~/components/inventory/InventoryItemDetailModal.vue";
+  import type { InventoryItem } from "~/types";
 
-const { items, loading, error, isStale, startPolling, stopPolling, refresh } = useInventory();
-const showModal = ref(false);
-const selectedItem = ref<InventoryItem | null>(null);
-const showDetailModal = ref(false);
+  const { items, loading, error, isStale, startPolling, stopPolling, refresh } = useInventory();
+  const showModal = ref(false);
+  const selectedItem = ref<InventoryItem | null>(null);
+  const showDetailModal = ref(false);
 
-onMounted(() => startPolling());
-onUnmounted(() => stopPolling());
+  onMounted(() => startPolling());
+  onUnmounted(() => stopPolling());
 
-const handleAdded = () => {
-  showModal.value = false;
-  refresh();
-};
+  const handleAdded = () => {
+    showModal.value = false;
+    refresh();
+  };
 
-const openItem = (item: InventoryItem) => {
-  selectedItem.value = item;
-  showDetailModal.value = true;
-};
+  const openItem = (item: InventoryItem) => {
+    selectedItem.value = item;
+    showDetailModal.value = true;
+  };
 
-const handleEdited = () => {
-  showDetailModal.value = false;
-  refresh();
-};
+  const handleEdited = () => {
+    showDetailModal.value = false;
+    refresh();
+  };
 
-const itemsLocalCopy = computed(() => (items.value !== null ? items.value : []));
+  const itemsLocalCopy = computed(() => (items.value !== null ? items.value : []));
 </script>

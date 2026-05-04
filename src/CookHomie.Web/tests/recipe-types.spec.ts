@@ -36,12 +36,8 @@ describe("Recipe types", () => {
       recipeMatchCount: 2,
       shoppingCount: 4,
       totalItems: 15,
-      expiringItems: [
-        { id: "inv-1", name: "Milk", expiresAt: "2026-05-03", location: "Fridge" },
-      ],
-      recipeIdeas: [
-        { id: "r1", name: "Classic Pancakes", matchedCount: 2, missingCount: 1 },
-      ],
+      expiringItems: [{ id: "inv-1", name: "Milk", expiresAt: "2026-05-03", location: "Fridge" }],
+      recipeIdeas: [{ id: "r1", name: "Classic Pancakes", matchedCount: 2, missingCount: 1 }],
     };
     expect(d.expiringCount).toBe(3);
     expect(d.recipeMatchCount).toBe(2);

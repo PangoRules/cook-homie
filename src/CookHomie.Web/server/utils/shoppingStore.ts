@@ -17,7 +17,10 @@ export const addShoppingItems = (items: Omit<ShoppingItem, "id">[]): ShoppingIte
   return items.map(addShoppingItem);
 };
 
-export const updateShoppingItem = (id: string, updates: Partial<ShoppingItem>): ShoppingItem | null => {
+export const updateShoppingItem = (
+  id: string,
+  updates: Partial<ShoppingItem>
+): ShoppingItem | null => {
   const idx = store.findIndex((s) => s.id === id);
   if (idx === -1) return null;
   store[idx] = { ...store[idx], ...updates };
@@ -31,5 +34,8 @@ export const deleteShoppingItem = (id: string): boolean => {
   return true;
 };
 
-export const getShoppingItemByName = (name: string, excludeBought = true): ShoppingItem | undefined =>
+export const getShoppingItemByName = (
+  name: string,
+  excludeBought = true
+): ShoppingItem | undefined =>
   store.find((s) => s.name.toLowerCase() === name.toLowerCase() && (!excludeBought || !s.isBought));

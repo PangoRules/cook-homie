@@ -47,7 +47,7 @@ export const usePollingFetch = <T>(
   };
 
   const handleVisibilityChange = () => {
-    if (document.visibilityState === 'visible') {
+    if (document.visibilityState === "visible") {
       // Resume polling if not already running
       if (!intervalId) {
         intervalId = setInterval(fetchData, pollIntervalMs);
@@ -62,20 +62,20 @@ export const usePollingFetch = <T>(
     if (started) return;
     started = true;
     await fetchData();
-    
+
     // Add event listener for visibility change
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    
-    // Start polling immediately 
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    // Start polling immediately
     intervalId = setInterval(fetchData, pollIntervalMs);
   };
 
   const stop = () => {
     started = false;
     clearPollingInterval();
-    
+
     // Remove visibility change listener
-    document.removeEventListener('visibilitychange', handleVisibilityChange);
+    document.removeEventListener("visibilitychange", handleVisibilityChange);
   };
 
   const refresh = async () => {

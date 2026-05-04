@@ -7,5 +7,5 @@
 </template>
 
 <script setup lang="ts">
-import DevModeGuard from "@/components/shared/DevModeGuard.vue";
+  import DevModeGuard from "@/components/shared/DevModeGuard.vue";
 </script>

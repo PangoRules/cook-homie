@@ -7,8 +7,8 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{
-  name: string;
-  url: string;
-}>();
+  defineProps<{
+    name: string;
+    url: string;
+  }>();
 </script>

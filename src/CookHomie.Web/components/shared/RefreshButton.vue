@@ -9,12 +9,15 @@
 </template>
 
 <script setup lang="ts">
-withDefaults(defineProps<{
-  loading?: boolean;
-  label?: string;
-}>(), {
-  loading: false,
-  label: "Refresh",
-});
-defineEmits(["refresh"]);
+  withDefaults(
+    defineProps<{
+      loading?: boolean;
+      label?: string;
+    }>(),
+    {
+      loading: false,
+      label: "Refresh",
+    }
+  );
+  defineEmits(["refresh"]);
 </script>

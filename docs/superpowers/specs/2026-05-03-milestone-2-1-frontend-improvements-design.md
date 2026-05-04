@@ -314,7 +314,7 @@ Rationale: unblock dependencies first (#9), then shared primitives (#3/#2/#1/#7)
 - [ ] Task 2: Centralize expiry day-diff logic in `utils/date.ts` and map short/long copy per view.
 - [ ] Task 3: Add `utils/apiRoutes.ts` namespaced constants/functions and migrate composables.
 - [ ] Task 4: Convert dashboard quick recipe name from span to accessible `NuxtLink`.
-- [ ] Task 5: Build reusable inventory item detail/edit modal with expiring-context actions.
+- [x] Task 5: Build reusable inventory item detail/edit modal with expiring-context actions.
 - [x] Task 6: Add dashboard missing-ingredient expansion and bulk/per-item shopping actions.
 - [ ] Task 7: Introduce shared paginated ingredient table and integrate into `AddRecipeModal`.
 - [ ] Task 8: Upgrade recipe detail with shared ingredient table, per-row shopping add, section inline editing, and PATCH integration.

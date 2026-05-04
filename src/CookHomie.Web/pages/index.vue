@@ -46,7 +46,7 @@
             No expiring items — inventory looks fresh!
           </div>
           <div v-else-if="data?.expiringItems && data.expiringItems.length > 0">
-            <div v-for="item in data.expiringItems" :key="item.id" class="py-2 border-b border-border">
+            <div v-for="item in data.expiringItems" :key="item.id" class="py-2 border-b border-border cursor-pointer" @click="openExpiring(item)">
               <span class="text-text-primary font-medium">{{ item.name }}</span>
               <span class="block text-text-muted text-sm">{{ item.location }}</span>
               <span class="block text-warning text-xs font-semibold">{{ formatExpiryLong(item.expiresAt) }}</span>
@@ -57,6 +57,17 @@
           </div>
         </template>
       </DashboardPanel>
+
+      <InventoryItemDetailModal
+        v-if="expiringItemDetails"
+        :item="expiringItemDetails"
+        mode="expiring"
+        @close="showExpiringModal = false"
+        @dismiss="handleExpiringDismiss"
+        @discard="handleExpiringDismiss"
+        @restocked="handleExpiringRestocked"
+        @add-to-shopping-list="handleExpiringAddToShoppingList"
+      />
 
       <DashboardPanel
         title="Quick Recipe Ideas"
@@ -120,10 +131,46 @@
 import { computed, onMounted, onUnmounted, ref } from "vue";
 import { formatExpiryLong } from "~/utils/date";
 import RefreshButton from "~/components/shared/RefreshButton.vue";
+import type { DashboardExpiringItem, InventoryItem } from "~/types";
+import InventoryItemDetailModal from "~/components/inventory/InventoryItemDetailModal.vue";
 
 const { data, loading, error, isStale, start, stop, refresh } = useDashboard();
 
 const hasData = computed(() => data.value !== null);
+
+const selectedExpiringItem = ref<DashboardExpiringItem | null>(null);
+const showExpiringModal = ref(false);
+const expiringItemDetails = ref<InventoryItem | null>(null);
+
+const openExpiring = async (item: DashboardExpiringItem) => {
+  selectedExpiringItem.value = item;
+  showExpiringModal.value = true;
+  const { items } = useInventory();
+  expiringItemDetails.value = items.value?.find(i => i.id === item.id) ?? null;
+};
+
+const handleExpiringDismiss = () => {
+  showExpiringModal.value = false;
+  refresh();
+};
+
+const handleExpiringRestocked = () => {
+  showExpiringModal.value = false;
+  refresh();
+};
+
+const handleExpiringAddToShoppingList = async () => {
+  if (!selectedExpiringItem.value) return;
+  const { addBulk } = useShoppingList();
+  try {
+    await addBulk([selectedExpiringItem.value.name]);
+    useToast().pushSuccess(`"${selectedExpiringItem.value.name}" added to shopping list`);
+  } catch {
+    useToast().pushError("Failed to add to shopping list");
+  }
+  showExpiringModal.value = false;
+  refresh();
+};
 
 const expandedIdeaId = ref<string | null>(null);
 const loadingMissing = ref(false);

@@ -3,21 +3,21 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CookHomie.Domain", "CookHomie.Domain\CookHomie.Domain.csproj", "{39BAC566-6EB9-424A-862E-57EBF1FBDAF0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CookHomie.Domain", "CookHomie.Domain/CookHomie.Domain.csproj", "{39BAC566-6EB9-424A-862E-57EBF1FBDAF0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CookHomie.Application", "CookHomie.Application\CookHomie.Application.csproj", "{2D4B1928-3FD4-48E2-B676-64405B43E0CA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CookHomie.Application", "CookHomie.Application/CookHomie.Application.csproj", "{2D4B1928-3FD4-48E2-B676-64405B43E0CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CookHomie.Infrastructure", "CookHomie.Infrastructure\CookHomie.Infrastructure.csproj", "{7600C2E6-499C-4ABF-B123-B63CEAC8CDBB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CookHomie.Infrastructure", "CookHomie.Infrastructure/CookHomie.Infrastructure.csproj", "{7600C2E6-499C-4ABF-B123-B63CEAC8CDBB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CookHomie.WebApi", "CookHomie.WebApi\CookHomie.WebApi.csproj", "{C303AFD7-6D31-4825-B488-74D622CF82BB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CookHomie.WebApi", "CookHomie.WebApi/CookHomie.WebApi.csproj", "{C303AFD7-6D31-4825-B488-74D622CF82BB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0AB3BF05-4346-4AA6-1389-037BE0695223}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CookHomie.Application.Tests", "tests\CookHomie.Application.Tests\CookHomie.Application.Tests.csproj", "{E9966082-BF68-4990-917A-360A218A4EE3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CookHomie.Application.Tests", "tests/CookHomie.Application.Tests/CookHomie.Application.Tests.csproj", "{E9966082-BF68-4990-917A-360A218A4EE3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CookHomie.Infrastructure.Tests", "tests\CookHomie.Infrastructure.Tests\CookHomie.Infrastructure.Tests.csproj", "{8D72D8DE-350C-4DC2-8A94-CE9751B14F06}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CookHomie.Infrastructure.Tests", "tests/CookHomie.Infrastructure.Tests/CookHomie.Infrastructure.Tests.csproj", "{8D72D8DE-350C-4DC2-8A94-CE9751B14F06}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CookHomie.WebApi.Tests", "tests\CookHomie.WebApi.Tests\CookHomie.WebApi.Tests.csproj", "{D306E975-0A28-4F79-B996-6D7761878F22}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CookHomie.WebApi.Tests", "tests/CookHomie.WebApi.Tests/CookHomie.WebApi.Tests.csproj", "{D306E975-0A28-4F79-B996-6D7761878F22}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

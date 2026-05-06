@@ -131,6 +131,14 @@ public class AddInventoryItemUseCaseTests
             return Task.FromResult<IReadOnlyList<InventoryItem>>([]);
         }
 
+        public Task<IReadOnlyList<InventoryItem>> GetByNamesAsync(
+            IEnumerable<string> names,
+            CancellationToken cancellationToken = default
+        )
+        {
+            return Task.FromResult<IReadOnlyList<InventoryItem>>([]);
+        }
+
         public Task<InventoryItem> AddAsync(InventoryItem item, CancellationToken cancellationToken = default)
         {
             LastAdded = item;

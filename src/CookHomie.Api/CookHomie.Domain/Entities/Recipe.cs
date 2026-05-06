@@ -19,5 +19,5 @@ public class Recipe
     public DateTime CreatedAt { get; set; }
 
     // Navigation property
-    public ICollection<RecipeIngredient> Ingredients { get; set; } = new List<RecipeIngredient>();
+    public ICollection<RecipeIngredient> Ingredients { get; set; } = [];
 }

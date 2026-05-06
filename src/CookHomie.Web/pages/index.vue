@@ -49,7 +49,7 @@
             <div
               v-for="item in data.expiringItems"
               :key="item.id"
-              class="py-2 border-b border-border cursor-pointer"
+              class="py-2 px-2 border-b border-border cursor-pointer hover:bg-gray-100"
               @click="openExpiring(item)"
             >
               <span class="text-text-primary font-medium">{{ item.name }}</span>
@@ -112,21 +112,27 @@
                 }}</span>
               </div>
 
-              <!-- Expand UI stubs awaiting Task 9 backend (GET /api/recipes/{id}/missing not implemented) -->
+              <!-- Expand stock-check details for ingredients needed to cook this recipe -->
               <div v-if="expandedIdeaId === idea.id" class="pl-4 pb-3">
                 <div v-if="loadingMissing" class="text-text-muted text-sm">Loading…</div>
-                <div v-else-if="missingCache[idea.id]?.length > 0">
+                <div v-else-if="getNeededItems(idea.id).length > 0">
                   <ul class="list-none p-0 m-0 flex flex-col gap-1">
                     <li
-                      v-for="ing in missingCache[idea.id]"
-                      :key="ing"
+                      v-for="item in getNeededItems(idea.id)"
+                      :key="`${item.ingredientName}-${item.unit}`"
                       class="flex items-center justify-between text-sm"
                     >
-                      <span>{{ ing }}</span>
+                      <span>
+                        {{ item.ingredientName }}
+                        <span class="text-text-muted">
+                          ({{ item.availableQuantity }}/{{ item.requiredQuantity }} {{ item.unit }},
+                          {{ item.status }})
+                        </span>
+                      </span>
                       <SharedButton
                         size="small"
                         variant="secondary"
-                        @click.stop="addMissing(idea.id, ing)"
+                        @click.stop="addMissing(idea.id, item.ingredientName)"
                       >
                         + Add
                       </SharedButton>
@@ -138,11 +144,11 @@
                     size="small"
                     @click.stop="addAllMissing(idea.id)"
                   >
-                    Add all missing
+                    Add all needed
                   </SharedButton>
                 </div>
                 <div v-else class="text-text-muted text-sm">
-                  Missing ingredients unavailable (API stub)
+                  All required ingredients available.
                 </div>
               </div>
             </div>
@@ -160,7 +166,12 @@
   import { computed, onMounted, onUnmounted, ref } from "vue";
   import { formatExpiryLong } from "~/utils/date";
   import RefreshButton from "~/components/shared/RefreshButton.vue";
-  import type { DashboardExpiringItem, InventoryItem } from "~/types";
+  import type {
+    DashboardExpiringItem,
+    InventoryItem,
+    RecipeStockCheck,
+    RecipeStockItem,
+  } from "~/types";
   import InventoryItemDetailModal from "~/components/inventory/InventoryItemDetailModal.vue";
 
   const { data, loading, error, isStale, start, stop, refresh } = useDashboard();
@@ -172,13 +183,10 @@
   const expiringItemDetails = ref<InventoryItem | null>(null);
 
   const openExpiring = async (item: DashboardExpiringItem) => {
-    // RLOG
-    console.log("🚀 index.vue:174 ╎item╎:", item); // RLOG_END
     selectedExpiringItem.value = item;
     showExpiringModal.value = true;
     const { items, refresh } = useInventory();
     await refresh();
-    console.log("items", items.value);
     expiringItemDetails.value = items.value?.find((i) => i.id === item.id) ?? null;
   };
 
@@ -207,7 +215,13 @@
 
   const expandedIdeaId = ref<string | null>(null);
   const loadingMissing = ref(false);
-  const missingCache = ref<Record<string, string[]>>({});
+  const stockCheckCache = ref<Record<string, RecipeStockCheck>>({});
+
+  const getNeededItems = (recipeId: string): RecipeStockItem[] => {
+    return (stockCheckCache.value[recipeId]?.items ?? []).filter(
+      (item) => item.status === "Missing" || item.status === "Insufficient"
+    );
+  };
 
   const toggleExpand = async (idea: { id: string }) => {
     if (expandedIdeaId.value === idea.id) {
@@ -215,11 +229,11 @@
       return;
     }
     expandedIdeaId.value = idea.id;
-    if (!missingCache.value[idea.id]) {
+    if (!stockCheckCache.value[idea.id]) {
       loadingMissing.value = true;
       try {
-        const missing = await $fetch<string[]>(`/api/recipes/${idea.id}/missing`);
-        missingCache.value[idea.id] = missing;
+        const stockCheck = await $fetch<RecipeStockCheck>(`/api/recipes/${idea.id}/stock-check`);
+        stockCheckCache.value[idea.id] = stockCheck;
       } finally {
         loadingMissing.value = false;
       }
@@ -238,7 +252,7 @@
 
   const addAllMissing = async (recipeId: string) => {
     const { addBulk } = useShoppingList();
-    const missing = missingCache.value[recipeId] ?? [];
+    const missing = getNeededItems(recipeId).map((item) => item.ingredientName);
     try {
       await addBulk(missing);
       useToast().pushSuccess(`${missing.length} items added to shopping list`);

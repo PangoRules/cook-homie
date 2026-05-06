@@ -12,7 +12,7 @@ export const API_ROUTES = {
   RECIPES: {
     BASE: "/api/recipes",
     DETAIL: (id: string) => `/api/recipes/${id}`,
-    MISSING: (id: string) => `/api/recipes/${id}/missing`,
+    STOCK_CHECK: (id: string) => `/api/recipes/${id}/stock-check`,
   },
   // Shopping routes
   SHOPPING: {

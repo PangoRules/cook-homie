@@ -113,7 +113,6 @@
     unit: "",
   };
   const localInventoryItem = computed(() => props.item ?? defaultItem);
-
   const emit = defineEmits<{
     (e: "close" | "dismiss" | "restocked" | "addToShoppingList"): void;
     (e: "edited", payload: EditInventoryItemPayload): void;

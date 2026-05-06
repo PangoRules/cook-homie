@@ -1,29 +1,25 @@
-using CookHomie.Domain.Entities;
-using CookHomie.Domain.Enums;
-using CookHomie.Domain.Interfaces;
-using Microsoft.AspNetCore.Mvc;
 using CookHomie.Application.DTOs;
 using CookHomie.Application.UseCases.Inventory;
+using CookHomie.Domain.Entities;
+using CookHomie.Domain.Interfaces;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CookHomie.WebApi.Controllers;
 
 [ApiController]
 [Route("api/inventory")]
-public class InventoryController : ControllerBase
+public class InventoryController(
+    IInventoryRepository inventoryRepository,
+    AddInventoryItemUseCase addInventoryItem
+) : ControllerBase
 {
-    private readonly IInventoryRepository _inventoryRepository;
-    private readonly AddInventoryItemUseCase _addInventoryItem;
-
-    public InventoryController(
-        IInventoryRepository inventoryRepository,
-        AddInventoryItemUseCase addInventoryItem)
-    {
-        _inventoryRepository = inventoryRepository;
-        _addInventoryItem = addInventoryItem;
-    }
+    private readonly IInventoryRepository _inventoryRepository = inventoryRepository;
+    private readonly AddInventoryItemUseCase _addInventoryItem = addInventoryItem;
 
     [HttpGet]
-    public async Task<ActionResult<IReadOnlyList<InventoryItemResponse>>> Get(CancellationToken cancellationToken)
+    public async Task<ActionResult<IReadOnlyList<InventoryItemResponse>>> Get(
+        CancellationToken cancellationToken
+    )
     {
         var items = await _inventoryRepository.GetAllAsync(cancellationToken);
         return Ok(items.Select(MapToResponse).ToList());
@@ -32,7 +28,8 @@ public class InventoryController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<InventoryItemDto>> Post(
         [FromBody] AddInventoryItemRequest request,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken
+    )
     {
         try
         {
@@ -44,14 +41,16 @@ public class InventoryController : ControllerBase
             return Problem(
                 statusCode: StatusCodes.Status400BadRequest,
                 title: "Invalid inventory payload",
-                detail: ex.Message);
+                detail: ex.Message
+            );
         }
         catch (ArgumentException ex)
         {
             return Problem(
                 statusCode: StatusCodes.Status400BadRequest,
                 title: "Invalid inventory payload",
-                detail: ex.Message);
+                detail: ex.Message
+            );
         }
     }
 
@@ -67,7 +66,7 @@ public class InventoryController : ControllerBase
             Unit = item.Unit,
             ExpiresAt = item.ExpiresAt,
             IsOpened = item.IsOpened,
-            Notes = item.Notes
+            Notes = item.Notes,
         };
     }
 

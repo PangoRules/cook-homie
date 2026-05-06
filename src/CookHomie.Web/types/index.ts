@@ -8,6 +8,25 @@ export interface RecipeIngredient {
   isInStock?: boolean;
 }
 
+export type RecipeStockStatus = "Missing" | "Insufficient" | "Good";
+
+export interface RecipeStockItem {
+  ingredientName: string;
+  requiredQuantity: number;
+  availableQuantity: number;
+  unit: string;
+  status: RecipeStockStatus;
+}
+
+export interface RecipeStockCheck {
+  recipeId: string;
+  canCook: boolean;
+  missingCount: number;
+  insufficientCount: number;
+  goodCount: number;
+  items: RecipeStockItem[];
+}
+
 export interface DashboardExpiringItem {
   id: string;
   name: string;

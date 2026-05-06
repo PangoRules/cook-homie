@@ -1,10 +1,10 @@
+using System.Diagnostics;
+using CookHomie.Application.UseCases.Inventory;
+using CookHomie.Application.UseCases.Recipes;
 using CookHomie.Domain.Interfaces;
 using CookHomie.Infrastructure.Persistence;
 using CookHomie.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Http;
-using System.Diagnostics;
-using CookHomie.Application.UseCases.Inventory;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,9 +13,14 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddOpenApi();
 builder.Services.AddProblemDetails();
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
+);
 builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
 builder.Services.AddScoped<AddInventoryItemUseCase>();
+builder.Services.AddScoped<IRecipeRepository, RecipeRepository>();
+builder.Services.AddScoped<GetRecipesUseCase>();
+builder.Services.AddScoped<CreateRecipeUseCase>();
+builder.Services.AddScoped<UpdateRecipeUseCase>();
 
 var app = builder.Build();
 
@@ -32,7 +37,6 @@ using (var scope = app.Services.CreateScope())
     {
         dbContext.Database.EnsureCreated();
     }
-
 }
 
 // Configure the HTTP request pipeline.
@@ -62,60 +66,66 @@ if (app.Environment.IsDevelopment())
 </html>
 """;
 
-    app.MapGet("/swagger", () => Results.Content(swaggerUiHtml, "text/html")).ExcludeFromDescription();
-    app.MapGet("/swagger/index.html", () => Results.Content(swaggerUiHtml, "text/html")).ExcludeFromDescription();
+    app.MapGet("/swagger", () => Results.Content(swaggerUiHtml, "text/html"))
+        .ExcludeFromDescription();
+    app.MapGet("/swagger/index.html", () => Results.Content(swaggerUiHtml, "text/html"))
+        .ExcludeFromDescription();
 }
 
 app.MapControllers();
-app.MapGet("/health", async (AppDbContext dbContext, CancellationToken cancellationToken) =>
-{
-    var checks = new Dictionary<string, string>
+app.MapGet(
+    "/health",
+    async (AppDbContext dbContext, CancellationToken cancellationToken) =>
     {
-        ["api"] = "ok"
-    };
+        var checks = new Dictionary<string, string> { ["api"] = "ok" };
 
-    try
-    {
-        var canConnect = await dbContext.Database.CanConnectAsync(cancellationToken);
-        if (!canConnect)
+        try
         {
-            checks["database"] = "unreachable";
+            var canConnect = await dbContext.Database.CanConnectAsync(cancellationToken);
+            if (!canConnect)
+            {
+                checks["database"] = "unreachable";
+                return Results.Problem(
+                    statusCode: StatusCodes.Status503ServiceUnavailable,
+                    title: "Service Unhealthy",
+                    detail: "Database connectivity check failed.",
+                    extensions: new Dictionary<string, object?>
+                    {
+                        ["status"] = "unhealthy",
+                        ["checks"] = checks,
+                        ["traceId"] = Activity.Current?.Id ?? string.Empty,
+                    }
+                );
+            }
+        }
+        catch (Exception ex)
+        {
+            checks["database"] = "error";
             return Results.Problem(
                 statusCode: StatusCodes.Status503ServiceUnavailable,
                 title: "Service Unhealthy",
-                detail: "Database connectivity check failed.",
+                detail: "Database connectivity check threw an exception.",
                 extensions: new Dictionary<string, object?>
                 {
                     ["status"] = "unhealthy",
                     ["checks"] = checks,
-                    ["traceId"] = Activity.Current?.Id ?? string.Empty
-                });
+                    ["error"] = ex.Message,
+                    ["traceId"] = Activity.Current?.Id ?? string.Empty,
+                }
+            );
         }
-    }
-    catch (Exception ex)
-    {
-        checks["database"] = "error";
-        return Results.Problem(
-            statusCode: StatusCodes.Status503ServiceUnavailable,
-            title: "Service Unhealthy",
-            detail: "Database connectivity check threw an exception.",
-            extensions: new Dictionary<string, object?>
-            {
-                ["status"] = "unhealthy",
-                ["checks"] = checks,
-                ["error"] = ex.Message,
-                ["traceId"] = Activity.Current?.Id ?? string.Empty
-            });
-    }
 
-    checks["database"] = "ok";
-    return Results.Ok(new
-    {
-        status = "ok",
-        checks,
-        traceId = Activity.Current?.Id ?? string.Empty
-    });
-});
+        checks["database"] = "ok";
+        return Results.Ok(
+            new
+            {
+                status = "ok",
+                checks,
+                traceId = Activity.Current?.Id ?? string.Empty,
+            }
+        );
+    }
+);
 
 app.Run();
 

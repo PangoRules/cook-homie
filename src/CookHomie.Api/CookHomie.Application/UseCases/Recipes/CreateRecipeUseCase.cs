@@ -1,19 +1,18 @@
 using CookHomie.Application.DTOs;
+using CookHomie.Application.Mappings;
 using CookHomie.Domain.Entities;
 using CookHomie.Domain.Interfaces;
 
 namespace CookHomie.Application.UseCases.Recipes;
 
-public class CreateRecipeUseCase
+public class CreateRecipeUseCase(IRecipeRepository recipeRepository)
 {
-    private readonly IRecipeRepository _recipeRepository;
+    private readonly IRecipeRepository _recipeRepository = recipeRepository;
 
-    public CreateRecipeUseCase(IRecipeRepository recipeRepository)
-    {
-        _recipeRepository = recipeRepository;
-    }
-
-    public async Task<RecipeDto> ExecuteAsync(UpsertRecipeRequest request, CancellationToken cancellationToken = default)
+    public async Task<RecipeDto> ExecuteAsync(
+        UpsertRecipeRequest request,
+        CancellationToken cancellationToken = default
+    )
     {
         ArgumentNullException.ThrowIfNull(request);
 
@@ -29,12 +28,18 @@ public class CreateRecipeUseCase
 
         if (request.PrepMinutes < 0)
         {
-            throw new ArgumentOutOfRangeException(nameof(request), "PrepMinutes cannot be negative.");
+            throw new ArgumentOutOfRangeException(
+                nameof(request),
+                "PrepMinutes cannot be negative."
+            );
         }
 
         if (request.CookMinutes < 0)
         {
-            throw new ArgumentOutOfRangeException(nameof(request), "CookMinutes cannot be negative.");
+            throw new ArgumentOutOfRangeException(
+                nameof(request),
+                "CookMinutes cannot be negative."
+            );
         }
 
         if (request.Ingredients is null || request.Ingredients.Count == 0)
@@ -44,33 +49,44 @@ public class CreateRecipeUseCase
 
         var now = DateTime.UtcNow;
         var recipeId = Guid.NewGuid();
-        var ingredients = request.Ingredients.Select(ing =>
-        {
-            if (string.IsNullOrWhiteSpace(ing.IngredientName))
+        var ingredients = request
+            .Ingredients.Select(ing =>
             {
-                throw new ArgumentException("Each ingredient must have a name.", nameof(request));
-            }
+                if (string.IsNullOrWhiteSpace(ing.IngredientName))
+                {
+                    throw new ArgumentException(
+                        "Each ingredient must have a name.",
+                        nameof(request)
+                    );
+                }
 
-            if (string.IsNullOrWhiteSpace(ing.Unit))
-            {
-                throw new ArgumentException("Each ingredient must have a unit.", nameof(request));
-            }
+                if (string.IsNullOrWhiteSpace(ing.Unit))
+                {
+                    throw new ArgumentException(
+                        "Each ingredient must have a unit.",
+                        nameof(request)
+                    );
+                }
 
-            if (ing.Quantity <= 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(request), "Ingredient quantity must be greater than zero.");
-            }
+                if (ing.Quantity <= 0)
+                {
+                    throw new ArgumentOutOfRangeException(
+                        nameof(request),
+                        "Ingredient quantity must be greater than zero."
+                    );
+                }
 
-            return new RecipeIngredient
-            {
-                Id = Guid.NewGuid(),
-                RecipeId = recipeId,
-                IngredientName = ing.IngredientName.Trim(),
-                Quantity = ing.Quantity,
-                Unit = ing.Unit.Trim(),
-                IsOptional = ing.IsOptional
-            };
-        }).ToList();
+                return new RecipeIngredient
+                {
+                    Id = Guid.NewGuid(),
+                    RecipeId = recipeId,
+                    IngredientName = ing.IngredientName.Trim(),
+                    Quantity = ing.Quantity,
+                    Unit = ing.Unit.Trim(),
+                    IsOptional = ing.IsOptional,
+                };
+            })
+            .ToList();
 
         var recipe = new Recipe
         {
@@ -79,42 +95,18 @@ public class CreateRecipeUseCase
             Instructions = request.Instructions.Trim(),
             PrepMinutes = request.PrepMinutes,
             CookMinutes = request.CookMinutes,
-            Tags = request.Tags?
-                .Select(t => t.Trim())
-                .Where(t => !string.IsNullOrWhiteSpace(t))
-                .ToArray() ?? [],
+            Tags =
+                request
+                    .Tags?.Select(t => t.Trim())
+                    .Where(t => !string.IsNullOrWhiteSpace(t))
+                    .ToArray()
+                ?? [],
             Source = string.IsNullOrWhiteSpace(request.Source) ? null : request.Source.Trim(),
             CreatedAt = now,
-            Ingredients = ingredients
+            Ingredients = ingredients,
         };
 
         var created = await _recipeRepository.AddAsync(recipe, cancellationToken);
-        return MapToDto(created);
-    }
-
-    private static RecipeDto MapToDto(Recipe recipe)
-    {
-        return new RecipeDto
-        {
-            Id = recipe.Id,
-            Name = recipe.Name,
-            Instructions = recipe.Instructions,
-            PrepMinutes = recipe.PrepMinutes,
-            CookMinutes = recipe.CookMinutes,
-            Tags = recipe.Tags,
-            Source = recipe.Source,
-            CreatedAt = recipe.CreatedAt,
-            Ingredients = recipe.Ingredients
-                .OrderBy(i => i.IngredientName)
-                .Select(i => new RecipeIngredientDto
-                {
-                    Id = i.Id,
-                    IngredientName = i.IngredientName,
-                    Quantity = i.Quantity,
-                    Unit = i.Unit,
-                    IsOptional = i.IsOptional
-                })
-                .ToList()
-        };
+        return created.ToDto();
     }
 }

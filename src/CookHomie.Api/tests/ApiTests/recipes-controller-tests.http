@@ -1,0 +1,58 @@
+###
+
+@BASE_URL = http://localhost:5000/api/recipes
+
+# #HAPPY PATHS
+
+
+### Get All Recipes
+
+GET {{BASE_URL}} HTTP/1.1
+Accept: application/json
+
+> {%
+  client.test("Returns 200 OK", function () {
+    client.assert(response.status === 200, "Expected 200 OK");
+  });
+%}
+
+
+### Get Recipe By Id
+
+GET {{BASE_URL}}/77777777-7777-7777-7777-777777777777 HTTP/1.1
+Accept: application/json
+
+> {%
+  client.test("Returns 200 OK", function () {
+    client.assert(response.status === 200, "Expected 200 OK");
+  });
+%}
+
+
+### Get Missing Ingredients for Recipe
+
+GET {{BASE_URL}}/77777777-7777-7777-7777-777777777777/missing HTTP/1.1
+Accept: application/json
+
+> {%
+  client.test("Returns 200 OK", function () {
+    client.assert(response.status === 200, "Expected 200 OK");
+  });
+%}
+
+
+###
+
+# #FAILSCENARIOS
+
+
+### Get Recipe By Id: Recipe not found
+
+GET {{BASE_URL}}/00000000-0000-0000-0000-000000000000 HTTP/1.1
+Accept: application/json
+
+> {%
+  client.test("Returns 404 NotFound", function () {
+    client.assert(response.status === 404, "Expected 404 NotFound");
+  });
+%}

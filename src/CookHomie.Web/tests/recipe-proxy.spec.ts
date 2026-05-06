@@ -117,8 +117,23 @@ describe("recipe proxy routes", () => {
     });
   });
 
-  it("GET /recipes/:id/missing proxy forwards to /api/recipes/:id/missing on upstream API", async () => {
-    const payload = ["flour", "eggs"];
+  it("GET /recipes/:id/stock-check proxy forwards to /api/recipes/:id/stock-check on upstream API", async () => {
+    const payload = {
+      recipeId: "r1",
+      canCook: false,
+      missingCount: 1,
+      insufficientCount: 1,
+      goodCount: 0,
+      items: [
+        {
+          ingredientName: "flour",
+          requiredQuantity: 1,
+          availableQuantity: 0,
+          unit: "g",
+          status: "Missing",
+        },
+      ],
+    };
     const fetchSpy = vi.fn().mockResolvedValue(payload);
 
     vi.stubGlobal("defineEventHandler", (handler: unknown) => handler);
@@ -126,12 +141,12 @@ describe("recipe proxy routes", () => {
     vi.stubGlobal("getRouterParam", (_event: unknown, _name: string) => "r1");
     vi.stubGlobal("$fetch", fetchSpy);
 
-    const { default: handler } = await import("../server/api/recipes/[id]/missing.get");
+    const { default: handler } = await import("../server/api/recipes/[id]/stock-check.get");
 
     await expect(
       handler({ context: { params: { id: "r1" } } } as unknown as typeof mockEvent)
     ).resolves.toEqual(payload);
-    expect(fetchSpy).toHaveBeenCalledWith("/api/recipes/r1/missing", {
+    expect(fetchSpy).toHaveBeenCalledWith("/api/recipes/r1/stock-check", {
       baseURL: "http://api:5000",
     });
   });

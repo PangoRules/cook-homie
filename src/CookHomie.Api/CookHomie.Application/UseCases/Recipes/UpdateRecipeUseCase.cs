@@ -1,4 +1,5 @@
 using CookHomie.Application.DTOs;
+using CookHomie.Application.Mappings;
 using CookHomie.Domain.Entities;
 using CookHomie.Domain.Interfaces;
 
@@ -70,32 +71,6 @@ public class UpdateRecipeUseCase
         }
 
         var updated = await _recipeRepository.UpdateAsync(existing, request.Ingredients is not null ? newIngredients : null, cancellationToken);
-        return MapToDto(updated);
-    }
-
-    private static RecipeDto MapToDto(Recipe recipe)
-    {
-        return new RecipeDto
-        {
-            Id = recipe.Id,
-            Name = recipe.Name,
-            Instructions = recipe.Instructions,
-            PrepMinutes = recipe.PrepMinutes,
-            CookMinutes = recipe.CookMinutes,
-            Tags = recipe.Tags,
-            Source = recipe.Source,
-            CreatedAt = recipe.CreatedAt,
-            Ingredients = recipe.Ingredients
-                .OrderBy(i => i.IngredientName)
-                .Select(i => new RecipeIngredientDto
-                {
-                    Id = i.Id,
-                    IngredientName = i.IngredientName,
-                    Quantity = i.Quantity,
-                    Unit = i.Unit,
-                    IsOptional = i.IsOptional
-                })
-                .ToList()
-        };
+        return updated?.ToDto();
     }
 }

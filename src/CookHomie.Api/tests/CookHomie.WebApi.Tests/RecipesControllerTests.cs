@@ -262,7 +262,7 @@ var patchResponse = await client.PatchAsJsonAsync($"/api/recipes/{seedRecipe.Id}
     }
 
     [Fact]
-    public async Task GetMissingIngredients_UsesRequiredExactNormalizedInventoryNames()
+    public async Task GetRecipeStockCheck_ReturnsMissingAndGoodStatuses()
     {
         var client = _factory.CreateClient();
 
@@ -270,15 +270,64 @@ var patchResponse = await client.PatchAsJsonAsync($"/api/recipes/{seedRecipe.Id}
         var recipes = await getAllResponse.Content.ReadFromJsonAsync<List<RecipeResponse>>();
         var seedRecipe = recipes!.First(r => r.Name == "Seed Pancakes");
 
-        var response = await client.GetAsync($"/api/recipes/{seedRecipe.Id}/missing");
+        var response = await client.GetAsync($"/api/recipes/{seedRecipe.Id}/stock-check");
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-        var missing = await response.Content.ReadFromJsonAsync<List<string>>();
-        Assert.NotNull(missing);
-        // "flour" and "eggs" not in seeded inventory "Milk"
-        Assert.Contains("FLOUR", missing);
-        Assert.Contains("EGGS", missing);
-        // "milk" would be matched case-insensitively but it's not in recipe
+        var stockCheck = await response.Content.ReadFromJsonAsync<RecipeStockCheckResponse>();
+        Assert.NotNull(stockCheck);
+        Assert.False(stockCheck.CanCook);
+        Assert.Equal(2, stockCheck.MissingCount);
+        Assert.Equal(0, stockCheck.InsufficientCount);
+        Assert.Equal(0, stockCheck.GoodCount);
+        Assert.Contains(stockCheck.Items, i => i.IngredientName == "flour" && i.Status == "Missing");
+        Assert.Contains(stockCheck.Items, i => i.IngredientName == "eggs" && i.Status == "Missing");
+    }
+
+    [Fact]
+    public async Task GetRecipeStockCheck_ReturnsInsufficientWhenInventoryQuantityIsTooLow()
+    {
+        var client = _factory.CreateClient();
+
+        var payload = new UpsertRecipeRequest
+        {
+            Name = "Milkshake",
+            Instructions = "Blend milk.",
+            PrepMinutes = 1,
+            CookMinutes = 0,
+            Tags = ["drink"],
+            Ingredients =
+            [
+                new UpsertRecipeIngredientRequest
+                {
+                    IngredientName = "Milk",
+                    Quantity = 2,
+                    Unit = "liter",
+                    IsOptional = false,
+                },
+            ],
+        };
+
+        var postResponse = await client.PostAsJsonAsync("/api/recipes", payload);
+        var created = await postResponse.Content.ReadFromJsonAsync<RecipeResponse>();
+
+        var response = await client.GetAsync($"/api/recipes/{created!.Id}/stock-check");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var stockCheck = await response.Content.ReadFromJsonAsync<RecipeStockCheckResponse>();
+        Assert.NotNull(stockCheck);
+        Assert.False(stockCheck.CanCook);
+        Assert.Equal(0, stockCheck.MissingCount);
+        Assert.Equal(1, stockCheck.InsufficientCount);
+        Assert.Equal(0, stockCheck.GoodCount);
+        Assert.Contains(
+            stockCheck.Items,
+            i =>
+                i.IngredientName == "Milk"
+                && i.RequiredQuantity == 2
+                && i.AvailableQuantity == 1
+                && i.Unit == "liter"
+                && i.Status == "Insufficient"
+        );
     }
 
     public sealed class UpsertRecipeRequest
@@ -320,5 +369,24 @@ var patchResponse = await client.PatchAsJsonAsync($"/api/recipes/{seedRecipe.Id}
         public decimal Quantity { get; set; }
         public string Unit { get; set; } = string.Empty;
         public bool IsOptional { get; set; }
+    }
+
+    public sealed class RecipeStockCheckResponse
+    {
+        public Guid RecipeId { get; set; }
+        public bool CanCook { get; set; }
+        public int MissingCount { get; set; }
+        public int InsufficientCount { get; set; }
+        public int GoodCount { get; set; }
+        public List<RecipeStockItemResponse> Items { get; set; } = [];
+    }
+
+    public sealed class RecipeStockItemResponse
+    {
+        public string IngredientName { get; set; } = string.Empty;
+        public decimal RequiredQuantity { get; set; }
+        public decimal AvailableQuantity { get; set; }
+        public string Unit { get; set; } = string.Empty;
+        public string Status { get; set; } = string.Empty;
     }
 }

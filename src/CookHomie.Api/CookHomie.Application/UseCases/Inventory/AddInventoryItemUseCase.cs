@@ -5,16 +5,14 @@ using CookHomie.Domain.Interfaces;
 
 namespace CookHomie.Application.UseCases.Inventory;
 
-public class AddInventoryItemUseCase
+public class AddInventoryItemUseCase(IInventoryRepository inventoryRepository)
 {
-    private readonly IInventoryRepository _inventoryRepository;
+    private readonly IInventoryRepository _inventoryRepository = inventoryRepository;
 
-    public AddInventoryItemUseCase(IInventoryRepository inventoryRepository)
-    {
-        _inventoryRepository = inventoryRepository;
-    }
-
-    public async Task<InventoryItemDto> ExecuteAsync(AddInventoryItemRequest request, CancellationToken cancellationToken = default)
+    public async Task<InventoryItemDto> ExecuteAsync(
+        AddInventoryItemRequest request,
+        CancellationToken cancellationToken = default
+    )
     {
         ArgumentNullException.ThrowIfNull(request);
 
@@ -35,7 +33,10 @@ public class AddInventoryItemUseCase
 
         if (request.Quantity <= 0)
         {
-            throw new ArgumentOutOfRangeException(nameof(request.Quantity), "Quantity must be greater than zero.");
+            throw new ArgumentOutOfRangeException(
+                nameof(request.Quantity),
+                "Quantity must be greater than zero."
+            );
         }
 
         if (!Enum.TryParse(request.Location, true, out Location parsedLocation))
@@ -56,7 +57,7 @@ public class AddInventoryItemUseCase
             IsOpened = request.IsOpened,
             Notes = string.IsNullOrWhiteSpace(request.Notes) ? null : request.Notes.Trim(),
             CreatedAt = now,
-            UpdatedAt = now
+            UpdatedAt = now,
         };
 
         var createdItem = await _inventoryRepository.AddAsync(item, cancellationToken);
@@ -71,7 +72,7 @@ public class AddInventoryItemUseCase
             Unit = createdItem.Unit,
             ExpiresAt = createdItem.ExpiresAt,
             IsOpened = createdItem.IsOpened,
-            Notes = createdItem.Notes
+            Notes = createdItem.Notes,
         };
     }
 }

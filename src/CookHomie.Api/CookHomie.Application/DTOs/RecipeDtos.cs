@@ -22,6 +22,25 @@ public class RecipeIngredientDto
     public bool IsOptional { get; set; }
 }
 
+public class RecipeStockCheckDto
+{
+    public Guid RecipeId { get; set; }
+    public bool CanCook { get; set; }
+    public int MissingCount { get; set; }
+    public int InsufficientCount { get; set; }
+    public int GoodCount { get; set; }
+    public List<RecipeStockItemDto> Items { get; set; } = [];
+}
+
+public class RecipeStockItemDto
+{
+    public string IngredientName { get; set; } = string.Empty;
+    public decimal RequiredQuantity { get; set; }
+    public decimal AvailableQuantity { get; set; }
+    public string Unit { get; set; } = string.Empty;
+    public string Status { get; set; } = string.Empty;
+}
+
 public class UpsertRecipeRequest
 {
     public string Name { get; set; } = string.Empty;
